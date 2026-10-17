@@ -1,0 +1,7 @@
+{
+  "name": "Kejahub - AI Property Agent",
+  "description": "AI-native property management platform for Kenyan landlords with automated workflows, M-Pesa reconciliation, and WhatsApp communications.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
