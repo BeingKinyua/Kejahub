@@ -1,4 +1,7 @@
+'use client';
+
 import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   Property,
   Unit,
@@ -144,30 +147,35 @@ const PropertyContext = createContext<PropertyContextType | undefined>(undefined
 
 const STORAGE_KEY = 'kejahub_app_state_v1';
 
+function getStored<T>(key: string, fallback: T): T {
+  if (typeof window === 'undefined') return fallback;
+  try {
+    const val = localStorage.getItem(key);
+    return val ? JSON.parse(val) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export const PropertyProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+
   // Theme state
-  const [theme, setThemeState] = useState<'light' | 'dark' | 'system'>(() => {
-    return (localStorage.getItem('kejahub_theme') as any) || 'light';
-  });
+  const [theme, setThemeState] = useState<'light' | 'dark' | 'system'>('light');
 
   // Current user state
-  const [currentUser, setCurrentUser] = useState<CurrentUser>(() => {
-    const saved = localStorage.getItem('kejahub_user');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) { /* fallback */ }
-    }
-    return {
-      id: 'usr-1',
-      name: 'David Mwangi',
-      email: 'david.mwangi@kejahub.co.ke',
-      role: 'LANDLORD',
-      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
-      isAuthenticated: true,
-    };
+  const [currentUser, setCurrentUser] = useState<CurrentUser>({
+    id: 'usr-1',
+    name: 'David Mwangi',
+    email: 'david.mwangi@kejahub.co.ke',
+    role: 'LANDLORD',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
+    isAuthenticated: true,
   });
 
   // Screen & Navigation
-  const [currentScreen, setCurrentScreen] = useState<ScreenId>('overview');
+  const [currentScreen, setCurrentScreenState] = useState<ScreenId>('overview');
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -178,7 +186,7 @@ export const PropertyProvider: React.FC<{ children: ReactNode }> = ({ children }
       id: 'init-1',
       sender: 'AGENT',
       text: 'Jambo David! I am your Kejahub Property Agent. I am monitoring your 3 properties, tracking October rent collection, and flagging unallocated payments.',
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      timestamp: '12:00 PM',
     },
   ]);
 
@@ -198,60 +206,67 @@ export const PropertyProvider: React.FC<{ children: ReactNode }> = ({ children }
   };
 
   // Main Entities State loaded from storage or seed
-  const [properties, setProperties] = useState<Property[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY + '_props');
-    return saved ? JSON.parse(saved) : initialProperties;
-  });
+  const [properties, setProperties] = useState<Property[]>(initialProperties);
+  const [units, setUnits] = useState<Unit[]>(initialUnits);
+  const [tenants, setTenants] = useState<Tenant[]>(initialTenants);
+  const [transactions, setTransactions] = useState<PaymentTransaction[]>(initialTransactions);
+  const [maintenanceTickets, setMaintenanceTickets] = useState<MaintenanceTicket[]>(initialMaintenanceTickets);
+  const [expenses, setExpenses] = useState<Expense[]>(initialExpenses);
+  const [agentTasks, setAgentTasks] = useState<AgentTask[]>(initialAgentTasks);
+  const [automationRules, setAutomationRules] = useState<AutomationRule[]>(initialAutomationRules);
+  const [auditLogs, setAuditLogs] = useState<AgentAuditLog[]>(initialAuditLogs);
+  const [whatsappMessages, setWhatsAppMessages] = useState<WhatsAppMessage[]>(initialWhatsAppMessages);
+  const [workspaceConfig, setWorkspaceConfigState] = useState<WorkspaceConfig>(initialWorkspaceConfig);
 
-  const [units, setUnits] = useState<Unit[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY + '_units');
-    return saved ? JSON.parse(saved) : initialUnits;
-  });
+  // Sync state from client localStorage after mount
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const savedTheme = localStorage.getItem('kejahub_theme') as any;
+    if (savedTheme) setThemeState(savedTheme);
 
-  const [tenants, setTenants] = useState<Tenant[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY + '_tenants');
-    return saved ? JSON.parse(saved) : initialTenants;
-  });
+    const savedUser = getStored<CurrentUser | null>('kejahub_user', null);
+    if (savedUser) setCurrentUser(savedUser);
 
-  const [transactions, setTransactions] = useState<PaymentTransaction[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY + '_txs');
-    return saved ? JSON.parse(saved) : initialTransactions;
-  });
+    setProperties(getStored(STORAGE_KEY + '_props', initialProperties));
+    setUnits(getStored(STORAGE_KEY + '_units', initialUnits));
+    setTenants(getStored(STORAGE_KEY + '_tenants', initialTenants));
+    setTransactions(getStored(STORAGE_KEY + '_txs', initialTransactions));
+    setMaintenanceTickets(getStored(STORAGE_KEY + '_maint', initialMaintenanceTickets));
+    setExpenses(getStored(STORAGE_KEY + '_exp', initialExpenses));
+    setAgentTasks(getStored(STORAGE_KEY + '_tasks', initialAgentTasks));
+    setAutomationRules(getStored(STORAGE_KEY + '_rules', initialAutomationRules));
+    setAuditLogs(getStored(STORAGE_KEY + '_logs', initialAuditLogs));
+    setWhatsAppMessages(getStored(STORAGE_KEY + '_wa', initialWhatsAppMessages));
+    setWorkspaceConfigState(getStored(STORAGE_KEY + '_config', initialWorkspaceConfig));
+  }, []);
 
-  const [maintenanceTickets, setMaintenanceTickets] = useState<MaintenanceTicket[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY + '_maint');
-    return saved ? JSON.parse(saved) : initialMaintenanceTickets;
-  });
+  // Sync route pathname with currentScreen
+  useEffect(() => {
+    if (!pathname) return;
+    const clean = pathname.replace(/^\//, '');
+    const validScreens: ScreenId[] = [
+      'overview',
+      'properties',
+      'tenants',
+      'payments',
+      'maintenance',
+      'expenses',
+      'reports',
+      'agent',
+      'settings',
+      'onboarding',
+    ];
+    if (validScreens.includes(clean as ScreenId)) {
+      setCurrentScreenState(clean as ScreenId);
+    }
+  }, [pathname]);
 
-  const [expenses, setExpenses] = useState<Expense[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY + '_exp');
-    return saved ? JSON.parse(saved) : initialExpenses;
-  });
-
-  const [agentTasks, setAgentTasks] = useState<AgentTask[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY + '_tasks');
-    return saved ? JSON.parse(saved) : initialAgentTasks;
-  });
-
-  const [automationRules, setAutomationRules] = useState<AutomationRule[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY + '_rules');
-    return saved ? JSON.parse(saved) : initialAutomationRules;
-  });
-
-  const [auditLogs, setAuditLogs] = useState<AgentAuditLog[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY + '_logs');
-    return saved ? JSON.parse(saved) : initialAuditLogs;
-  });
-
-  const [whatsappMessages, setWhatsAppMessages] = useState<WhatsAppMessage[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY + '_wa');
-    return saved ? JSON.parse(saved) : initialWhatsAppMessages;
-  });
-
-  const [workspaceConfig, setWorkspaceConfigState] = useState<WorkspaceConfig>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY + '_config');
-    return saved ? JSON.parse(saved) : initialWorkspaceConfig;
-  });
+  const setCurrentScreen = (screen: ScreenId) => {
+    setCurrentScreenState(screen);
+    if (router && typeof router.push === 'function') {
+      router.push('/' + screen);
+    }
+  };
 
   // Apply Theme effect
   useEffect(() => {
@@ -672,7 +687,7 @@ export const PropertyProvider: React.FC<{ children: ReactNode }> = ({ children }
     }
 
     // Execute task side-effects
-    if (task.category === 'RECONCIATION' || task.id === 'task-1') {
+    if (task.category === 'RECONCILIATION' || task.id === 'task-1') {
       // Reconcile the unallocated transactions
       reconcilePayment('tx-unalloc-1', 'ten-5', 'u-106');
       reconcilePayment('tx-unalloc-2', 'ten-11', 'u-301');

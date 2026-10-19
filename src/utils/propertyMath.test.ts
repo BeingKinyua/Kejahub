@@ -6,7 +6,7 @@ import {
   evaluateAgentActionSafety,
   normalizePhoneNumber,
   formatKES,
-} from './propertyMath.ts';
+} from './propertyMath';
 
 test('normalizePhoneNumber handles various Kenyan phone formats', () => {
   assert.equal(normalizePhoneNumber('0712345678'), '254712345678');
