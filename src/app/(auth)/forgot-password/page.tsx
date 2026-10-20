@@ -42,7 +42,7 @@ export default function ForgotPasswordPage() {
               </div>
 
               <Link
-                href="/sign-in"
+                href="/login"
                 className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold text-white bg-[#173C32] hover:bg-[#245245] transition-all"
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -82,7 +82,7 @@ export default function ForgotPasswordPage() {
 
               <div className="text-center pt-2">
                 <Link
-                  href="/sign-in"
+                  href="/login"
                   className="text-xs font-semibold text-[#2F8A68] dark:text-[#79C8A4] hover:underline"
                 >
                   Back to Sign In

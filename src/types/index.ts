@@ -189,6 +189,59 @@ export interface WhatsAppMessage {
   isSimulated: boolean;
 }
 
+export type OnboardingStatus = 'not_started' | 'in_progress' | 'completed';
+
+export interface OnboardingData {
+  step: number;
+  status: OnboardingStatus;
+  // Step 1: Profile & Workspace
+  landlordName: string;
+  workspaceName: string;
+  contactPhone: string;
+  country: string;
+  currency: string;
+  timezone: string;
+  // Step 2: Property Portfolio
+  hasExistingProperties: boolean;
+  propertyName: string;
+  propertyLocation: string;
+  propertyCity: string;
+  propertyType: 'APARTMENT' | 'MAISONETTE' | 'COMMERCIAL' | 'MIXED_USE';
+  totalUnitsCount: number;
+  // Step 3: First Unit
+  unitNumber: string;
+  unitType: string;
+  monthlyRent: number;
+  serviceCharge: number;
+  // Step 4: Rent Rules
+  rentDueDay: number;
+  gracePeriodDays: number;
+  lateFeePercentage: number;
+  securityDepositMonths: number;
+  waterChargeType: 'FIXED' | 'METERED';
+  waterFixedAmount: number;
+  garbageCharge: number;
+  // Step 5: Initial Tenant
+  addTenantNow: boolean;
+  tenantName: string;
+  tenantPhone: string;
+  tenantEmail: string;
+  tenantNationalId: string;
+  leaseStart: string;
+  leaseEnd: string;
+  depositAmount: number;
+  // Step 6: Integrations
+  enableMpesa: boolean;
+  mpesaPaybillNumber: string;
+  mpesaTillNumber?: string;
+  mpesaRefFormat: string;
+  enableWhatsApp: boolean;
+  whatsappAutoReceipt: boolean;
+  whatsappAutoReminders: boolean;
+  // Step 7: Completed
+  completedAt?: string;
+}
+
 export interface WorkspaceConfig {
   landlordName: string;
   workspaceName: string;
@@ -200,6 +253,8 @@ export interface WorkspaceConfig {
   lateFeePercentage: number; // e.g. 5
   maintenanceApprovalThreshold: number; // e.g. 10000 KES
   onboardingCompleted: boolean;
+  onboardingStatus?: OnboardingStatus;
+  onboardingStep?: number;
   mpesaPaybillNumber?: string;
   mpesaAccountRefFormat?: string; // "Unit Number"
 }
@@ -211,4 +266,7 @@ export interface CurrentUser {
   role: UserRole;
   avatarUrl?: string;
   isAuthenticated: boolean;
+  onboardingStatus: OnboardingStatus;
+  workspaceId?: string;
 }
+

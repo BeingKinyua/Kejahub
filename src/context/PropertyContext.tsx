@@ -17,6 +17,8 @@ import {
   UserRole,
   ScreenId,
   CurrentUser,
+  OnboardingData,
+  OnboardingStatus,
 } from '../types';
 import {
   initialProperties,
@@ -83,10 +85,17 @@ interface PropertyContextType {
   theme: 'light' | 'dark' | 'system';
   setTheme: (theme: 'light' | 'dark' | 'system') => void;
   currentUser: CurrentUser;
+  isAuthLoaded: boolean;
   switchRole: (role: UserRole) => void;
-  signIn: (email: string, role?: UserRole) => void;
+  signIn: (email: string, role?: UserRole, options?: { isDemo?: boolean; redirectTo?: string }) => Promise<boolean>;
+  signUp: (name: string, email: string, password?: string) => Promise<boolean>;
   signOut: () => void;
   resetDemoData: () => void;
+
+  // Onboarding
+  onboardingData: OnboardingData;
+  updateOnboardingData: (updates: Partial<OnboardingData>) => void;
+  completeOnboarding: (finalData?: OnboardingData) => void;
 
   // Assistant Drawer
   isAssistantOpen: boolean;
@@ -147,6 +156,69 @@ const PropertyContext = createContext<PropertyContextType | undefined>(undefined
 
 const STORAGE_KEY = 'kejahub_app_state_v1';
 
+export const defaultUnauthenticatedUser: CurrentUser = {
+  id: '',
+  name: '',
+  email: '',
+  role: 'LANDLORD',
+  avatarUrl: undefined,
+  isAuthenticated: false,
+  onboardingStatus: 'not_started',
+};
+
+export const defaultDemoLandlord: CurrentUser = {
+  id: 'usr-demo-david',
+  name: 'David Mwangi',
+  email: 'david.mwangi@kejahub.co.ke',
+  role: 'LANDLORD',
+  avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
+  isAuthenticated: true,
+  onboardingStatus: 'completed',
+  workspaceId: 'ws-mwangi',
+};
+
+export const defaultOnboardingData: OnboardingData = {
+  step: 1,
+  status: 'not_started',
+  landlordName: '',
+  workspaceName: '',
+  contactPhone: '+254 712 345 678',
+  country: 'Kenya',
+  currency: 'KES',
+  timezone: 'Africa/Nairobi (EAT)',
+  hasExistingProperties: true,
+  propertyName: 'Kilimani Heights Apartments',
+  propertyLocation: 'Lenana Road, Kilimani',
+  propertyCity: 'Nairobi',
+  propertyType: 'APARTMENT',
+  totalUnitsCount: 8,
+  unitNumber: 'A1',
+  unitType: '2BR Master Ensuite',
+  monthlyRent: 45000,
+  serviceCharge: 3500,
+  rentDueDay: 5,
+  gracePeriodDays: 5,
+  lateFeePercentage: 5,
+  securityDepositMonths: 1,
+  waterChargeType: 'FIXED',
+  waterFixedAmount: 1500,
+  garbageCharge: 500,
+  addTenantNow: true,
+  tenantName: 'Wanjiku Kamau',
+  tenantPhone: '+254 712 345 678',
+  tenantEmail: 'wanjiku.kamau@gmail.com',
+  tenantNationalId: '32145678',
+  leaseStart: '2026-01-01',
+  leaseEnd: '2026-12-31',
+  depositAmount: 48500,
+  enableMpesa: true,
+  mpesaPaybillNumber: '522522',
+  mpesaRefFormat: 'Unit Number',
+  enableWhatsApp: true,
+  whatsappAutoReceipt: true,
+  whatsappAutoReminders: true,
+};
+
 function getStored<T>(key: string, fallback: T): T {
   if (typeof window === 'undefined') return fallback;
   try {
@@ -164,15 +236,12 @@ export const PropertyProvider: React.FC<{ children: ReactNode }> = ({ children }
   // Theme state
   const [theme, setThemeState] = useState<'light' | 'dark' | 'system'>('light');
 
-  // Current user state
-  const [currentUser, setCurrentUser] = useState<CurrentUser>({
-    id: 'usr-1',
-    name: 'David Mwangi',
-    email: 'david.mwangi@kejahub.co.ke',
-    role: 'LANDLORD',
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
-    isAuthenticated: true,
-  });
+  // Current user state - defaults to unauthenticated
+  const [currentUser, setCurrentUser] = useState<CurrentUser>(defaultUnauthenticatedUser);
+  const [isAuthLoaded, setIsAuthLoaded] = useState(false);
+
+  // Onboarding draft state
+  const [onboardingData, setOnboardingData] = useState<OnboardingData>(defaultOnboardingData);
 
   // Screen & Navigation
   const [currentScreen, setCurrentScreenState] = useState<ScreenId>('overview');
@@ -185,7 +254,7 @@ export const PropertyProvider: React.FC<{ children: ReactNode }> = ({ children }
     {
       id: 'init-1',
       sender: 'AGENT',
-      text: 'Jambo David! I am your Kejahub Property Agent. I am monitoring your 3 properties, tracking October rent collection, and flagging unallocated payments.',
+      text: 'Jambo! I am your Kejahub Property Agent. I assist with property monitoring, M-Pesa rent reconciliation, and WhatsApp communications.',
       timestamp: '12:00 PM',
     },
   ]);
@@ -225,7 +294,16 @@ export const PropertyProvider: React.FC<{ children: ReactNode }> = ({ children }
     if (savedTheme) setThemeState(savedTheme);
 
     const savedUser = getStored<CurrentUser | null>('kejahub_user', null);
-    if (savedUser) setCurrentUser(savedUser);
+    if (savedUser && savedUser.isAuthenticated) {
+      setCurrentUser(savedUser);
+    } else {
+      setCurrentUser(defaultUnauthenticatedUser);
+    }
+
+    const savedDraft = getStored<OnboardingData | null>('kejahub_onboarding_draft', null);
+    if (savedDraft) {
+      setOnboardingData(savedDraft);
+    }
 
     setProperties(getStored(STORAGE_KEY + '_props', initialProperties));
     setUnits(getStored(STORAGE_KEY + '_units', initialUnits));
@@ -238,6 +316,8 @@ export const PropertyProvider: React.FC<{ children: ReactNode }> = ({ children }
     setAuditLogs(getStored(STORAGE_KEY + '_logs', initialAuditLogs));
     setWhatsAppMessages(getStored(STORAGE_KEY + '_wa', initialWhatsAppMessages));
     setWorkspaceConfigState(getStored(STORAGE_KEY + '_config', initialWorkspaceConfig));
+
+    setIsAuthLoaded(true);
   }, []);
 
   // Sync route pathname with currentScreen
@@ -354,22 +434,222 @@ export const PropertyProvider: React.FC<{ children: ReactNode }> = ({ children }
     addToast('INFO', 'Active Role Switched', `Now operating under ${role} permissions.`);
   };
 
-  const signIn = (email: string, role: UserRole = 'LANDLORD') => {
-    const user: CurrentUser = {
-      id: 'usr-demo',
-      name: email.split('@')[0].replace('.', ' ') || 'David Mwangi',
-      email,
-      role,
-      isAuthenticated: true,
-    };
+  const signIn = async (
+    email: string,
+    role: UserRole = 'LANDLORD',
+    options?: { isDemo?: boolean; redirectTo?: string }
+  ): Promise<boolean> => {
+    const isDemo = options?.isDemo || email.includes('david.mwangi') || email.includes('sarah.omondi');
+
+    let user: CurrentUser;
+    if (isDemo) {
+      user = {
+        ...defaultDemoLandlord,
+        role,
+        name: role === 'PROPERTY_MANAGER' ? 'Sarah Omondi (Property Manager)' : 'David Mwangi (Landlord)',
+        email: role === 'PROPERTY_MANAGER' ? 'sarah.omondi@kejahub.co.ke' : 'david.mwangi@kejahub.co.ke',
+        isAuthenticated: true,
+        onboardingStatus: 'completed',
+      };
+    } else {
+      const existingDraft = getStored<OnboardingData | null>('kejahub_onboarding_draft', null);
+      const isCompleted = workspaceConfig.onboardingCompleted || existingDraft?.status === 'completed';
+
+      user = {
+        id: 'usr-' + Math.random().toString(36).substring(2, 9),
+        name: email.split('@')[0].replace(/[._-]/g, ' '),
+        email,
+        role,
+        isAuthenticated: true,
+        onboardingStatus: isCompleted ? 'completed' : 'in_progress',
+      };
+    }
+
     setCurrentUser(user);
-    setCurrentScreen('overview');
+    localStorage.setItem('kejahub_user', JSON.stringify(user));
+
+    try {
+      await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, role, isDemo }),
+      });
+    } catch {}
+
     addToast('SUCCESS', 'Signed In', `Welcome back, ${user.name}`);
+
+    const target = options?.redirectTo || (user.onboardingStatus === 'completed' ? '/overview' : '/onboarding');
+    router.push(target);
+    return true;
   };
 
-  const signOut = () => {
-    setCurrentUser((prev) => ({ ...prev, isAuthenticated: false }));
+  const signUp = async (name: string, email: string, password?: string): Promise<boolean> => {
+    const newUser: CurrentUser = {
+      id: 'usr-' + Date.now().toString(36),
+      name,
+      email,
+      role: 'LANDLORD',
+      isAuthenticated: true,
+      onboardingStatus: 'in_progress',
+      workspaceId: 'ws-' + Date.now().toString(36),
+    };
+
+    const initialDraft: OnboardingData = {
+      ...defaultOnboardingData,
+      step: 1,
+      status: 'in_progress',
+      landlordName: name,
+      workspaceName: `${name}'s Properties`,
+    };
+
+    setCurrentUser(newUser);
+    setOnboardingData(initialDraft);
+    localStorage.setItem('kejahub_user', JSON.stringify(newUser));
+    localStorage.setItem('kejahub_onboarding_draft', JSON.stringify(initialDraft));
+
+    try {
+      await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+      });
+    } catch {}
+
+    addToast('SUCCESS', 'Account Created', `Welcome to Kejahub, ${name}! Setting up your workspace.`);
+    router.push('/onboarding');
+    return true;
+  };
+
+  const signOut = async () => {
+    setCurrentUser(defaultUnauthenticatedUser);
+    localStorage.removeItem('kejahub_user');
+
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch {}
+
     addToast('INFO', 'Signed Out', 'You have been signed out of Kejahub.');
+    router.push('/login');
+  };
+
+  const updateOnboardingData = (updates: Partial<OnboardingData>) => {
+    setOnboardingData((prev) => {
+      const updated = { ...prev, ...updates };
+      localStorage.setItem('kejahub_onboarding_draft', JSON.stringify(updated));
+      return updated;
+    });
+
+    try {
+      fetch('/api/onboarding', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ onboardingData: updates, isCompleted: false }),
+      });
+    } catch {}
+  };
+
+  const completeOnboarding = (finalPayload?: OnboardingData) => {
+    const data = finalPayload || onboardingData;
+
+    // 1. Add new property to properties
+    const propId = 'prop-new-' + Date.now().toString(36);
+    const newProperty: Property = {
+      id: propId,
+      name: data.propertyName || 'My Property Portfolio',
+      location: data.propertyLocation || 'Kilimani, Nairobi',
+      city: data.propertyCity || 'Nairobi',
+      type: data.propertyType || 'APARTMENT',
+      totalUnits: data.totalUnitsCount || 6,
+      description: 'Configured during landlord onboarding.',
+    };
+
+    // 2. Add first unit
+    const unitId = 'u-new-' + Date.now().toString(36);
+    const newUnit: Unit = {
+      id: unitId,
+      propertyId: propId,
+      unitNumber: data.unitNumber || 'A1',
+      bedrooms: data.unitType?.toLowerCase().includes('1') ? 1 : 2,
+      typeLabel: data.unitType || '2BR Master Ensuite',
+      monthlyRent: data.monthlyRent || 45000,
+      serviceCharge: data.serviceCharge || 3500,
+      waterDepositOrFixed: data.waterFixedAmount || 1500,
+      status: data.addTenantNow ? 'OCCUPIED' : 'VACANT',
+    };
+
+    // 3. Add initial tenant if requested
+    let newTenant: Tenant | null = null;
+    if (data.addTenantNow && data.tenantName) {
+      const tenId = 'ten-new-' + Date.now().toString(36);
+      newTenant = {
+        id: tenId,
+        name: data.tenantName,
+        phone: data.tenantPhone || '+254 712 000 000',
+        email: data.tenantEmail || 'tenant@property.co.ke',
+        nationalIdOrPassport: data.tenantNationalId || '12345678',
+        assignedPropertyId: propId,
+        assignedUnitId: unitId,
+        leaseStart: data.leaseStart || '2026-01-01',
+        leaseEnd: data.leaseEnd || '2026-12-31',
+        leaseStatus: 'ACTIVE',
+        depositAmount: data.depositAmount || 48500,
+      };
+      newUnit.currentTenantId = tenId;
+    }
+
+    setProperties((prev) => [newProperty, ...prev]);
+    setUnits((prev) => [newUnit, ...prev]);
+    if (newTenant) {
+      setTenants((prev) => [newTenant!, ...prev]);
+    }
+
+    // 4. Update workspace config
+    const updatedConfig: WorkspaceConfig = {
+      ...workspaceConfig,
+      landlordName: data.landlordName || currentUser.name || 'Landlord',
+      workspaceName: data.workspaceName || `${data.landlordName || 'Landlord'}'s Properties`,
+      rentDueDay: data.rentDueDay || 5,
+      gracePeriodDays: data.gracePeriodDays || 5,
+      lateFeePercentage: data.lateFeePercentage || 5,
+      onboardingCompleted: true,
+      onboardingStatus: 'completed',
+      onboardingStep: 7,
+      mpesaPaybillNumber: data.mpesaPaybillNumber || '522522',
+      mpesaAccountRefFormat: 'Unit Number',
+    };
+    setWorkspaceConfigState(updatedConfig);
+    localStorage.setItem(STORAGE_KEY + '_config', JSON.stringify(updatedConfig));
+
+    // 5. Update user state
+    const updatedUser: CurrentUser = {
+      ...currentUser,
+      name: data.landlordName || currentUser.name,
+      onboardingStatus: 'completed',
+      isAuthenticated: true,
+    };
+    setCurrentUser(updatedUser);
+    localStorage.setItem('kejahub_user', JSON.stringify(updatedUser));
+
+    // 6. Persist completed onboarding data
+    const completedData: OnboardingData = {
+      ...data,
+      status: 'completed',
+      step: 7,
+      completedAt: new Date().toISOString(),
+    };
+    setOnboardingData(completedData);
+    localStorage.setItem('kejahub_onboarding_draft', JSON.stringify(completedData));
+
+    try {
+      fetch('/api/onboarding', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ onboardingData: completedData, isCompleted: true }),
+      });
+    } catch {}
+
+    addToast('SUCCESS', 'Onboarding Complete', `Workspace "${updatedConfig.workspaceName}" is ready.`);
+    router.push('/overview');
   };
 
   const resetDemoData = () => {
@@ -843,10 +1123,15 @@ export const PropertyProvider: React.FC<{ children: ReactNode }> = ({ children }
         theme,
         setTheme,
         currentUser,
+        isAuthLoaded,
         switchRole,
         signIn,
+        signUp,
         signOut,
         resetDemoData,
+        onboardingData,
+        updateOnboardingData,
+        completeOnboarding,
         isAssistantOpen,
         setIsAssistantOpen,
         assistantMessages,

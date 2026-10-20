@@ -23,6 +23,8 @@ export const initialWorkspaceConfig: WorkspaceConfig = {
   lateFeePercentage: 5,
   maintenanceApprovalThreshold: 10000,
   onboardingCompleted: true,
+  onboardingStatus: 'completed',
+  onboardingStep: 7,
   mpesaPaybillNumber: '522522',
   mpesaAccountRefFormat: 'UnitNumber (e.g. A3)',
 };
