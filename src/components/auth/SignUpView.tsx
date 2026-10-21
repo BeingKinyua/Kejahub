@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useProperty } from '../../context/PropertyContext';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useProperty } from "../../context/PropertyContext";
 import {
   Lock,
   Mail,
@@ -16,16 +16,16 @@ import {
   CheckCircle2,
   Building2,
   Check,
-} from 'lucide-react';
+} from "lucide-react";
 
 export const SignUpView: React.FC = () => {
   const router = useRouter();
   const { signUp, currentUser, isAuthLoaded } = useProperty();
 
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
@@ -35,13 +35,18 @@ export const SignUpView: React.FC = () => {
   // If already logged in with completed onboarding, redirect to overview
   useEffect(() => {
     if (isAuthLoaded && currentUser.isAuthenticated) {
-      if (currentUser.onboardingStatus === 'completed') {
-        router.replace('/overview');
+      if (currentUser.onboardingStatus === "completed") {
+        router.replace("/overview");
       } else {
-        router.replace('/onboarding');
+        router.replace("/onboarding");
       }
     }
-  }, [isAuthLoaded, currentUser.isAuthenticated, currentUser.onboardingStatus, router]);
+  }, [
+    isAuthLoaded,
+    currentUser.isAuthenticated,
+    currentUser.onboardingStatus,
+    router,
+  ]);
 
   // Password rules
   const hasMinLength = password.length >= 8;
@@ -51,28 +56,32 @@ export const SignUpView: React.FC = () => {
 
   const validate = () => {
     if (!fullName.trim()) {
-      setError('Please enter your full name.');
+      setError("Please enter your full name.");
       return false;
     }
     if (!email.trim()) {
-      setError('Please enter your work or personal email address.');
+      setError("Please enter your work or personal email address.");
       return false;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
-      setError('Please provide a valid email format (e.g. name@property.co.ke).');
+      setError(
+        "Please provide a valid email format (e.g. name@property.co.ke).",
+      );
       return false;
     }
     if (!hasMinLength) {
-      setError('Password must be at least 8 characters long.');
+      setError("Password must be at least 8 characters long.");
       return false;
     }
     if (!passwordsMatch) {
-      setError('Passwords do not match. Please re-enter.');
+      setError("Passwords do not match. Please re-enter.");
       return false;
     }
     if (!agreeTerms) {
-      setError('Please agree to the Terms of Service & Privacy Policy to create your account.');
+      setError(
+        "Please agree to the Terms of Service & Privacy Policy to create your account.",
+      );
       return false;
     }
     setError(null);
@@ -89,7 +98,7 @@ export const SignUpView: React.FC = () => {
     try {
       await signUp(fullName.trim(), email.trim(), password);
     } catch (err: any) {
-      setError(err?.message || 'Registration failed. Please try again.');
+      setError(err?.message || "Registration failed. Please try again.");
       setIsLoading(false);
     }
   };
@@ -99,15 +108,14 @@ export const SignUpView: React.FC = () => {
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         {/* Brand Icon */}
         <div className="w-14 h-14 rounded-2xl bg-[#173C32] dark:bg-[#79C8A4] flex items-center justify-center mx-auto shadow-xl mb-4 group transition-transform hover:scale-105">
-          <span className="font-extrabold text-2xl text-white dark:text-[#111A17] tracking-wider">K</span>
+          <span className="font-extrabold text-2xl text-white dark:text-[#111A17] tracking-wider">
+            K
+          </span>
         </div>
 
         <h1 className="text-2xl sm:text-3xl font-extrabold text-[#24312D] dark:text-[#EDF5F1] tracking-tight">
-          Create Landlord Account
+          Create Account
         </h1>
-        <p className="mt-1 text-sm text-[#64736C] dark:text-[#9EB2A9]">
-          Get started with automated Kenyan property management & M-Pesa tracking
-        </p>
       </div>
 
       <div className="mt-7 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
@@ -121,7 +129,10 @@ export const SignUpView: React.FC = () => {
 
           <form className="space-y-4" onSubmit={handleSubmit} noValidate>
             <div>
-              <label htmlFor="signup-name" className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
+              <label
+                htmlFor="signup-name"
+                className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1.5"
+              >
                 Full Name / Business Owner
               </label>
               <div className="relative">
@@ -142,7 +153,10 @@ export const SignUpView: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="signup-email" className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
+              <label
+                htmlFor="signup-email"
+                className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1.5"
+              >
                 Work Email Address
               </label>
               <div className="relative">
@@ -164,14 +178,17 @@ export const SignUpView: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="signup-password" className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
+              <label
+                htmlFor="signup-password"
+                className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1.5"
+              >
                 Password
               </label>
               <div className="relative">
                 <Lock className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   id="signup-password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
@@ -186,38 +203,57 @@ export const SignUpView: React.FC = () => {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1"
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
                 </button>
               </div>
 
               {/* Password strength indicator */}
               <div className="mt-2 grid grid-cols-3 gap-1.5 text-[10px]">
-                <div className={`flex items-center gap-1 ${hasMinLength ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-gray-400'}`}>
-                  <Check className={`w-3 h-3 ${hasMinLength ? 'opacity-100' : 'opacity-30'}`} />
+                <div
+                  className={`flex items-center gap-1 ${hasMinLength ? "text-emerald-600 dark:text-emerald-400 font-semibold" : "text-gray-400"}`}
+                >
+                  <Check
+                    className={`w-3 h-3 ${hasMinLength ? "opacity-100" : "opacity-30"}`}
+                  />
                   <span>8+ characters</span>
                 </div>
-                <div className={`flex items-center gap-1 ${hasLetter ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-gray-400'}`}>
-                  <Check className={`w-3 h-3 ${hasLetter ? 'opacity-100' : 'opacity-30'}`} />
+                <div
+                  className={`flex items-center gap-1 ${hasLetter ? "text-emerald-600 dark:text-emerald-400 font-semibold" : "text-gray-400"}`}
+                >
+                  <Check
+                    className={`w-3 h-3 ${hasLetter ? "opacity-100" : "opacity-30"}`}
+                  />
                   <span>Letter</span>
                 </div>
-                <div className={`flex items-center gap-1 ${hasNumber ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-gray-400'}`}>
-                  <Check className={`w-3 h-3 ${hasNumber ? 'opacity-100' : 'opacity-30'}`} />
+                <div
+                  className={`flex items-center gap-1 ${hasNumber ? "text-emerald-600 dark:text-emerald-400 font-semibold" : "text-gray-400"}`}
+                >
+                  <Check
+                    className={`w-3 h-3 ${hasNumber ? "opacity-100" : "opacity-30"}`}
+                  />
                   <span>Number</span>
                 </div>
               </div>
             </div>
 
             <div>
-              <label htmlFor="signup-confirm-password" className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
+              <label
+                htmlFor="signup-confirm-password"
+                className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1.5"
+              >
                 Confirm Password
               </label>
               <div className="relative">
                 <Lock className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   id="signup-confirm-password"
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => {
                     setConfirmPassword(e.target.value);
@@ -232,9 +268,15 @@ export const SignUpView: React.FC = () => {
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1"
-                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                  aria-label={
+                    showConfirmPassword ? "Hide password" : "Show password"
+                  }
                 >
-                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showConfirmPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
                 </button>
               </div>
               {confirmPassword && (
@@ -245,7 +287,8 @@ export const SignUpView: React.FC = () => {
                     </span>
                   ) : (
                     <span className="text-red-500 flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" /> Passwords do not match yet
+                      <AlertCircle className="w-3 h-3" /> Passwords do not match
+                      yet
                     </span>
                   )}
                 </div>
@@ -264,7 +307,7 @@ export const SignUpView: React.FC = () => {
                   className="h-4 w-4 mt-0.5 rounded border-gray-300 text-[#2F8A68] focus:ring-[#2F8A68]"
                 />
                 <span className="ml-2 text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-                  I agree to the Property AI Agent Terms of Service and Privacy Policy for Kenyan tenancy data.
+                  I agree to the Terms of Service and Privacy Policy.
                 </span>
               </label>
             </div>
@@ -278,7 +321,7 @@ export const SignUpView: React.FC = () => {
                 <span className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
               ) : (
                 <>
-                  <span>Create Account & Start Onboarding</span>
+                  <span>Create Account</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
@@ -286,18 +329,18 @@ export const SignUpView: React.FC = () => {
           </form>
 
           <div className="mt-5 text-center text-xs text-gray-600 dark:text-gray-400 border-t border-gray-100 dark:border-gray-800/80 pt-4">
-            <span>Already have a Kejahub account? </span>
+            <span>Already have an account? </span>
             <Link
               href="/login"
               className="font-bold text-[#2F8A68] dark:text-[#79C8A4] hover:underline"
             >
-              Sign In &rarr;
+              Login
             </Link>
           </div>
         </div>
 
         <p className="mt-4 text-center text-xs text-gray-500 dark:text-gray-400">
-          Independent Landlord Platform • Safe Kenyan Data Storage • M-Pesa Native
+          &copy; {new Date().getFullYear()} Kejahub. All rights reserved.
         </p>
       </div>
     </div>
