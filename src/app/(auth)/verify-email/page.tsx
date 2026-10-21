@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Mail, CheckCircle2, ArrowRight, ShieldCheck, RefreshCw } from 'lucide-react';
+import { Mail, CheckCircle2, ArrowRight, RefreshCw } from 'lucide-react';
 import { useProperty } from '../../../context/PropertyContext';
+import { AuthGlassCard } from '../../../components/auth/AuthGlassCard';
 
 export default function VerifyEmailPage() {
   const { currentUser } = useProperty();
@@ -19,32 +20,33 @@ export default function VerifyEmailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F6F8F6] dark:bg-[#111A17] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <div className="w-14 h-14 rounded-2xl bg-[#173C32] dark:bg-[#79C8A4] flex items-center justify-center mx-auto shadow-lg mb-4">
-          <Mail className="w-7 h-7 text-white dark:text-[#111A17]" />
+    <div className="w-full flex flex-col items-center">
+      <AuthGlassCard>
+        {/* Minimalist Top Logo & Brand Identity */}
+        <div className="text-center mb-6">
+          <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center mx-auto shadow-inner mb-3 transition-transform hover:scale-105">
+            <Mail className="w-6 h-6 text-[#F5F2E9]" />
+          </div>
+          <h1 className="text-xl font-medium tracking-tight text-[#F5F2E9]">
+            Verify Your Email
+          </h1>
+          <p className="text-[11px] uppercase tracking-widest text-white/50 mt-0.5">
+            Email Confirmation
+          </p>
         </div>
-        <h1 className="text-2xl font-extrabold text-[#24312D] dark:text-[#EDF5F1] tracking-tight">
-          Verify Your Email
-        </h1>
-        <p className="mt-1 text-sm text-[#64736C] dark:text-[#9EB2A9]">
-          Confirm your landlord email address for Kejahub notifications
-        </p>
-      </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
-        <div className="bg-white dark:bg-[#1B2622] py-8 px-6 sm:px-10 shadow-xl rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] text-center space-y-5">
-          <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
+        <div className="text-center space-y-4">
+          <p className="text-xs text-white/70 leading-relaxed">
             We sent a verification confirmation to{' '}
-            <strong className="text-gray-900 dark:text-white font-semibold">
-              {currentUser.email || 'your email'}
+            <strong className="text-white font-semibold">
+              {currentUser.email || 'your registered email'}
             </strong>
             . Check your inbox and click the verification link.
           </p>
 
           {resent && (
-            <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs text-emerald-800 dark:text-emerald-300 flex items-center justify-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <div className="p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-xl text-xs text-[#EAE7DD] flex items-center justify-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <span>Verification email re-dispatched (Simulated).</span>
             </div>
           )}
@@ -53,31 +55,37 @@ export default function VerifyEmailPage() {
             <button
               onClick={handleResend}
               disabled={resending}
-              className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs font-semibold text-gray-700 dark:text-gray-200 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-medium text-white/80 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors cursor-pointer"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${resending ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`w-3.5 h-3.5 ${resending ? 'animate-spin' : ''}`}
+              />
               <span>{resending ? 'Resending...' : 'Resend Verification Link'}</span>
             </button>
 
             <Link
               href="/onboarding"
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold text-white bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] dark:text-[#111A17] transition-all shadow-sm"
+              className="w-full py-3 px-4 rounded-xl text-sm font-semibold text-[#142820] bg-[#EAE7DD] hover:bg-[#FDFBF7] shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>Proceed to Landlord Onboarding</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
-          <div className="pt-3 border-t border-gray-100 dark:border-gray-800">
+          <div className="pt-3 border-t border-white/10">
             <Link
               href="/login"
-              className="text-xs text-[#2F8A68] dark:text-[#79C8A4] hover:underline font-semibold"
+              className="text-xs text-white/60 hover:text-white transition-colors"
             >
-              Back to Sign In
+              &larr; Back to Sign In
             </Link>
           </div>
         </div>
-      </div>
+      </AuthGlassCard>
+
+      <p className="mt-5 text-center text-xs text-white/40 tracking-wide">
+        &copy; {new Date().getFullYear()} Kejahub • Kenya Property Operations
+      </p>
     </div>
   );
 }

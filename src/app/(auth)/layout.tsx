@@ -3,24 +3,29 @@
 import React from 'react';
 import { useProperty } from '../../context/PropertyContext';
 import { Sun, Moon } from 'lucide-react';
+import { AuthBackground } from '../../components/auth/AuthBackground';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const { theme, setTheme } = useProperty();
 
   return (
-    <div className="min-h-screen bg-[#F6F8F6] dark:bg-[#111A17] text-[#24312D] dark:text-[#EDF5F1] relative transition-colors duration-200">
-      {/* Top right theme toggle */}
-      <div className="absolute top-4 right-4 z-20">
+    <AuthBackground>
+      {/* Fixed top right subtle glass theme toggle */}
+      <div className="fixed top-4 right-4 sm:top-6 sm:right-6 z-30">
         <button
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className="p-2 rounded-xl bg-white dark:bg-[#1B2622] border border-[#E2E8E5] dark:border-[#2D4039] text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white shadow-xs transition-colors"
+          className="p-2 sm:p-2.5 rounded-full bg-black/40 backdrop-blur-lg border border-white/15 text-white/80 hover:text-white shadow-lg transition-all hover:scale-105 cursor-pointer"
           aria-label="Toggle theme"
         >
-          {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-emerald-800" />}
+          {theme === 'dark' ? (
+            <Sun className="w-4 h-4 text-amber-300" />
+          ) : (
+            <Moon className="w-4 h-4 text-emerald-200" />
+          )}
         </button>
       </div>
 
       {children}
-    </div>
+    </AuthBackground>
   );
 }
