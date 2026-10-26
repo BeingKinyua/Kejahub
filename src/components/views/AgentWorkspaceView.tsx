@@ -21,6 +21,9 @@ import {
 } from 'lucide-react';
 import { formatKES } from '../../utils/propertyMath';
 
+import { GSAPEntrance } from '../animation/GSAPEntrance';
+import { StatusBadge } from '../ui/StatusBadge';
+
 export const AgentWorkspaceView: React.FC = () => {
   const {
     agentTasks,
@@ -66,7 +69,7 @@ export const AgentWorkspaceView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <GSAPEntrance className="space-y-6">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -504,6 +507,6 @@ export const AgentWorkspaceView: React.FC = () => {
           </div>
         </div>
       )}
-    </div>
+    </GSAPEntrance>
   );
 };

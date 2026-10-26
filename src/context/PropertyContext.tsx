@@ -233,8 +233,8 @@ export const PropertyProvider: React.FC<{ children: ReactNode }> = ({ children }
   const router = useRouter();
   const pathname = usePathname();
 
-  // Theme state
-  const [theme, setThemeState] = useState<'light' | 'dark' | 'system'>('light');
+  // Theme state - defaults to system
+  const [theme, setThemeState] = useState<'light' | 'dark' | 'system'>('system');
 
   // Current user state - defaults to unauthenticated
   const [currentUser, setCurrentUser] = useState<CurrentUser>(defaultUnauthenticatedUser);
@@ -348,19 +348,28 @@ export const PropertyProvider: React.FC<{ children: ReactNode }> = ({ children }
     }
   };
 
-  // Apply Theme effect
+  // Apply Theme effect with OS media query listener
   useEffect(() => {
     const root = document.documentElement;
-    const isDark =
-      theme === 'dark' ||
-      (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
-    if (isDark) {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
+    const applyTheme = () => {
+      const isDark = theme === 'dark' || (theme === 'system' && mediaQuery.matches);
+      if (isDark) {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
+    };
+
+    applyTheme();
     localStorage.setItem('kejahub_theme', theme);
+
+    if (theme === 'system') {
+      const handler = () => applyTheme();
+      mediaQuery.addEventListener('change', handler);
+      return () => mediaQuery.removeEventListener('change', handler);
+    }
   }, [theme]);
 
   // Persist entities

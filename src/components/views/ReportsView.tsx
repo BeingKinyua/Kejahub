@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import { useProperty } from '../../context/PropertyContext';
 import {
   BarChart3,
@@ -7,24 +9,43 @@ import {
   Building,
   TrendingUp,
   AlertTriangle,
-  PieChart,
   FileSpreadsheet,
   CheckCircle2,
+  Calculator,
+  ShieldCheck,
+  Percent,
 } from 'lucide-react';
 import { formatKES } from '../../utils/propertyMath';
+import { BentoCard } from '../ui/BentoCard';
+import { StatusBadge } from '../ui/StatusBadge';
+import { GSAPEntrance } from '../animation/GSAPEntrance';
+import { ArrearsAgeingChart } from '../charts/ArrearsAgeingChart';
+import { IncomeExpenseChart } from '../charts/IncomeExpenseChart';
 
 export const ReportsView: React.FC = () => {
-  const { properties, units, tenants, transactions, expenses, portfolioMetrics, getTenantBalance, addToast } = useProperty();
+  const {
+    properties,
+    units,
+    tenants,
+    transactions,
+    expenses,
+    portfolioMetrics,
+    getTenantBalance,
+    addToast,
+  } = useProperty();
 
   // Calculate Net Operating Income (NOI)
   const totalIncome = portfolioMetrics.collectedRent;
   const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
   const netOperatingIncome = totalIncome - totalExpenses;
 
+  // Kenya Residential Rental Income Tax (7.5% on gross rent collected)
+  const estimatedKraTax = Math.round(totalIncome * 0.075);
+
   // Arrears Ageing Buckets
   const arrearsBuckets = {
-    current: 0, // 0-5 days
-    days6to30: 0, // 6-30 days
+    current: 0,
+    days6to30: 0,
     days31to60: 0,
     days60plus: 0,
   };
@@ -46,7 +67,15 @@ export const ReportsView: React.FC = () => {
 
   // CSV Export Handler
   const handleExportCSV = () => {
-    const headers = ['Property', 'Unit', 'Tenant Name', 'Phone', 'Expected Monthly Rent', 'October Balance', 'Arrears Status'];
+    const headers = [
+      'Property',
+      'Unit',
+      'Tenant Name',
+      'Phone',
+      'Expected Monthly Rent',
+      'October Balance',
+      'Arrears Status',
+    ];
     const rows = tenants.map((t) => {
       const u = units.find((unit) => unit.id === t.assignedUnitId);
       const p = properties.find((prop) => prop.id === t.assignedPropertyId);
@@ -62,174 +91,227 @@ export const ReportsView: React.FC = () => {
       ].join(',');
     });
 
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows].join('\n');
+    const csvContent =
+      'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows].join('\n');
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `kejahub_rent_report_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute(
+      'download',
+      `kejahub_rent_report_${new Date().toISOString().slice(0, 10)}.csv`
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    addToast('SUCCESS', 'CSV Exported', 'Rent roll and arrears report downloaded.');
+    addToast(
+      'SUCCESS',
+      'CSV Exported',
+      'Rent roll and arrears audit log downloaded.'
+    );
   };
 
   return (
-    <div className="space-y-6">
+    <GSAPEntrance className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-[#24312D] dark:text-[#EDF5F1] tracking-tight">
-            Financial & Operational Reports
-          </h1>
-          <p className="text-xs sm:text-sm text-[#64736C] dark:text-[#9EB2A9]">
-            Rent collection performance, arrears ageing, NOI, and KRA-ready tax summaries
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-extrabold text-[#24312D] dark:text-[#EDF5F1] tracking-tight">
+              Financial & Operational Reports
+            </h1>
+            <StatusBadge label="October 2026" variant="neutral" />
+          </div>
+          <p className="text-xs sm:text-sm text-[#64736C] dark:text-[#9EB2A9] mt-0.5">
+            Rent collection performance, arrears ageing analysis, NOI, and KRA Section 6A tax estimation
           </p>
         </div>
 
         <button
           onClick={handleExportCSV}
-          className="flex items-center gap-1.5 px-3.5 py-2 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-sm self-start sm:self-auto"
+          className="flex items-center gap-2 px-3.5 py-2 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-sm self-start sm:self-auto"
         >
           <FileSpreadsheet className="w-4 h-4" />
-          <span>Export CSV (Demo Data)</span>
+          <span>Export Rent Roll (CSV)</span>
         </button>
       </div>
 
-      {/* Top 3 KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white dark:bg-[#1B2622] p-5 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] shadow-xs">
-          <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 block">Total Revenue Collected</span>
-          <div className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-2">
+      {/* 4 Financial KPIs in Bento Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <BentoCard
+          title="Gross Revenue Collected"
+          subtitle="October billing cycle"
+          badge={
+            <span className="p-2 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400">
+              <TrendingUp className="w-4 h-4" />
+            </span>
+          }
+        >
+          <div className="text-xl sm:text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">
             {formatKES(totalIncome)}
           </div>
-          <span className="text-[11px] text-gray-400 mt-1 block">October 2026 accounting cycle</span>
-        </div>
+          <div className="text-[11px] text-[#64736C] dark:text-[#9EB2A9] mt-2 font-medium">
+            From {transactions.filter((t) => t.status === 'CONFIRMED' || t.status === 'RECONCILED').length} transactions
+          </div>
+        </BentoCard>
 
-        <div className="bg-white dark:bg-[#1B2622] p-5 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] shadow-xs">
-          <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 block">Operational Expenses</span>
-          <div className="text-2xl font-extrabold text-red-500 dark:text-red-400 mt-2">
+        <BentoCard
+          title="Operating Expenses"
+          subtitle="Utilities & repairs"
+          badge={
+            <span className="p-2 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400">
+              <AlertTriangle className="w-4 h-4" />
+            </span>
+          }
+        >
+          <div className="text-xl sm:text-2xl font-extrabold text-red-500 dark:text-red-400 mt-1">
             {formatKES(totalExpenses)}
           </div>
-          <span className="text-[11px] text-gray-400 mt-1 block">Utilities, wages & maintenance</span>
-        </div>
+          <div className="text-[11px] text-[#64736C] dark:text-[#9EB2A9] mt-2 font-medium">
+            {expenses.length} logged expense items
+          </div>
+        </BentoCard>
 
-        <div className="bg-white dark:bg-[#1B2622] p-5 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] shadow-xs">
-          <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 block">Net Operating Income (NOI)</span>
-          <div className="text-2xl font-extrabold text-gray-900 dark:text-gray-100 mt-2">
+        <BentoCard
+          title="Net Operating Income"
+          subtitle="NOI = Gross - Opex"
+          badge={
+            <span className="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
+              <Calculator className="w-4 h-4" />
+            </span>
+          }
+        >
+          <div className="text-xl sm:text-2xl font-extrabold text-[#24312D] dark:text-[#EDF5F1] mt-1">
             {formatKES(netOperatingIncome)}
           </div>
-          <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium mt-1 block">
-            {Math.round((netOperatingIncome / (totalIncome || 1)) * 100)}% Net Margin
-          </span>
-        </div>
+          <div className="text-[11px] text-[#2F8A68] dark:text-[#79C8A4] mt-2 font-medium">
+            Healthy operating margin
+          </div>
+        </BentoCard>
+
+        <BentoCard
+          title="Estimated KRA Tax (7.5%)"
+          subtitle="Residential Rental Income"
+          badge={
+            <StatusBadge
+              label="Sec 6A"
+              variant="evergreen"
+              size="sm"
+            />
+          }
+        >
+          <div className="text-xl sm:text-2xl font-extrabold text-purple-600 dark:text-purple-400 mt-1">
+            {formatKES(estimatedKraTax)}
+          </div>
+          <div className="text-[11px] text-[#64736C] dark:text-[#9EB2A9] mt-2 font-medium">
+            Due 20th of the following month
+          </div>
+        </BentoCard>
       </div>
 
-      {/* Arrears Ageing Breakdown */}
-      <div className="bg-white dark:bg-[#1B2622] p-5 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] shadow-xs">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100">
-              Arrears Ageing Analysis
-            </h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Distribution of overdue rent across ageing windows
-            </p>
-          </div>
-          <span className="text-xs font-bold text-amber-600 bg-amber-50 dark:bg-amber-950/60 px-2.5 py-1 rounded-full">
-            Total Arrears: {formatKES(portfolioMetrics.outstandingRent)}
-          </span>
-        </div>
+      {/* Visualizations Bento Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <BentoCard
+          title="Income vs Expenses (Monthly Trend)"
+          subtitle="Comparison of rental cash inflow versus outflow"
+          badge={<StatusBadge label="Cashflow" variant="success" size="sm" />}
+        >
+          <IncomeExpenseChart />
+        </BentoCard>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-          <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
-            <span className="text-[11px] text-gray-400 block">Current (0–5 Days)</span>
-            <div className="text-base font-extrabold text-gray-800 dark:text-gray-200 mt-1">
-              {formatKES(arrearsBuckets.current)}
-            </div>
-            <span className="text-[10px] text-emerald-600 font-medium">Within Grace</span>
-          </div>
-
-          <div className="p-3 bg-amber-50/70 dark:bg-amber-950/30 rounded-xl border border-amber-500/20">
-            <span className="text-[11px] text-amber-800 dark:text-amber-400 block font-semibold">6–30 Days</span>
-            <div className="text-base font-extrabold text-amber-600 mt-1">
-              {formatKES(arrearsBuckets.days6to30)}
-            </div>
-            <span className="text-[10px] text-amber-600 font-medium">Follow-up Active</span>
-          </div>
-
-          <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
-            <span className="text-[11px] text-gray-400 block">31–60 Days</span>
-            <div className="text-base font-extrabold text-gray-800 dark:text-gray-200 mt-1">
-              {formatKES(arrearsBuckets.days31to60)}
-            </div>
-            <span className="text-[10px] text-gray-400">0 Accounts</span>
-          </div>
-
-          <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
-            <span className="text-[11px] text-gray-400 block">60+ Days (Default Risk)</span>
-            <div className="text-base font-extrabold text-gray-800 dark:text-gray-200 mt-1">
-              {formatKES(arrearsBuckets.days60plus)}
-            </div>
-            <span className="text-[10px] text-gray-400">0 Accounts</span>
-          </div>
-        </div>
+        <BentoCard
+          title="Arrears Ageing Analysis"
+          subtitle="Cumulative exposure grouped by days delinquent"
+          badge={
+            <StatusBadge
+              label={formatKES(portfolioMetrics.outstandingRent)}
+              variant="warning"
+              size="sm"
+            />
+          }
+        >
+          <ArrearsAgeingChart buckets={arrearsBuckets} />
+        </BentoCard>
       </div>
 
-      {/* Property-Level Performance Breakdown */}
-      <div className="bg-white dark:bg-[#1B2622] p-5 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] shadow-xs">
-        <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100 mb-4">
-          Property-Level Income & Expense Breakdown
-        </h3>
-
-        <div className="space-y-4">
-          {properties.map((prop) => {
-            const pUnits = units.filter((u) => u.propertyId === prop.id);
-            const pExpected = pUnits.reduce((acc, u) => acc + (u.status === 'OCCUPIED' ? u.monthlyRent + u.serviceCharge : 0), 0);
-            const pCollected = transactions
-              .filter((tx) => tx.propertyId === prop.id && (tx.status === 'CONFIRMED' || tx.status === 'RECONCILED'))
-              .reduce((acc, tx) => acc + tx.amount, 0);
-            const pExpenses = expenses
-              .filter((e) => e.propertyId === prop.id)
-              .reduce((acc, e) => acc + e.amount, 0);
-            const pNOI = pCollected - pExpenses;
-            const occ = pUnits.filter((u) => u.status === 'OCCUPIED').length;
-            const occPct = pUnits.length > 0 ? Math.round((occ / pUnits.length) * 100) : 0;
-
-            return (
-              <div
-                key={prop.id}
-                className="p-4 rounded-xl border border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/30 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-              >
-                <div>
-                  <div className="flex items-center gap-2">
-                    <Building className="w-4 h-4 text-[#2F8A68]" />
-                    <span className="font-bold text-sm text-gray-900 dark:text-gray-100">{prop.name}</span>
-                    <span className="text-[10px] bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-semibold px-2 py-0.5 rounded-full">
-                      {occPct}% Occupancy ({occ}/{pUnits.length})
-                    </span>
-                  </div>
-                  <div className="text-gray-500 dark:text-gray-400 text-[11px] mt-1">
-                    Expected: {formatKES(pExpected)} • Collected: {formatKES(pCollected)}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-6 self-stretch sm:self-auto justify-between sm:justify-end border-t sm:border-t-0 pt-2 sm:pt-0">
-                  <div>
-                    <span className="text-[10px] text-gray-400 block">Expenses</span>
-                    <span className="font-semibold text-red-500">{formatKES(pExpenses)}</span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-gray-400 block">Property NOI</span>
-                    <span className="font-extrabold text-sm text-gray-900 dark:text-gray-100">
-                      {formatKES(pNOI)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+      {/* Rent Roll Table Bento */}
+      <BentoCard
+        title="Portfolio Rent Roll & Ledger Reconciliation"
+        subtitle="Current status across all leased units in Nairobi"
+        badge={
+          <StatusBadge
+            label={`${tenants.length} Tenants`}
+            variant="neutral"
+            size="sm"
+          />
+        }
+      >
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs text-left">
+            <thead className="bg-[#F6F8F6] dark:bg-[#202D28] text-[#64736C] dark:text-[#9EB2A9] uppercase font-semibold border-b border-[#E2E8E5] dark:border-[#2D4039]">
+              <tr>
+                <th className="py-2.5 px-3">Property</th>
+                <th className="py-2.5 px-3">Unit</th>
+                <th className="py-2.5 px-3">Tenant Name</th>
+                <th className="py-2.5 px-3">Phone</th>
+                <th className="py-2.5 px-3 text-right">Rent + SC</th>
+                <th className="py-2.5 px-3 text-right">Balance</th>
+                <th className="py-2.5 px-3 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#E2E8E5] dark:divide-[#2D4039]">
+              {tenants.map((t) => {
+                const u = units.find((unit) => unit.id === t.assignedUnitId);
+                const p = properties.find((prop) => prop.id === t.assignedPropertyId);
+                const b = getTenantBalance(t.id);
+                return (
+                  <tr
+                    key={t.id}
+                    className="hover:bg-gray-50/50 dark:hover:bg-[#202D28]/40 transition-colors"
+                  >
+                    <td className="py-2.5 px-3 font-medium text-[#24312D] dark:text-[#EDF5F1]">
+                      {p?.name || 'Estate'}
+                    </td>
+                    <td className="py-2.5 px-3 font-semibold text-[#2F8A68] dark:text-[#79C8A4]">
+                      {u?.unitNumber || '—'}
+                    </td>
+                    <td className="py-2.5 px-3 text-[#24312D] dark:text-[#EDF5F1]">
+                      {t.name}
+                    </td>
+                    <td className="py-2.5 px-3 text-[#64736C] dark:text-[#9EB2A9] font-mono">
+                      {t.phone}
+                    </td>
+                    <td className="py-2.5 px-3 text-right font-medium text-[#24312D] dark:text-[#EDF5F1]">
+                      {formatKES((u?.monthlyRent || 0) + (u?.serviceCharge || 0))}
+                    </td>
+                    <td
+                      className={`py-2.5 px-3 text-right font-bold ${
+                        b.balance > 0
+                          ? 'text-amber-600 dark:text-amber-400'
+                          : 'text-emerald-600 dark:text-emerald-400'
+                      }`}
+                    >
+                      {formatKES(b.balance)}
+                    </td>
+                    <td className="py-2.5 px-3 text-center">
+                      <StatusBadge
+                        label={b.status}
+                        variant={
+                          b.status === 'PAID'
+                            ? 'success'
+                            : b.status === 'PARTIAL'
+                            ? 'warning'
+                            : 'error'
+                        }
+                        size="sm"
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
-      </div>
-    </div>
+      </BentoCard>
+    </GSAPEntrance>
   );
 };

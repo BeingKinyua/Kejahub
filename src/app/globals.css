@@ -17,12 +17,27 @@
     --card-bg: #FFFFFF;
     --badge-bg: #E8F5EE;
     --badge-text: #173C32;
+
+    /* Semantic tokens */
+    --color-success: #15803D;
+    --color-warning: #D97706;
+    --color-error: #DC2626;
+    --color-info: #2563EB;
+
+    /* Chart series */
+    --chart-1: #173C32;
+    --chart-2: #2F8A68;
+    --chart-3: #52B788;
+    --chart-4: #D97706;
+    --chart-5: #3B82F6;
+    --chart-grid: #E2E8E5;
   }
 
   .dark {
     --canvas: #111A17;
     --surface: #1B2622;
-    --surface-raised: #24332D;
+    --surface-raised: #202D28;
+    --surface-secondary: #24332D;
     --surface-border: #2D4039;
     --primary-evergreen: #79C8A4;
     --accent-green: #79C8A4;
@@ -33,6 +48,20 @@
     --card-bg: #1B2622;
     --badge-bg: #213A30;
     --badge-text: #79C8A4;
+
+    /* Semantic tokens */
+    --color-success: #4ADE80;
+    --color-warning: #FBBF24;
+    --color-error: #F87171;
+    --color-info: #60A5FA;
+
+    /* Chart series */
+    --chart-1: #79C8A4;
+    --chart-2: #52B788;
+    --chart-3: #2F8A68;
+    --chart-4: #FBBF24;
+    --chart-5: #60A5FA;
+    --chart-grid: #2D4039;
   }
 
   body {
@@ -40,6 +69,7 @@
     color: var(--text-primary);
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
 }
 

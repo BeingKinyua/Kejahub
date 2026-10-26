@@ -224,27 +224,33 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobileMenu }) => {
                 <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block mb-1.5">
                   Theme Appearance
                 </span>
-                <div className="grid grid-cols-3 gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+                <div className="grid grid-cols-3 gap-1 bg-[#F6F8F6] dark:bg-[#1B2622] p-1 rounded-lg border border-[#E2E8E5] dark:border-[#2D4039]">
                   <button
                     onClick={() => setTheme('light')}
-                    className={`flex items-center justify-center gap-1 py-1 rounded text-xs font-medium transition-all ${
-                      theme === 'light' ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-xs' : 'text-gray-500 dark:text-gray-400'
+                    className={`flex items-center justify-center gap-1 py-1 rounded text-xs transition-all ${
+                      theme === 'light'
+                        ? 'bg-[#173C32] text-white dark:bg-[#79C8A4] dark:text-[#111A17] font-semibold shadow-xs'
+                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                     }`}
                   >
                     <Sun className="w-3 h-3" /> Light
                   </button>
                   <button
                     onClick={() => setTheme('dark')}
-                    className={`flex items-center justify-center gap-1 py-1 rounded text-xs font-medium transition-all ${
-                      theme === 'dark' ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-xs' : 'text-gray-500 dark:text-gray-400'
+                    className={`flex items-center justify-center gap-1 py-1 rounded text-xs transition-all ${
+                      theme === 'dark'
+                        ? 'bg-[#173C32] text-white dark:bg-[#79C8A4] dark:text-[#111A17] font-semibold shadow-xs'
+                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                     }`}
                   >
                     <Moon className="w-3 h-3" /> Dark
                   </button>
                   <button
                     onClick={() => setTheme('system')}
-                    className={`flex items-center justify-center gap-1 py-1 rounded text-xs font-medium transition-all ${
-                      theme === 'system' ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-xs' : 'text-gray-500 dark:text-gray-400'
+                    className={`flex items-center justify-center gap-1 py-1 rounded text-xs transition-all ${
+                      theme === 'system'
+                        ? 'bg-[#173C32] text-white dark:bg-[#79C8A4] dark:text-[#111A17] font-semibold shadow-xs'
+                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                     }`}
                   >
                     <Laptop className="w-3 h-3" /> System

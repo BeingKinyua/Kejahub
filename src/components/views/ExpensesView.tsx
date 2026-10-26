@@ -16,6 +16,7 @@ import {
   X,
 } from 'lucide-react';
 import { formatKES } from '../../utils/propertyMath';
+import { GSAPEntrance } from '../animation/GSAPEntrance';
 
 export const ExpensesView: React.FC = () => {
   const { expenses, properties, addExpense, currentUser, addToast } = useProperty();
@@ -84,7 +85,7 @@ export const ExpensesView: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <GSAPEntrance className="space-y-6">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -320,6 +321,6 @@ export const ExpensesView: React.FC = () => {
           </div>
         </div>
       )}
-    </div>
+    </GSAPEntrance>
   );
 };
