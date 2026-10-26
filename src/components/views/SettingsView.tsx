@@ -15,7 +15,10 @@ import {
   AlertTriangle,
   Send,
   Lock,
+  Eye,
+  Sparkles,
 } from 'lucide-react';
+import { BuildingBlocksLoader } from '../ui/BuildingBlocksLoader';
 
 export const SettingsView: React.FC = () => {
   const {
@@ -40,6 +43,10 @@ export const SettingsView: React.FC = () => {
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const [pingMpesaSuccess, setPingMpesaSuccess] = useState(false);
   const [pingWhatsAppSuccess, setPingWhatsAppSuccess] = useState(false);
+  const [loaderTestSize, setLoaderTestSize] = useState<'sm' | 'md' | 'lg'>('md');
+  const [loaderTestCompletion, setLoaderTestCompletion] = useState(false);
+  const [loaderFullscreenPreview, setLoaderFullscreenPreview] = useState(false);
+  const [loaderCustomLabel, setLoaderCustomLabel] = useState('Preparing your workspace…');
 
   const handleSaveDefaults = (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,6 +122,140 @@ export const SettingsView: React.FC = () => {
             );
           })}
         </div>
+      </div>
+
+      {/* Section: KejaHub Building Blocks Loader Design System */}
+      <div className="bg-white dark:bg-[#1B2622] p-5 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                KejaHub Building Blocks Loader
+              </h3>
+              <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded-full">
+                Motion System
+              </span>
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+              Architectural 9-block modular construction sequence: Foundation → Structure → Upper Floor → Details → Completion Shimmer
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              setLoaderFullscreenPreview(true);
+              setTimeout(() => setLoaderFullscreenPreview(false), 3500);
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-xl text-xs font-semibold transition-all shadow-xs shrink-0 self-start sm:self-auto cursor-pointer"
+          >
+            <Eye className="w-3.5 h-3.5" />
+            <span>Preview Fullscreen (3s)</span>
+          </button>
+        </div>
+
+        {/* Live Interactive Preview Box */}
+        <div className="bg-[#F6F8F6] dark:bg-[#111A17] rounded-xl border border-[#E2E8E5] dark:border-[#2D4039] p-6 flex flex-col items-center justify-center min-h-[180px] relative overflow-hidden">
+          <BuildingBlocksLoader
+            size={loaderTestSize}
+            variant="contained"
+            label={loaderCustomLabel}
+            completionState={loaderTestCompletion}
+            completionMessage="Your workspace is ready"
+          />
+
+          <div className="absolute top-2.5 right-2.5 text-[10px] font-mono text-gray-400 dark:text-gray-500">
+            {loaderTestCompletion ? 'STATE: COMPLETED ARCHITECTURE' : 'STATE: 3.6S LOOP CYCLE'}
+          </div>
+        </div>
+
+        {/* Interactive Controls */}
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-gray-100 dark:border-gray-800 text-xs">
+          {/* Size Preset */}
+          <div>
+            <label className="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1.5">
+              Block Size Preset
+            </label>
+            <div className="flex items-center gap-1.5 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+              {(['sm', 'md', 'lg'] as const).map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setLoaderTestSize(s)}
+                  className={`flex-1 py-1 rounded text-xs font-semibold uppercase transition-all ${
+                    loaderTestSize === s
+                      ? 'bg-white dark:bg-[#1B2622] text-[#173C32] dark:text-[#79C8A4] shadow-xs'
+                      : 'text-gray-500 hover:text-gray-900 dark:hover:text-white'
+                  }`}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Animation / Completion Mode */}
+          <div>
+            <label className="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1.5">
+              Animation State
+            </label>
+            <div className="flex items-center gap-1.5 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+              <button
+                type="button"
+                onClick={() => setLoaderTestCompletion(false)}
+                className={`flex-1 py-1 rounded text-xs font-semibold transition-all ${
+                  !loaderTestCompletion
+                    ? 'bg-white dark:bg-[#1B2622] text-[#173C32] dark:text-[#79C8A4] shadow-xs'
+                    : 'text-gray-500 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                Constructing
+              </button>
+              <button
+                type="button"
+                onClick={() => setLoaderTestCompletion(true)}
+                className={`flex-1 py-1 rounded text-xs font-semibold transition-all ${
+                  loaderTestCompletion
+                    ? 'bg-white dark:bg-[#1B2622] text-[#173C32] dark:text-[#79C8A4] shadow-xs'
+                    : 'text-gray-500 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                Completed
+              </button>
+            </div>
+          </div>
+
+          {/* Contextual Label Input */}
+          <div>
+            <label className="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1.5">
+              Contextual Label
+            </label>
+            <input
+              type="text"
+              value={loaderCustomLabel}
+              onChange={(e) => setLoaderCustomLabel(e.target.value)}
+              className="w-full px-2.5 py-1 text-xs bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100"
+            />
+          </div>
+        </div>
+
+        {/* Fullscreen Overlay Test Modal */}
+        {loaderFullscreenPreview && (
+          <div className="relative">
+            <BuildingBlocksLoader
+              variant="fullscreen"
+              size="lg"
+              label={loaderCustomLabel}
+              completionState={loaderTestCompletion}
+            />
+            <button
+              onClick={() => setLoaderFullscreenPreview(false)}
+              className="fixed top-5 right-5 z-[60] px-3 py-1.5 bg-black/60 hover:bg-black text-white rounded-lg text-xs font-semibold backdrop-blur-md"
+            >
+              Exit Preview (Esc)
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Section 2: Workspace & Rent Defaults */}

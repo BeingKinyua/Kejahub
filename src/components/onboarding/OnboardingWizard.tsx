@@ -28,6 +28,7 @@ import {
   MapPin,
   FileText,
 } from 'lucide-react';
+import { BuildingBlocksLoader } from '../ui/BuildingBlocksLoader';
 
 export const OnboardingWizard: React.FC = () => {
   const router = useRouter();
@@ -103,6 +104,8 @@ export const OnboardingWizard: React.FC = () => {
 
   // Validation errors
   const [stepError, setStepError] = useState<string | null>(null);
+  const [isFinalizing, setIsFinalizing] = useState(false);
+  const [isCompletedState, setIsCompletedState] = useState(false);
 
   // Auto-sync form changes to draft state
   const syncDraft = (stepNumber: number) => {
@@ -267,8 +270,28 @@ export const OnboardingWizard: React.FC = () => {
       completedAt: new Date().toISOString(),
     };
 
-    completeOnboarding(finalData);
+    setIsFinalizing(true);
+
+    // Transition from construction sequence to hold completed building state
+    setTimeout(() => {
+      setIsCompletedState(true);
+      setTimeout(() => {
+        completeOnboarding(finalData);
+      }, 900);
+    }, 1800);
   };
+
+  if (isFinalizing) {
+    return (
+      <BuildingBlocksLoader
+        variant="fullscreen"
+        size="lg"
+        label="Constructing your property portfolio workspace…"
+        completionState={isCompletedState}
+        completionMessage="Your workspace is ready • Launching…"
+      />
+    );
+  }
 
   return (
     <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6 transition-colors duration-200">

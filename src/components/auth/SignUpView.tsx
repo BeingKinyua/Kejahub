@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useProperty } from '../../context/PropertyContext';
 import { AuthGlassCard } from './AuthGlassCard';
 import { AuthTabs } from './AuthTabs';
+import { BuildingBlocksLoader } from '../ui/BuildingBlocksLoader';
 import {
   Lock,
   Mail,
@@ -329,7 +330,7 @@ export const SignUpView: React.FC = () => {
             className="w-full mt-3 py-3 px-4 rounded-xl text-sm font-semibold text-[#142820] bg-[#EAE7DD] hover:bg-[#FDFBF7] shadow-lg transition-all duration-200 active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
           >
             {isLoading ? (
-              <span className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-[#142820] border-t-transparent" />
+              <BuildingBlocksLoader size="sm" variant="inline" label="Setting up account…" />
             ) : (
               <>
                 <span>Create Account & Start Onboarding</span>
