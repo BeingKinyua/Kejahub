@@ -94,11 +94,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
             {!collapsed && (
               <div className="flex flex-col min-w-0">
-                <span className="font-bold text-lg tracking-tight text-white flex items-center gap-1.5">
-                  KEJAHUB
-                  <span className="text-[10px] uppercase font-semibold bg-[#2F8A68]/70 text-emerald-100 px-1.5 py-0.5 rounded">
-                    AI
-                  </span>
+                <span className="font-bold text-lg tracking-tight text-white leading-tight whitespace-nowrap">
+                  Kejahub
                 </span>
                 <span className="text-[11px] text-emerald-100/80 truncate">Kenyan Property Agent</span>
               </div>
@@ -149,11 +146,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
                 {!collapsed && <span className="truncate whitespace-nowrap flex-1 text-left">{item.label}</span>}
 
-                {/* Badges */}
                 {hasBadge && (
                   <span
-                    className={`${item.badgeColor || 'bg-emerald-600'} text-white text-[11px] font-bold tabular-nums px-2 py-0.5 rounded-full shrink-0 ${
-                      collapsed ? 'absolute top-1.5 right-2 w-2.5 h-2.5 p-0 ring-2 ring-[#173C32]' : ''
+                    className={`${item.badgeColor || 'bg-emerald-600'} text-white text-[11px] font-bold tabular-nums px-1.5 py-0.5 shrink-0 ${
+                      collapsed ? 'absolute top-1.5 right-2 w-2.5 h-2.5 p-0 rounded-full ring-2 ring-[#173C32]' : 'rounded-md'
                     }`}
                     aria-hidden={collapsed ? 'true' : undefined}
                   >

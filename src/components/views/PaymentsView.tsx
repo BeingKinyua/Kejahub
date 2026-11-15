@@ -290,10 +290,10 @@ export const PaymentsView: React.FC = () => {
           )}
         </div>
       ) : (
-        <div className="bg-white dark:bg-[#1B2622] rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] overflow-hidden shadow-xs">
+        <div className="bg-white dark:bg-[#1B2622] rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-[#24312D] dark:text-[#EDF5F1]">
-              <thead className="bg-[#F6F8F6] dark:bg-[#24332D] uppercase text-[11px] font-semibold tracking-wide text-[#64736C] dark:text-[#9EB2A9] border-b border-[#E2E8E5] dark:border-[#2D4039]">
+              <thead className="bg-[#F6F8F6] dark:bg-[#24332D] text-[11px] font-semibold tracking-wide text-[#64736C] dark:text-[#9EB2A9] border-b border-[#E2E8E5] dark:border-[#2D4039]">
                 <tr>
                   <th className="px-4 py-3">Date &amp; Time</th>
                   <th className="px-4 py-3">Channel &amp; Ref</th>
@@ -320,9 +320,10 @@ export const PaymentsView: React.FC = () => {
 
                       <td className="px-4 py-3.5">
                         <div className="font-bold text-[#24312D] dark:text-[#EDF5F1] flex flex-wrap items-center gap-1.5">
-                          <span className="px-1.5 py-0.5 rounded text-[10px] bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-semibold whitespace-nowrap">
+                          <span className="text-[11px] font-semibold text-[#267256] dark:text-[#79C8A4] whitespace-nowrap">
                             {tx.channel}
                           </span>
+                          <span aria-hidden="true" className="text-[#64736C] dark:text-[#9EB2A9]">·</span>
                           <span className="font-mono tabular-nums">{tx.referenceNumber}</span>
                         </div>
                         {tx.billRefNumber && (

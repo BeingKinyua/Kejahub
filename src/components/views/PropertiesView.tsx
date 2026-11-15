@@ -295,10 +295,10 @@ export const PropertiesView: React.FC = () => {
         </div>
       ) : (
         /* Table View */
-        <div className="bg-white dark:bg-[#1B2622] rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] overflow-hidden shadow-xs">
+        <div className="bg-white dark:bg-[#1B2622] rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-[#24312D] dark:text-[#EDF5F1]">
-              <thead className="bg-[#F6F8F6] dark:bg-[#24332D] uppercase text-[11px] font-semibold tracking-wide text-[#64736C] dark:text-[#9EB2A9] border-b border-[#E2E8E5] dark:border-[#2D4039]">
+              <thead className="bg-[#F6F8F6] dark:bg-[#24332D] text-[11px] font-semibold tracking-wide text-[#64736C] dark:text-[#9EB2A9] border-b border-[#E2E8E5] dark:border-[#2D4039]">
                 <tr>
                   <th className="px-4 py-3">Property Name</th>
                   <th className="px-4 py-3">Location</th>

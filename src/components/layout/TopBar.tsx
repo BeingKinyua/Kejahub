@@ -18,6 +18,7 @@ import {
   X,
   ArrowRight,
 } from 'lucide-react';
+import { StatusBadge } from '../ui/StatusBadge';
 
 interface TopBarProps {
   onToggleMobileMenu: () => void;
@@ -258,7 +259,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobileMenu }) => {
           <button
             type="button"
             onClick={() => setIsAssistantOpen(true)}
-            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 min-h-[36px] bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-lg text-xs sm:text-sm font-semibold transition-all shadow-sm active:scale-95 cursor-pointer"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 min-h-[36px] bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-lg text-xs sm:text-sm font-semibold transition-all shadow-sm active:scale-95 cursor-pointer whitespace-nowrap shrink-0"
             aria-label="Ask the AI Property Agent"
           >
             <Sparkles className="w-4 h-4 text-emerald-300 dark:text-[#111A17] shrink-0" aria-hidden="true" />
@@ -283,8 +284,10 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobileMenu }) => {
               {totalAlerts > 0 && (
                 <span
                   aria-hidden="true"
-                  className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white dark:ring-[#1B2622]"
-                />
+                  className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 bg-red-600 text-white text-[10px] font-bold tabular-nums rounded-md flex items-center justify-center ring-2 ring-white dark:ring-[#1B2622]"
+                >
+                  {totalAlerts}
+                </span>
               )}
             </button>
 
@@ -298,9 +301,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobileMenu }) => {
                   <span className="font-semibold text-xs text-[#24312D] dark:text-[#EDF5F1]">
                     Action Queue Notifications
                   </span>
-                  <span className="text-[11px] font-semibold tabular-nums bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 px-2 py-0.5 rounded-full whitespace-nowrap">
-                    {totalAlerts} Pending
-                  </span>
+                  <StatusBadge label={`${totalAlerts} Pending`} variant={totalAlerts > 0 ? 'error' : 'neutral'} size="sm" />
                 </div>
 
                 <div className="max-h-72 overflow-y-auto divide-y divide-[#E2E8E5] dark:divide-[#2D4039]">
@@ -390,17 +391,15 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobileMenu }) => {
                   <p className="font-semibold text-sm text-[#24312D] dark:text-[#EDF5F1] truncate">
                     {currentUser.name}
                   </p>
-                  <p className="text-xs text-[#64736C] dark:text-[#9EB2A9] truncate wrap-anywhere">
+                  <p className="text-xs text-[#64736C] dark:text-[#9EB2A9] truncate wrap-anywhere mb-1.5">
                     {currentUser.email}
                   </p>
-                  <span className="inline-block mt-1.5 text-[10px] font-semibold uppercase tracking-wider bg-[#E8F5EE] dark:bg-[#213A30] text-[#173C32] dark:text-[#79C8A4] px-2 py-0.5 rounded">
-                    {currentUser.role}
-                  </span>
+                  <StatusBadge label={currentUser.role.replace(/_/g, ' ')} variant="evergreen" size="sm" />
                 </div>
 
                 {/* Theme Selector */}
                 <div className="px-4 py-2.5 border-b border-[#E2E8E5] dark:border-[#2D4039]">
-                  <span className="text-[11px] font-semibold text-[#64736C] dark:text-[#9EB2A9] uppercase tracking-wider block mb-1.5">
+                  <span className="text-xs font-semibold text-[#64736C] dark:text-[#9EB2A9] block mb-1.5">
                     Theme Appearance
                   </span>
                   <div className="grid grid-cols-3 gap-1 bg-[#F6F8F6] dark:bg-[#1B2622] p-1 rounded-lg border border-[#E2E8E5] dark:border-[#2D4039]">

@@ -9,17 +9,13 @@ import {
   Building,
   Sparkles,
   ArrowRight,
-  Clock,
   Wrench,
   CheckCircle2,
   Calendar,
   MessageSquare,
   ShieldCheck,
   ChevronRight,
-  RefreshCw,
-  PieChart as PieChartIcon,
   BarChart3,
-  Layers,
 } from 'lucide-react';
 import { formatKES } from '../../utils/propertyMath';
 import { BentoCard } from '../ui/BentoCard';
@@ -30,7 +26,6 @@ import { OccupancyDonutChart } from '../charts/OccupancyDonutChart';
 import { ArrearsAgeingChart } from '../charts/ArrearsAgeingChart';
 import { IncomeExpenseChart } from '../charts/IncomeExpenseChart';
 import { PropertyPerformanceChart } from '../charts/PropertyPerformanceChart';
-import { MaintenanceStatusChart } from '../charts/MaintenanceStatusChart';
 
 export const OverviewView: React.FC = () => {
   const {
@@ -41,10 +36,7 @@ export const OverviewView: React.FC = () => {
     transactions,
     tenants,
     maintenanceTickets,
-    expenses,
-    agentTasks,
     setCurrentScreen,
-    setIsAssistantOpen,
     approveAgentTask,
     approveMaintenanceTicket,
     getTenantBalance,
@@ -157,7 +149,7 @@ export const OverviewView: React.FC = () => {
           <button
             type="button"
             onClick={() => setCurrentScreen('reports')}
-            className="flex items-center gap-1.5 px-3.5 py-2 min-h-[38px] bg-white dark:bg-[#1B2622] hover:bg-[#F0F4F2] dark:hover:bg-[#202D28] text-[#24312D] dark:text-[#EDF5F1] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-xs cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 min-h-[38px] bg-white dark:bg-[#1B2622] hover:bg-[#F0F4F2] dark:hover:bg-[#202D28] text-[#24312D] dark:text-[#EDF5F1] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0"
           >
             <BarChart3 className="w-4 h-4 text-[#2F8A68] dark:text-[#79C8A4]" aria-hidden="true" />
             <span>Financial Reports</span>
@@ -266,12 +258,10 @@ export const OverviewView: React.FC = () => {
           className="lg:col-span-2"
           title="Rent Collection Performance Trend"
           subtitle="Expected billing vs confirmed ledger collections over the last 6 months"
-          badge={
-            <StatusBadge
-              label="6 Months"
-              variant="neutral"
-              size="sm"
-            />
+          action={
+            <span className="text-xs font-medium text-[#64736C] dark:text-[#9EB2A9] tabular-nums whitespace-nowrap">
+              6 months
+            </span>
           }
         >
           <RentCollectionTrendChart />
@@ -281,12 +271,10 @@ export const OverviewView: React.FC = () => {
         <BentoCard
           title="Occupancy & Portfolio Breakdown"
           subtitle="Real-time occupancy status across units"
-          badge={
-            <StatusBadge
-              label={`${portfolioMetrics.totalUnits} Units`}
-              variant="evergreen"
-              size="sm"
-            />
+          action={
+            <span className="text-xs font-medium text-[#64736C] dark:text-[#9EB2A9] tabular-nums whitespace-nowrap">
+              {portfolioMetrics.totalUnits} units
+            </span>
           }
         >
           <OccupancyDonutChart
@@ -315,12 +303,10 @@ export const OverviewView: React.FC = () => {
         <BentoCard
           title="Income vs Operating Expenses"
           subtitle="Monthly gross revenue versus operational costs"
-          badge={
-            <StatusBadge
-              label="Net Cashflow"
-              variant="success"
-              size="sm"
-            />
+          action={
+            <span className="text-xs font-medium text-[#64736C] dark:text-[#9EB2A9] whitespace-nowrap">
+              Net cashflow
+            </span>
           }
         >
           <IncomeExpenseChart />
@@ -330,12 +316,10 @@ export const OverviewView: React.FC = () => {
         <BentoCard
           title="Estate Collection & Occupancy Rank"
           subtitle="Comparing collection velocity by estate"
-          badge={
-            <StatusBadge
-              label="Nairobi Portfolio"
-              variant="evergreen"
-              size="sm"
-            />
+          action={
+            <span className="text-xs font-medium text-[#64736C] dark:text-[#9EB2A9] whitespace-nowrap">
+              Nairobi portfolio
+            </span>
           }
         >
           <PropertyPerformanceChart data={propertyRankData} />
@@ -394,7 +378,7 @@ export const OverviewView: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Item 1: Unallocated Payments */}
           {unallocatedTxs.length > 0 && (
-            <div className="bento-card bg-white dark:bg-[#1B2622] p-5 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] shadow-xs flex flex-col justify-between">
+            <div className="bento-card bg-white dark:bg-[#1B2622] p-5 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] flex flex-col justify-between">
               <div>
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                   <span className="text-xs font-semibold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
@@ -431,7 +415,7 @@ export const OverviewView: React.FC = () => {
           {pendingApprovals.map((m) => (
             <div
               key={m.id}
-              className="bento-card bg-white dark:bg-[#1B2622] p-5 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] shadow-xs flex flex-col justify-between"
+              className="bento-card bg-white dark:bg-[#1B2622] p-5 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] flex flex-col justify-between"
             >
               <div>
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
@@ -473,7 +457,7 @@ export const OverviewView: React.FC = () => {
 
           {/* Item 3: Rent Arrears Past Grace Period */}
           {overdueTenants.length > 0 && (
-            <div className="bento-card bg-white dark:bg-[#1B2622] p-5 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] shadow-xs flex flex-col justify-between">
+            <div className="bento-card bg-white dark:bg-[#1B2622] p-5 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] flex flex-col justify-between">
               <div>
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                   <span className="text-xs font-semibold text-[#173C32] dark:text-[#79C8A4] flex items-center gap-1.5">
@@ -508,7 +492,7 @@ export const OverviewView: React.FC = () => {
 
           {/* Item 4: Expiring Leases */}
           {expiringTenants.length > 0 && (
-            <div className="bento-card bg-white dark:bg-[#1B2622] p-5 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] shadow-xs flex flex-col justify-between">
+            <div className="bento-card bg-white dark:bg-[#1B2622] p-5 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] flex flex-col justify-between">
               <div>
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                   <span className="text-xs font-semibold text-purple-700 dark:text-purple-400 flex items-center gap-1.5">

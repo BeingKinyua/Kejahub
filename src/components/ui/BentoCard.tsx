@@ -44,9 +44,9 @@ export const BentoCard: React.FC<BentoCardProps> = ({
             }
           : undefined
       }
-      className={`bento-card relative flex flex-col justify-between rounded-2xl bg-white dark:bg-[#1B2622] border border-[#E2E8E5] dark:border-[#2D4039] p-5 shadow-xs transition-all duration-200 ${
+      className={`bento-card relative flex flex-col justify-between rounded-2xl bg-white dark:bg-[#1B2622] border border-[#E2E8E5] dark:border-[#2D4039] p-5 transition-all duration-200 ${
         hoverable || isClickable
-          ? 'hover:border-[#2F8A68] dark:hover:border-[#79C8A4] hover:shadow-md cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F8A68] dark:focus-visible:ring-[#79C8A4]'
+          ? 'hover:border-[#2F8A68] dark:hover:border-[#79C8A4] hover:shadow-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F8A68] dark:focus-visible:ring-[#79C8A4]'
           : ''
       } ${className}`}
     >

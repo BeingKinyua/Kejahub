@@ -30,7 +30,7 @@ export default function VerifyEmailPage() {
           <h1 className="text-xl font-medium tracking-tight text-[#F5F2E9]">
             Verify Your Email
           </h1>
-          <p className="text-[11px] uppercase tracking-widest text-white/70 mt-0.5">
+          <p className="text-[11px] uppercase tracking-widest text-white/75 mt-0.5">
             Email Confirmation
           </p>
         </div>
@@ -89,7 +89,7 @@ export default function VerifyEmailPage() {
         </div>
       </AuthGlassCard>
 
-      <p className="mt-5 text-center text-xs text-white/70 tracking-wide">
+      <p className="mt-5 text-center text-xs text-white/75 tracking-wide">
         &copy; {new Date().getFullYear()} Kejahub • Kenya Property Operations
       </p>
     </div>
