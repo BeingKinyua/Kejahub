@@ -8,6 +8,7 @@
     --canvas: #F6F8F6;
     --surface: #FFFFFF;
     --surface-raised: #F0F4F2;
+    --surface-secondary: #F0F4F2;
     --surface-border: #E2E8E5;
     --primary-evergreen: #173C32;
     --accent-green: #2F8A68;
@@ -71,6 +72,38 @@
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+  }
+
+  button,
+  a,
+  select,
+  input,
+  textarea {
+    touch-action: manipulation;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  select:not(:disabled),
+  a[href] {
+    cursor: pointer;
+  }
+
+  :where(button, a, select, input, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--accent-green);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse,
+  .animate-bounce {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
   }
 }
 

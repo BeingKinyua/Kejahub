@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useProperty } from '../../context/PropertyContext';
@@ -32,6 +32,13 @@ export const SignUpView: React.FC = () => {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const errorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (error) {
+      errorRef.current?.focus();
+    }
+  }, [error]);
 
   // If already logged in with completed onboarding, redirect to overview
   useEffect(() => {
@@ -117,7 +124,7 @@ export const SignUpView: React.FC = () => {
           <h1 className="text-xl font-medium tracking-tight text-[#F5F2E9]">
             Kejahub
           </h1>
-          <p className="text-[11px] uppercase tracking-widest text-white/50 mt-0.5">
+          <p className="text-[11px] uppercase tracking-widest text-white/70 mt-0.5">
             Property AI Operations
           </p>
         </div>
@@ -127,8 +134,15 @@ export const SignUpView: React.FC = () => {
 
         {/* Error notification */}
         {error && (
-          <div className="mb-4 p-3 rounded-xl bg-red-950/50 border border-red-500/30 flex items-start gap-2.5 text-xs text-red-200">
-            <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+          <div
+            id="signup-error"
+            ref={errorRef}
+            tabIndex={-1}
+            role="alert"
+            aria-live="assertive"
+            className="mb-4 p-3 rounded-xl bg-red-950/60 border border-red-400/40 flex items-start gap-2.5 text-xs text-red-100 focus:outline-none focus:ring-2 focus:ring-red-300"
+          >
+            <AlertCircle className="w-4 h-4 text-red-300 shrink-0 mt-0.5" aria-hidden="true" />
             <span className="leading-snug">{error}</span>
           </div>
         )}
@@ -137,12 +151,15 @@ export const SignUpView: React.FC = () => {
           <div>
             <label
               htmlFor="signup-name"
-              className="block text-xs font-medium text-white/80 mb-1"
+              className="block text-xs font-medium text-white/85 mb-1"
             >
               Full Name / Landlord Owner
             </label>
             <div className="relative">
-              <User className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <User
+                className="w-4 h-4 text-white/55 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                aria-hidden="true"
+              />
               <input
                 id="signup-name"
                 type="text"
@@ -152,8 +169,11 @@ export const SignUpView: React.FC = () => {
                   if (error) setError(null);
                 }}
                 required
+                autoComplete="name"
+                aria-invalid={Boolean(error)}
+                aria-describedby={error ? 'signup-error' : undefined}
                 placeholder="e.g. David Mwangi"
-                className="w-full pl-10 pr-3.5 py-2.5 bg-black/25 border border-white/15 rounded-xl text-sm text-[#F5F2E9] placeholder-white/35 focus:outline-none focus:border-[#EAE7DD]/80 focus:ring-1 focus:ring-[#EAE7DD]/50 transition-colors"
+                className="w-full min-h-[44px] pl-10 pr-3.5 py-2.5 bg-black/25 border border-white/15 rounded-xl text-sm text-[#F5F2E9] placeholder-white/45 focus:outline-none focus:border-[#EAE7DD]/80 focus:ring-1 focus:ring-[#EAE7DD]/50 transition-colors"
               />
             </div>
           </div>
@@ -161,12 +181,15 @@ export const SignUpView: React.FC = () => {
           <div>
             <label
               htmlFor="signup-email"
-              className="block text-xs font-medium text-white/80 mb-1"
+              className="block text-xs font-medium text-white/85 mb-1"
             >
               Work Email Address
             </label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Mail
+                className="w-4 h-4 text-white/55 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                aria-hidden="true"
+              />
               <input
                 id="signup-email"
                 type="email"
@@ -177,8 +200,10 @@ export const SignUpView: React.FC = () => {
                 }}
                 required
                 autoComplete="email"
+                aria-invalid={Boolean(error)}
+                aria-describedby={error ? 'signup-error' : undefined}
                 placeholder="name@property.co.ke"
-                className="w-full pl-10 pr-3.5 py-2.5 bg-black/25 border border-white/15 rounded-xl text-sm text-[#F5F2E9] placeholder-white/35 focus:outline-none focus:border-[#EAE7DD]/80 focus:ring-1 focus:ring-[#EAE7DD]/50 transition-colors"
+                className="w-full min-h-[44px] pl-10 pr-3.5 py-2.5 bg-black/25 border border-white/15 rounded-xl text-sm text-[#F5F2E9] placeholder-white/45 focus:outline-none focus:border-[#EAE7DD]/80 focus:ring-1 focus:ring-[#EAE7DD]/50 transition-colors"
               />
             </div>
           </div>
@@ -186,12 +211,15 @@ export const SignUpView: React.FC = () => {
           <div>
             <label
               htmlFor="signup-password"
-              className="block text-xs font-medium text-white/80 mb-1"
+              className="block text-xs font-medium text-white/85 mb-1"
             >
               Password
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Lock
+                className="w-4 h-4 text-white/55 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                aria-hidden="true"
+              />
               <input
                 id="signup-password"
                 type={showPassword ? 'text' : 'password'}
@@ -202,52 +230,60 @@ export const SignUpView: React.FC = () => {
                 }}
                 required
                 autoComplete="new-password"
+                aria-invalid={Boolean(error)}
+                aria-describedby="signup-password-rules"
                 placeholder="Min 8 characters"
-                className="w-full pl-10 pr-10 py-2.5 bg-black/25 border border-white/15 rounded-xl text-sm text-[#F5F2E9] placeholder-white/35 focus:outline-none focus:border-[#EAE7DD]/80 focus:ring-1 focus:ring-[#EAE7DD]/50 transition-colors"
+                className="w-full min-h-[44px] pl-10 pr-11 py-2.5 bg-black/25 border border-white/15 rounded-xl text-sm text-[#F5F2E9] placeholder-white/45 focus:outline-none focus:border-[#EAE7DD]/80 focus:ring-1 focus:ring-[#EAE7DD]/50 transition-colors"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/80 p-1 cursor-pointer transition-colors"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-white/65 hover:text-white min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg cursor-pointer transition-colors"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? (
-                  <EyeOff className="w-4 h-4" />
+                  <EyeOff className="w-4 h-4" aria-hidden="true" />
                 ) : (
-                  <Eye className="w-4 h-4" />
+                  <Eye className="w-4 h-4" aria-hidden="true" />
                 )}
               </button>
             </div>
 
             {/* Micro requirements checklist */}
-            <div className="mt-1.5 flex items-center gap-3 text-[10px]">
+            <div
+              id="signup-password-rules"
+              className="mt-1.5 flex flex-wrap items-center gap-3 text-[11px]"
+            >
               <div
                 className={`flex items-center gap-1 ${
-                  hasMinLength ? 'text-[#EAE7DD] font-semibold' : 'text-white/40'
+                  hasMinLength ? 'text-[#EAE7DD] font-semibold' : 'text-white/65'
                 }`}
               >
                 <Check
-                  className={`w-3 h-3 ${hasMinLength ? 'opacity-100' : 'opacity-30'}`}
+                  aria-hidden="true"
+                  className={`w-3 h-3 ${hasMinLength ? 'opacity-100' : 'opacity-40'}`}
                 />
                 <span>8+ chars</span>
               </div>
               <div
                 className={`flex items-center gap-1 ${
-                  hasLetter ? 'text-[#EAE7DD] font-semibold' : 'text-white/40'
+                  hasLetter ? 'text-[#EAE7DD] font-semibold' : 'text-white/65'
                 }`}
               >
                 <Check
-                  className={`w-3 h-3 ${hasLetter ? 'opacity-100' : 'opacity-30'}`}
+                  aria-hidden="true"
+                  className={`w-3 h-3 ${hasLetter ? 'opacity-100' : 'opacity-40'}`}
                 />
                 <span>Letter</span>
               </div>
               <div
                 className={`flex items-center gap-1 ${
-                  hasNumber ? 'text-[#EAE7DD] font-semibold' : 'text-white/40'
+                  hasNumber ? 'text-[#EAE7DD] font-semibold' : 'text-white/65'
                 }`}
               >
                 <Check
-                  className={`w-3 h-3 ${hasNumber ? 'opacity-100' : 'opacity-30'}`}
+                  aria-hidden="true"
+                  className={`w-3 h-3 ${hasNumber ? 'opacity-100' : 'opacity-40'}`}
                 />
                 <span>Number</span>
               </div>
@@ -257,12 +293,15 @@ export const SignUpView: React.FC = () => {
           <div>
             <label
               htmlFor="signup-confirm-password"
-              className="block text-xs font-medium text-white/80 mb-1"
+              className="block text-xs font-medium text-white/85 mb-1"
             >
               Confirm Password
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Lock
+                className="w-4 h-4 text-white/55 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                aria-hidden="true"
+              />
               <input
                 id="signup-confirm-password"
                 type={showConfirmPassword ? 'text' : 'password'}
@@ -273,33 +312,34 @@ export const SignUpView: React.FC = () => {
                 }}
                 required
                 autoComplete="new-password"
+                aria-invalid={Boolean(error || (confirmPassword && !passwordsMatch))}
                 placeholder="Repeat password"
-                className="w-full pl-10 pr-10 py-2.5 bg-black/25 border border-white/15 rounded-xl text-sm text-[#F5F2E9] placeholder-white/35 focus:outline-none focus:border-[#EAE7DD]/80 focus:ring-1 focus:ring-[#EAE7DD]/50 transition-colors"
+                className="w-full min-h-[44px] pl-10 pr-11 py-2.5 bg-black/25 border border-white/15 rounded-xl text-sm text-[#F5F2E9] placeholder-white/45 focus:outline-none focus:border-[#EAE7DD]/80 focus:ring-1 focus:ring-[#EAE7DD]/50 transition-colors"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/80 p-1 cursor-pointer transition-colors"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-white/65 hover:text-white min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg cursor-pointer transition-colors"
                 aria-label={
                   showConfirmPassword ? 'Hide password' : 'Show password'
                 }
               >
                 {showConfirmPassword ? (
-                  <EyeOff className="w-4 h-4" />
+                  <EyeOff className="w-4 h-4" aria-hidden="true" />
                 ) : (
-                  <Eye className="w-4 h-4" />
+                  <Eye className="w-4 h-4" aria-hidden="true" />
                 )}
               </button>
             </div>
             {confirmPassword && (
-              <div className="mt-1 text-[11px]">
+              <div className="mt-1 text-[11px]" role="status" aria-live="polite">
                 {passwordsMatch ? (
                   <span className="text-[#EAE7DD] flex items-center gap-1 font-medium">
-                    <CheckCircle2 className="w-3 h-3 text-emerald-400" /> Passwords match
+                    <CheckCircle2 className="w-3 h-3 text-emerald-400" aria-hidden="true" /> Passwords match
                   </span>
                 ) : (
-                  <span className="text-red-300 flex items-center gap-1">
-                    <AlertCircle className="w-3 h-3" /> Passwords do not match
+                  <span className="text-red-200 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" aria-hidden="true" /> Passwords do not match
                   </span>
                 )}
               </div>
@@ -307,18 +347,19 @@ export const SignUpView: React.FC = () => {
           </div>
 
           <div className="pt-1">
-            <label className="flex items-start cursor-pointer select-none">
+            <label htmlFor="signup-terms" className="flex items-start cursor-pointer select-none min-h-[32px]">
               <input
+                id="signup-terms"
                 type="checkbox"
                 checked={agreeTerms}
                 onChange={(e) => {
                   setAgreeTerms(e.target.checked);
                   if (error) setError(null);
                 }}
-                className="h-3.5 w-3.5 mt-0.5 rounded border-white/20 bg-black/30 text-emerald-600 focus:ring-0 focus:outline-none accent-[#173C32]"
+                className="h-4 w-4 mt-0.5 rounded border-white/25 bg-black/30 text-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EAE7DD] accent-[#173C32] shrink-0"
               />
-              <span className="ml-2 text-xs text-white/70 leading-relaxed">
-                I agree to the Terms of Service & Privacy Policy.
+              <span className="ml-2 text-xs text-white/80 leading-relaxed">
+                I agree to the Terms of Service &amp; Privacy Policy.
               </span>
             </label>
           </div>
@@ -327,14 +368,14 @@ export const SignUpView: React.FC = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full mt-3 py-3 px-4 rounded-xl text-sm font-semibold text-[#142820] bg-[#EAE7DD] hover:bg-[#FDFBF7] shadow-lg transition-all duration-200 active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+            className="w-full min-h-[44px] mt-3 py-3 px-4 rounded-xl text-sm font-semibold text-[#142820] bg-[#EAE7DD] hover:bg-[#FDFBF7] shadow-lg transition-all duration-200 active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
           >
             {isLoading ? (
               <BuildingBlocksLoader size="sm" variant="inline" label="Setting up account…" />
             ) : (
               <>
-                <span>Create Account & Start Onboarding</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>Create Account &amp; Start Onboarding</span>
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </>
             )}
           </button>
@@ -342,9 +383,9 @@ export const SignUpView: React.FC = () => {
 
         {/* Minimalist Divider */}
         <div className="flex items-center gap-3 my-4">
-          <div className="h-px flex-1 bg-white/10" />
-          <span className="text-[11px] text-white/40">or sign up with</span>
-          <div className="h-px flex-1 bg-white/10" />
+          <div className="h-px flex-1 bg-white/15" />
+          <span className="text-[11px] text-white/65">or sign up with</span>
+          <div className="h-px flex-1 bg-white/15" />
         </div>
 
         {/* Minimal Social Buttons */}
@@ -355,9 +396,9 @@ export const SignUpView: React.FC = () => {
               setFullName('David Mwangi');
               setEmail('david.mwangi@kejahub.co.ke');
             }}
-            className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-white/80 transition-colors cursor-pointer"
+            className="min-h-[44px] flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-xs text-white/90 transition-colors cursor-pointer"
           >
-            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" aria-hidden="true">
               <path
                 fill="currentColor"
                 d="M12.24 10.285V13.4h6.887C18.2 16.14 15.645 18 12.24 18c-3.37 0-6.1-2.73-6.1-6.1s2.73-6.1 6.1-6.1c1.555 0 2.97.585 4.05 1.55l2.42-2.42C16.945 3.32 14.73 2.5 12.24 2.5 7.025 2.5 2.79 6.735 2.79 11.95s4.235 9.45 9.45 9.45c5.455 0 9.07-3.835 9.07-9.24 0-.62-.065-1.22-.175-1.875H12.24z"
@@ -372,9 +413,9 @@ export const SignUpView: React.FC = () => {
               setFullName('David Mwangi');
               setEmail('david.mwangi@kejahub.co.ke');
             }}
-            className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-white/80 transition-colors cursor-pointer"
+            className="min-h-[44px] flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-xs text-white/90 transition-colors cursor-pointer"
           >
-            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" aria-hidden="true">
               <path
                 fill="currentColor"
                 d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.93-2.85-.9.04-2 .6-2.65 1.35-.58.66-1.09 1.74-.95 2.76 1.01.08 2.05-.51 2.67-1.26z"
@@ -384,7 +425,7 @@ export const SignUpView: React.FC = () => {
           </button>
         </div>
 
-        <div className="mt-4 text-center text-xs text-white/50">
+        <div className="mt-4 text-center text-xs text-white/70">
           Already registered?{' '}
           <Link
             href="/login"
@@ -396,7 +437,7 @@ export const SignUpView: React.FC = () => {
       </AuthGlassCard>
 
       {/* Subtle Bottom Attribution */}
-      <p className="mt-5 text-center text-xs text-white/40 tracking-wide">
+      <p className="mt-5 text-center text-xs text-white/70 tracking-wide">
         &copy; {new Date().getFullYear()} Kejahub • Kenya Property Operations
       </p>
     </div>

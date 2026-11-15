@@ -59,7 +59,14 @@ export default function WorkspaceLayout({
 
   return (
     <div className="min-h-screen bg-[#F6F8F6] dark:bg-[#111A17] text-[#24312D] dark:text-[#EDF5F1] flex flex-col font-sans transition-colors duration-200">
-      <div className="flex-1 flex overflow-hidden">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-xl focus:bg-[#173C32] focus:text-white dark:focus:bg-[#79C8A4] dark:focus:text-[#111A17] focus:text-xs focus:font-semibold focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
+
+      <div className="flex-1 flex overflow-x-clip">
         {/* 1. Responsive Collapsible Sidebar */}
         <Sidebar
           collapsed={sidebarCollapsed}
@@ -81,7 +88,11 @@ export default function WorkspaceLayout({
           <TopBar onToggleMobileMenu={() => setMobileSidebarOpen(!mobileSidebarOpen)} />
 
           {/* Active Viewport */}
-          <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+          <main
+            id="main-content"
+            tabIndex={-1}
+            className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 pb-24 sm:pb-8 focus:outline-none"
+          >
             <div className="max-w-7xl mx-auto">{children}</div>
           </main>
         </div>
@@ -90,11 +101,12 @@ export default function WorkspaceLayout({
       {/* Floating Action Button for Assistant */}
       {!isAssistantOpen && (
         <button
+          type="button"
           onClick={() => setIsAssistantOpen(true)}
-          className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-3 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-full shadow-xl hover:shadow-2xl transition-all duration-200 active:scale-95 group font-semibold text-xs sm:text-sm border-2 border-emerald-400/30"
+          className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 flex items-center gap-2 px-4 py-3 min-h-[44px] bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-full shadow-xl hover:shadow-2xl transition-all duration-200 active:scale-95 group font-semibold text-xs sm:text-sm border-2 border-emerald-400/30 cursor-pointer"
           aria-label="Open AI Property Agent Assistant"
         >
-          <Sparkles className="w-4 h-4 text-emerald-300 dark:text-[#111A17] animate-pulse" />
+          <Sparkles className="w-4 h-4 text-emerald-300 dark:text-[#111A17] shrink-0" aria-hidden="true" />
           <span>Ask Agent</span>
         </button>
       )}
@@ -103,36 +115,48 @@ export default function WorkspaceLayout({
       <PersistentAssistantDrawer />
 
       {/* Toast Notifications Stack */}
-      <div className="fixed bottom-5 left-5 z-50 flex flex-col gap-2 max-w-sm pointer-events-none">
+      <div
+        role="region"
+        aria-live="polite"
+        aria-label="Notifications"
+        className="fixed bottom-5 left-5 right-5 sm:right-auto z-50 flex flex-col gap-2 max-w-sm pointer-events-none"
+      >
         {toasts.map((toast) => (
           <div
             key={toast.id}
+            role="status"
             className={`pointer-events-auto p-3.5 rounded-2xl shadow-xl border flex items-start gap-3 animate-in slide-in-from-bottom-2 duration-200 text-xs ${
               toast.type === 'SUCCESS'
-                ? 'bg-white dark:bg-[#1B2622] border-emerald-500/40 text-gray-900 dark:text-gray-100'
+                ? 'bg-white dark:bg-[#1B2622] border-emerald-500/40 text-[#24312D] dark:text-[#EDF5F1]'
                 : toast.type === 'ERROR'
-                ? 'bg-white dark:bg-[#1B2622] border-red-500/40 text-gray-900 dark:text-gray-100'
-                : 'bg-white dark:bg-[#1B2622] border-blue-500/40 text-gray-900 dark:text-gray-100'
+                ? 'bg-white dark:bg-[#1B2622] border-red-500/40 text-[#24312D] dark:text-[#EDF5F1]'
+                : 'bg-white dark:bg-[#1B2622] border-blue-500/40 text-[#24312D] dark:text-[#EDF5F1]'
             }`}
           >
             {toast.type === 'SUCCESS' ? (
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" aria-hidden="true" />
             ) : toast.type === 'ERROR' ? (
-              <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+              <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0 mt-0.5" aria-hidden="true" />
             ) : (
-              <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+              <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" aria-hidden="true" />
             )}
 
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <span className="font-bold block">{toast.title}</span>
-              {toast.message && <p className="text-gray-500 dark:text-gray-400 mt-0.5">{toast.message}</p>}
+              {toast.message && (
+                <p className="text-[#64736C] dark:text-[#9EB2A9] mt-0.5 leading-relaxed">
+                  {toast.message}
+                </p>
+              )}
             </div>
 
             <button
+              type="button"
               onClick={() => dismissToast(toast.id)}
-              className="text-gray-400 hover:text-gray-600 p-0.5"
+              aria-label="Dismiss notification"
+              className="text-[#64736C] dark:text-[#9EB2A9] hover:text-[#24312D] dark:hover:text-white p-1.5 -m-1 rounded-lg transition-colors cursor-pointer shrink-0"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-3.5 h-3.5" aria-hidden="true" />
             </button>
           </div>
         ))}

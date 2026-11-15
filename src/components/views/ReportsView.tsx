@@ -114,9 +114,9 @@ export const ReportsView: React.FC = () => {
     <GSAPEntrance className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-extrabold text-[#24312D] dark:text-[#EDF5F1] tracking-tight">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-extrabold text-[#24312D] dark:text-[#EDF5F1] tracking-tight text-balance">
               Financial & Operational Reports
             </h1>
             <StatusBadge label="October 2026" variant="neutral" />
@@ -127,29 +127,30 @@ export const ReportsView: React.FC = () => {
         </div>
 
         <button
+          type="button"
           onClick={handleExportCSV}
-          className="flex items-center gap-2 px-3.5 py-2 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-sm self-start sm:self-auto"
+          className="flex items-center gap-2 px-3.5 py-2 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-sm self-start sm:self-auto shrink-0 min-h-[38px]"
         >
-          <FileSpreadsheet className="w-4 h-4" />
+          <FileSpreadsheet className="w-4 h-4" aria-hidden="true" />
           <span>Export Rent Roll (CSV)</span>
         </button>
       </div>
 
       {/* 4 Financial KPIs in Bento Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <BentoCard
           title="Gross Revenue Collected"
           subtitle="October billing cycle"
           badge={
             <span className="p-2 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400">
-              <TrendingUp className="w-4 h-4" />
+              <TrendingUp className="w-4 h-4" aria-hidden="true" />
             </span>
           }
         >
-          <div className="text-xl sm:text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">
+          <div className="text-xl sm:text-2xl font-extrabold text-emerald-700 dark:text-emerald-400 mt-1 tabular-nums">
             {formatKES(totalIncome)}
           </div>
-          <div className="text-[11px] text-[#64736C] dark:text-[#9EB2A9] mt-2 font-medium">
+          <div className="text-[11px] text-[#64736C] dark:text-[#9EB2A9] mt-2 font-medium tabular-nums">
             From {transactions.filter((t) => t.status === 'CONFIRMED' || t.status === 'RECONCILED').length} transactions
           </div>
         </BentoCard>
@@ -159,14 +160,14 @@ export const ReportsView: React.FC = () => {
           subtitle="Utilities & repairs"
           badge={
             <span className="p-2 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400">
-              <AlertTriangle className="w-4 h-4" />
+              <AlertTriangle className="w-4 h-4" aria-hidden="true" />
             </span>
           }
         >
-          <div className="text-xl sm:text-2xl font-extrabold text-red-500 dark:text-red-400 mt-1">
+          <div className="text-xl sm:text-2xl font-extrabold text-red-600 dark:text-red-400 mt-1 tabular-nums">
             {formatKES(totalExpenses)}
           </div>
-          <div className="text-[11px] text-[#64736C] dark:text-[#9EB2A9] mt-2 font-medium">
+          <div className="text-[11px] text-[#64736C] dark:text-[#9EB2A9] mt-2 font-medium tabular-nums">
             {expenses.length} logged expense items
           </div>
         </BentoCard>
@@ -175,15 +176,15 @@ export const ReportsView: React.FC = () => {
           title="Net Operating Income"
           subtitle="NOI = Gross - Opex"
           badge={
-            <span className="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
-              <Calculator className="w-4 h-4" />
+            <span className="p-2 rounded-xl bg-[#F0F4F2] dark:bg-[#24332D] text-[#64736C] dark:text-[#9EB2A9]">
+              <Calculator className="w-4 h-4" aria-hidden="true" />
             </span>
           }
         >
-          <div className="text-xl sm:text-2xl font-extrabold text-[#24312D] dark:text-[#EDF5F1] mt-1">
+          <div className="text-xl sm:text-2xl font-extrabold text-[#24312D] dark:text-[#EDF5F1] mt-1 tabular-nums">
             {formatKES(netOperatingIncome)}
           </div>
-          <div className="text-[11px] text-[#2F8A68] dark:text-[#79C8A4] mt-2 font-medium">
+          <div className="text-[11px] text-[#267256] dark:text-[#79C8A4] mt-2 font-medium">
             Healthy operating margin
           </div>
         </BentoCard>
@@ -199,7 +200,7 @@ export const ReportsView: React.FC = () => {
             />
           }
         >
-          <div className="text-xl sm:text-2xl font-extrabold text-purple-600 dark:text-purple-400 mt-1">
+          <div className="text-xl sm:text-2xl font-extrabold text-purple-700 dark:text-purple-400 mt-1 tabular-nums">
             {formatKES(estimatedKraTax)}
           </div>
           <div className="text-[11px] text-[#64736C] dark:text-[#9EB2A9] mt-2 font-medium">
@@ -266,28 +267,28 @@ export const ReportsView: React.FC = () => {
                 return (
                   <tr
                     key={t.id}
-                    className="hover:bg-gray-50/50 dark:hover:bg-[#202D28]/40 transition-colors"
+                    className="hover:bg-[#F6F8F6]/70 dark:hover:bg-[#202D28]/40 transition-colors"
                   >
-                    <td className="py-2.5 px-3 font-medium text-[#24312D] dark:text-[#EDF5F1]">
+                    <td className="py-2.5 px-3 font-medium text-[#24312D] dark:text-[#EDF5F1] wrap-anywhere">
                       {p?.name || 'Estate'}
                     </td>
-                    <td className="py-2.5 px-3 font-semibold text-[#2F8A68] dark:text-[#79C8A4]">
+                    <td className="py-2.5 px-3 font-semibold text-[#267256] dark:text-[#79C8A4] whitespace-nowrap tabular-nums">
                       {u?.unitNumber || '—'}
                     </td>
-                    <td className="py-2.5 px-3 text-[#24312D] dark:text-[#EDF5F1]">
+                    <td className="py-2.5 px-3 text-[#24312D] dark:text-[#EDF5F1] wrap-anywhere">
                       {t.name}
                     </td>
-                    <td className="py-2.5 px-3 text-[#64736C] dark:text-[#9EB2A9] font-mono">
+                    <td className="py-2.5 px-3 text-[#64736C] dark:text-[#9EB2A9] font-mono whitespace-nowrap tabular-nums">
                       {t.phone}
                     </td>
-                    <td className="py-2.5 px-3 text-right font-medium text-[#24312D] dark:text-[#EDF5F1]">
+                    <td className="py-2.5 px-3 text-right font-medium text-[#24312D] dark:text-[#EDF5F1] whitespace-nowrap tabular-nums">
                       {formatKES((u?.monthlyRent || 0) + (u?.serviceCharge || 0))}
                     </td>
                     <td
-                      className={`py-2.5 px-3 text-right font-bold ${
+                      className={`py-2.5 px-3 text-right font-bold whitespace-nowrap tabular-nums ${
                         b.balance > 0
-                          ? 'text-amber-600 dark:text-amber-400'
-                          : 'text-emerald-600 dark:text-emerald-400'
+                          ? 'text-amber-700 dark:text-amber-400'
+                          : 'text-emerald-700 dark:text-emerald-400'
                       }`}
                     >
                       {formatKES(b.balance)}

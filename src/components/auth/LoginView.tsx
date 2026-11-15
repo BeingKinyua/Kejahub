@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useProperty } from '../../context/PropertyContext';
@@ -34,6 +34,13 @@ export const LoginView: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showDemoOptions, setShowDemoOptions] = useState(false);
+  const errorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (error) {
+      errorRef.current?.focus();
+    }
+  }, [error]);
 
   // If already authenticated and onboarding completed, redirect to next or overview
   useEffect(() => {
@@ -124,7 +131,7 @@ export const LoginView: React.FC = () => {
           <h1 className="text-xl font-medium tracking-tight text-[#F5F2E9]">
             Kejahub
           </h1>
-          <p className="text-[11px] uppercase tracking-widest text-white/50 mt-0.5">
+          <p className="text-[11px] uppercase tracking-widest text-white/70 mt-0.5">
             Property AI Operations
           </p>
         </div>
@@ -134,8 +141,15 @@ export const LoginView: React.FC = () => {
 
         {/* Error notification */}
         {error && (
-          <div className="mb-5 p-3 rounded-xl bg-red-950/50 border border-red-500/30 flex items-start gap-2.5 text-xs text-red-200">
-            <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+          <div
+            id="login-error"
+            ref={errorRef}
+            tabIndex={-1}
+            role="alert"
+            aria-live="assertive"
+            className="mb-5 p-3 rounded-xl bg-red-950/60 border border-red-400/40 flex items-start gap-2.5 text-xs text-red-100 focus:outline-none focus:ring-2 focus:ring-red-300"
+          >
+            <AlertCircle className="w-4 h-4 text-red-300 shrink-0 mt-0.5" aria-hidden="true" />
             <span className="leading-snug">{error}</span>
           </div>
         )}
@@ -145,12 +159,15 @@ export const LoginView: React.FC = () => {
           <div>
             <label
               htmlFor="login-email"
-              className="block text-xs font-medium text-white/80 mb-1.5"
+              className="block text-xs font-medium text-white/85 mb-1.5"
             >
               Email Address
             </label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Mail
+                className="w-4 h-4 text-white/55 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                aria-hidden="true"
+              />
               <input
                 id="login-email"
                 type="email"
@@ -161,29 +178,34 @@ export const LoginView: React.FC = () => {
                 }}
                 required
                 autoComplete="email"
+                aria-invalid={Boolean(error)}
+                aria-describedby={error ? 'login-error' : undefined}
                 placeholder="name@property.co.ke"
-                className="w-full pl-10 pr-3.5 py-2.5 bg-black/25 border border-white/15 rounded-xl text-sm text-[#F5F2E9] placeholder-white/35 focus:outline-none focus:border-[#EAE7DD]/80 focus:ring-1 focus:ring-[#EAE7DD]/50 transition-colors"
+                className="w-full min-h-[44px] pl-10 pr-3.5 py-2.5 bg-black/25 border border-white/15 rounded-xl text-sm text-[#F5F2E9] placeholder-white/45 focus:outline-none focus:border-[#EAE7DD]/80 focus:ring-1 focus:ring-[#EAE7DD]/50 transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-1.5">
+            <div className="flex items-center justify-between gap-2 mb-1.5">
               <label
                 htmlFor="login-password"
-                className="block text-xs font-medium text-white/80"
+                className="block text-xs font-medium text-white/85"
               >
                 Password
               </label>
               <Link
                 href="/forgot-password"
-                className="text-xs text-[#D8E4DC] hover:text-white transition-colors"
+                className="text-xs text-[#E4EDE7] hover:text-white underline-offset-2 hover:underline transition-colors"
               >
                 Forgot password?
               </Link>
             </div>
             <div className="relative">
-              <Lock className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Lock
+                className="w-4 h-4 text-white/55 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                aria-hidden="true"
+              />
               <input
                 id="login-password"
                 type={showPassword ? 'text' : 'password'}
@@ -194,33 +216,36 @@ export const LoginView: React.FC = () => {
                 }}
                 required
                 autoComplete="current-password"
+                aria-invalid={Boolean(error)}
+                aria-describedby={error ? 'login-error' : undefined}
                 placeholder="Enter your password"
-                className="w-full pl-10 pr-10 py-2.5 bg-black/25 border border-white/15 rounded-xl text-sm text-[#F5F2E9] placeholder-white/35 focus:outline-none focus:border-[#EAE7DD]/80 focus:ring-1 focus:ring-[#EAE7DD]/50 transition-colors"
+                className="w-full min-h-[44px] pl-10 pr-11 py-2.5 bg-black/25 border border-white/15 rounded-xl text-sm text-[#F5F2E9] placeholder-white/45 focus:outline-none focus:border-[#EAE7DD]/80 focus:ring-1 focus:ring-[#EAE7DD]/50 transition-colors"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/80 p-1 cursor-pointer transition-colors"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-white/65 hover:text-white min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg cursor-pointer transition-colors"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? (
-                  <EyeOff className="w-4 h-4" />
+                  <EyeOff className="w-4 h-4" aria-hidden="true" />
                 ) : (
-                  <Eye className="w-4 h-4" />
+                  <Eye className="w-4 h-4" aria-hidden="true" />
                 )}
               </button>
             </div>
           </div>
 
           <div className="flex items-center justify-between pt-0.5">
-            <label className="flex items-center cursor-pointer select-none">
+            <label htmlFor="login-remember" className="flex items-center cursor-pointer select-none min-h-[32px]">
               <input
+                id="login-remember"
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-3.5 w-3.5 rounded border-white/20 bg-black/30 text-emerald-600 focus:ring-0 focus:outline-none accent-[#173C32]"
+                className="h-4 w-4 rounded border-white/25 bg-black/30 text-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EAE7DD] accent-[#173C32]"
               />
-              <span className="ml-2 text-xs text-white/70">
+              <span className="ml-2 text-xs text-white/80">
                 Remember me
               </span>
             </label>
@@ -230,14 +255,14 @@ export const LoginView: React.FC = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full mt-2 py-3 px-4 rounded-xl text-sm font-semibold text-[#142820] bg-[#EAE7DD] hover:bg-[#FDFBF7] shadow-lg transition-all duration-200 active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+            className="w-full min-h-[44px] mt-2 py-3 px-4 rounded-xl text-sm font-semibold text-[#142820] bg-[#EAE7DD] hover:bg-[#FDFBF7] shadow-lg transition-all duration-200 active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
           >
             {isLoading ? (
               <BuildingBlocksLoader size="sm" variant="inline" label="Authenticating…" />
             ) : (
               <>
                 <span>Sign In</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </>
             )}
           </button>
@@ -245,9 +270,9 @@ export const LoginView: React.FC = () => {
 
         {/* Minimalist Divider */}
         <div className="flex items-center gap-3 my-5">
-          <div className="h-px flex-1 bg-white/10" />
-          <span className="text-[11px] text-white/40">or continue with</span>
-          <div className="h-px flex-1 bg-white/10" />
+          <div className="h-px flex-1 bg-white/15" />
+          <span className="text-[11px] text-white/65">or continue with</span>
+          <div className="h-px flex-1 bg-white/15" />
         </div>
 
         {/* Minimal Social Buttons */}
@@ -255,9 +280,9 @@ export const LoginView: React.FC = () => {
           <button
             type="button"
             onClick={() => handleQuickDemo('LANDLORD', 'david.mwangi@kejahub.co.ke')}
-            className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-white/80 transition-colors cursor-pointer"
+            className="min-h-[44px] flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-xs text-white/90 transition-colors cursor-pointer"
           >
-            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" aria-hidden="true">
               <path
                 fill="currentColor"
                 d="M12.24 10.285V13.4h6.887C18.2 16.14 15.645 18 12.24 18c-3.37 0-6.1-2.73-6.1-6.1s2.73-6.1 6.1-6.1c1.555 0 2.97.585 4.05 1.55l2.42-2.42C16.945 3.32 14.73 2.5 12.24 2.5 7.025 2.5 2.79 6.735 2.79 11.95s4.235 9.45 9.45 9.45c5.455 0 9.07-3.835 9.07-9.24 0-.62-.065-1.22-.175-1.875H12.24z"
@@ -269,9 +294,9 @@ export const LoginView: React.FC = () => {
           <button
             type="button"
             onClick={() => handleQuickDemo('LANDLORD', 'david.mwangi@kejahub.co.ke')}
-            className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-white/80 transition-colors cursor-pointer"
+            className="min-h-[44px] flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-xs text-white/90 transition-colors cursor-pointer"
           >
-            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" aria-hidden="true">
               <path
                 fill="currentColor"
                 d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.93-2.85-.9.04-2 .6-2.65 1.35-.58.66-1.09 1.74-.95 2.76 1.01.08 2.05-.51 2.67-1.26z"
@@ -285,14 +310,16 @@ export const LoginView: React.FC = () => {
         <div className="mt-5 pt-4 border-t border-white/10">
           <button
             type="button"
+            aria-expanded={showDemoOptions}
             onClick={() => setShowDemoOptions(!showDemoOptions)}
-            className="w-full flex items-center justify-between text-[11px] text-white/60 hover:text-white/90 py-1 transition-colors cursor-pointer"
+            className="w-full min-h-[40px] flex items-center justify-between text-xs text-white/75 hover:text-white py-1.5 transition-colors cursor-pointer"
           >
             <span className="flex items-center gap-1.5">
-              <Sparkles className="w-3 h-3 text-[#EAE7DD]" />
+              <Sparkles className="w-3.5 h-3.5 text-[#EAE7DD]" aria-hidden="true" />
               <span>1-Click Landlord Demo Workspace</span>
             </span>
             <ChevronDown
+              aria-hidden="true"
               className={`w-3.5 h-3.5 transition-transform duration-200 ${
                 showDemoOptions ? 'rotate-180' : ''
               }`}
@@ -307,18 +334,18 @@ export const LoginView: React.FC = () => {
                   handleQuickDemo('LANDLORD', 'david.mwangi@kejahub.co.ke')
                 }
                 disabled={isLoading}
-                className="w-full p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-left transition-colors cursor-pointer group"
+                className="w-full p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-left transition-colors cursor-pointer group"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Building2 className="w-3.5 h-3.5 text-[#EAE7DD]" />
-                    <span className="text-xs font-medium text-[#F5F2E9]">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Building2 className="w-3.5 h-3.5 text-[#EAE7DD] shrink-0" aria-hidden="true" />
+                    <span className="text-xs font-medium text-[#F5F2E9] truncate">
                       David Mwangi (Landlord)
                     </span>
                   </div>
-                  <ArrowRight className="w-3 h-3 text-white/40 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+                  <ArrowRight className="w-3 h-3 text-white/60 group-hover:text-white group-hover:translate-x-0.5 transition-all shrink-0" aria-hidden="true" />
                 </div>
-                <p className="text-[10px] text-white/50 pl-5.5 mt-0.5">
+                <p className="text-[11px] text-white/70 pl-5.5 mt-0.5">
                   Mwangi Holdings • 3 properties • Ready data
                 </p>
               </button>
@@ -332,21 +359,24 @@ export const LoginView: React.FC = () => {
                   )
                 }
                 disabled={isLoading}
-                className="w-full p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-left transition-colors cursor-pointer group"
+                className="w-full p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-left transition-colors cursor-pointer group"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3.5 h-3.5 rounded-full bg-white/20 flex items-center justify-center text-[9px]">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span
+                      aria-hidden="true"
+                      className="w-3.5 h-3.5 rounded-full bg-white/20 flex items-center justify-center text-[9px] text-white shrink-0"
+                    >
                       P
                     </span>
-                    <span className="text-xs font-medium text-[#F5F2E9]">
+                    <span className="text-xs font-medium text-[#F5F2E9] truncate">
                       Sarah Omondi (Manager)
                     </span>
                   </div>
-                  <ArrowRight className="w-3 h-3 text-white/40 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+                  <ArrowRight className="w-3 h-3 text-white/60 group-hover:text-white group-hover:translate-x-0.5 transition-all shrink-0" aria-hidden="true" />
                 </div>
-                <p className="text-[10px] text-white/50 pl-5.5 mt-0.5">
-                  Operations, maintenance triage & payments
+                <p className="text-[11px] text-white/70 pl-5.5 mt-0.5">
+                  Operations, maintenance triage &amp; payments
                 </p>
               </button>
             </div>
@@ -355,7 +385,7 @@ export const LoginView: React.FC = () => {
       </AuthGlassCard>
 
       {/* Subtle Bottom Attribution */}
-      <p className="mt-5 text-center text-xs text-white/40 tracking-wide">
+      <p className="mt-5 text-center text-xs text-white/70 tracking-wide">
         &copy; {new Date().getFullYear()} Kejahub • Kenya Property Operations
       </p>
     </div>

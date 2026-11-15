@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useProperty } from '../../context/PropertyContext';
 import { OnboardingData } from '../../types';
@@ -106,6 +106,13 @@ export const OnboardingWizard: React.FC = () => {
   const [stepError, setStepError] = useState<string | null>(null);
   const [isFinalizing, setIsFinalizing] = useState(false);
   const [isCompletedState, setIsCompletedState] = useState(false);
+  const errorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (stepError) {
+      errorRef.current?.focus();
+    }
+  }, [stepError]);
 
   // Auto-sync form changes to draft state
   const syncDraft = (stepNumber: number) => {
@@ -296,150 +303,178 @@ export const OnboardingWizard: React.FC = () => {
   return (
     <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6 transition-colors duration-200">
       {/* Header Banner */}
-      <div className="flex items-center justify-between mb-8 pb-4 border-b border-[#E2E8E5] dark:border-[#2D4039]">
-        <div>
-          <span className="text-xs uppercase font-extrabold text-[#2F8A68] dark:text-[#79C8A4] tracking-wider flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-8 pb-4 border-b border-[#E2E8E5] dark:border-[#2D4039]">
+        <div className="min-w-0">
+          <span className="text-xs uppercase font-extrabold text-[#267256] dark:text-[#79C8A4] tracking-wider flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
             Landlord Onboarding Workflow
           </span>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-[#24312D] dark:text-[#EDF5F1] mt-0.5">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-[#24312D] dark:text-[#EDF5F1] mt-0.5 text-balance">
             Configure Your Property Operations
           </h1>
         </div>
 
         <button
+          type="button"
           onClick={handleSkipToDemo}
-          className="text-xs font-semibold text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white px-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          className="min-h-[38px] text-xs font-semibold text-[#64736C] hover:text-[#24312D] dark:text-[#9EB2A9] dark:hover:text-[#EDF5F1] px-3.5 py-2 rounded-xl border border-[#E2E8E5] dark:border-[#2D4039] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] transition-colors shrink-0 cursor-pointer"
         >
-          Skip & Explore Demo
+          Skip &amp; Explore Demo
         </button>
       </div>
 
       {/* 7-Step Progress Stepper */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
+      <nav aria-label="Onboarding progress" className="mb-8">
+        <div className="flex items-center justify-between gap-1">
           {stepsList.map((s) => (
-            <div key={s.num} className="flex flex-col items-center cursor-pointer" onClick={() => s.num < step && setStep(s.num)}>
+            <button
+              key={s.num}
+              type="button"
+              disabled={s.num > step}
+              onClick={() => s.num < step && setStep(s.num)}
+              aria-current={step === s.num ? 'step' : undefined}
+              aria-label={`Step ${s.num}: ${s.title}${step > s.num ? ' (Completed)' : ''}`}
+              className="flex flex-col items-center disabled:cursor-default enabled:cursor-pointer rounded-lg p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F8A68]"
+            >
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold tabular-nums transition-all ${
                   step === s.num
-                    ? 'bg-[#173C32] dark:bg-[#79C8A4] text-white dark:text-[#111A17] ring-4 ring-emerald-500/20'
+                    ? 'bg-[#173C32] dark:bg-[#79C8A4] text-white dark:text-[#111A17] ring-4 ring-[#2F8A68]/20'
                     : step > s.num
                     ? 'bg-[#2F8A68] text-white'
-                    : 'bg-gray-200 dark:bg-gray-800 text-gray-500 dark:text-gray-400'
+                    : 'bg-[#E2E8E5] dark:bg-[#24332D] text-[#64736C] dark:text-[#9EB2A9]'
                 }`}
               >
-                {step > s.num ? <Check className="w-4 h-4" /> : s.num}
+                {step > s.num ? <Check className="w-4 h-4" aria-hidden="true" /> : s.num}
               </div>
-              <span className="text-[10px] mt-1 hidden sm:block text-gray-500 dark:text-gray-400 font-medium">
+              <span className="text-[11px] mt-1 hidden sm:block text-[#64736C] dark:text-[#9EB2A9] font-medium">
                 {s.title}
               </span>
-            </div>
+            </button>
           ))}
         </div>
-        <div className="mt-3 w-full bg-gray-200 dark:bg-gray-800 h-1.5 rounded-full overflow-hidden">
+        <div
+          role="progressbar"
+          aria-valuenow={step}
+          aria-valuemin={1}
+          aria-valuemax={7}
+          aria-label={`Onboarding step ${step} of 7`}
+          className="mt-3 w-full bg-[#E2E8E5] dark:bg-[#24332D] h-1.5 rounded-full overflow-hidden"
+        >
           <div
             className="bg-[#2F8A68] dark:bg-[#79C8A4] h-full transition-all duration-300"
             style={{ width: `${(step / 7) * 100}%` }}
           />
         </div>
-      </div>
+      </nav>
 
       {/* Main Wizard Form Card */}
       <div className="bg-white dark:bg-[#1B2622] rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] p-6 sm:p-8 shadow-sm">
         {stepError && (
-          <div className="mb-5 p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 flex items-start gap-2 text-xs text-red-700 dark:text-red-300 animate-in fade-in">
-            <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+          <div
+            ref={errorRef}
+            tabIndex={-1}
+            role="alert"
+            aria-live="assertive"
+            className="mb-5 p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 flex items-start gap-2 text-xs text-red-700 dark:text-red-300 focus:outline-none focus:ring-2 focus:ring-red-400"
+          >
+            <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0 mt-0.5" aria-hidden="true" />
             <span>{stepError}</span>
           </div>
         )}
 
         {/* STEP 1: Landlord Profile & Workspace */}
         {step === 1 && (
-          <div className="space-y-5 animate-in fade-in duration-200">
+          <div className="space-y-5">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                1. Landlord Profile & Workspace Identity
+              <h2 className="text-lg font-bold text-[#24312D] dark:text-[#EDF5F1] flex items-center gap-2 text-balance">
+                <Building2 className="w-5 h-5 text-[#2F8A68] dark:text-[#79C8A4] shrink-0" aria-hidden="true" />
+                <span>1. Landlord Profile &amp; Workspace Identity</span>
               </h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-xs text-[#64736C] dark:text-[#9EB2A9] mt-1">
                 Establish the ownership entity and regional parameters for your Kenyan property portfolio.
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="onb-landlord-name" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                   Landlord / Manager Name *
                 </label>
                 <input
+                  id="onb-landlord-name"
                   type="text"
                   value={landlordName}
                   onChange={(e) => setLandlordName(e.target.value)}
                   placeholder="e.g. David Mwangi"
-                  className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                  className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="onb-workspace-name" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                   Workspace / Holding Entity Name *
                 </label>
                 <input
+                  id="onb-workspace-name"
                   type="text"
                   value={workspaceName}
                   onChange={(e) => setWorkspaceName(e.target.value)}
                   placeholder="e.g. Mwangi Property Holdings"
-                  className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                  className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="onb-contact-phone" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                   Contact Phone (WhatsApp / SMS)
                 </label>
                 <input
-                  type="text"
+                  id="onb-contact-phone"
+                  type="tel"
                   value={contactPhone}
                   onChange={(e) => setContactPhone(e.target.value)}
                   placeholder="+254 712 345 678"
-                  className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                  className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="onb-timezone" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                   Operating Timezone
                 </label>
                 <input
+                  id="onb-timezone"
                   type="text"
                   value={timezone}
                   disabled
-                  className="w-full px-3 py-2 text-sm bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-gray-600 dark:text-gray-400 cursor-not-allowed"
+                  className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F0F4F2] dark:bg-[#111A17] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#64736C] dark:text-[#9EB2A9] cursor-not-allowed"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="onb-currency" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                   Operating Currency
                 </label>
                 <input
+                  id="onb-currency"
                   type="text"
                   value={`${currency} (Kenyan Shilling)`}
                   disabled
-                  className="w-full px-3 py-2 text-sm bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-gray-600 dark:text-gray-400 cursor-not-allowed"
+                  className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F0F4F2] dark:bg-[#111A17] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#64736C] dark:text-[#9EB2A9] cursor-not-allowed"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="onb-country" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                   Country
                 </label>
                 <input
+                  id="onb-country"
                   type="text"
                   value={country}
                   disabled
-                  className="w-full px-3 py-2 text-sm bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-gray-600 dark:text-gray-400 cursor-not-allowed"
+                  className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F0F4F2] dark:bg-[#111A17] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#64736C] dark:text-[#9EB2A9] cursor-not-allowed"
                 />
               </div>
             </div>
@@ -448,19 +483,19 @@ export const OnboardingWizard: React.FC = () => {
 
         {/* STEP 2: Property Portfolio */}
         {step === 2 && (
-          <div className="space-y-5 animate-in fade-in duration-200">
+          <div className="space-y-5">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                2. Property Portfolio & First Building
+              <h2 className="text-lg font-bold text-[#24312D] dark:text-[#EDF5F1] flex items-center gap-2 text-balance">
+                <MapPin className="w-5 h-5 text-[#2F8A68] dark:text-[#79C8A4] shrink-0" aria-hidden="true" />
+                <span>2. Property Portfolio &amp; First Building</span>
               </h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-xs text-[#64736C] dark:text-[#9EB2A9] mt-1">
                 Enter details for your primary residential building or managed estate.
               </p>
             </div>
 
-            <div className="p-3 bg-gray-50 dark:bg-gray-800/60 rounded-xl flex items-center justify-between">
-              <label htmlFor="managePropsToggle" className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+            <div className="p-3 bg-[#F6F8F6] dark:bg-[#24332D]/60 rounded-xl flex items-center justify-between gap-3">
+              <label htmlFor="managePropsToggle" className="text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] cursor-pointer">
                 I actively manage properties right now
               </label>
               <input
@@ -468,47 +503,50 @@ export const OnboardingWizard: React.FC = () => {
                 type="checkbox"
                 checked={hasExistingProperties}
                 onChange={(e) => setHasExistingProperties(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 text-[#2F8A68] focus:ring-[#2F8A68]"
+                className="h-4 w-4 rounded border-[#E2E8E5] text-[#2F8A68] focus:ring-[#2F8A68]"
               />
             </div>
 
             {hasExistingProperties ? (
               <div className="space-y-4 pt-1">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="onb-prop-name" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                     Property Name *
                   </label>
                   <input
+                    id="onb-prop-name"
                     type="text"
                     value={propertyName}
                     onChange={(e) => setPropertyName(e.target.value)}
                     placeholder="e.g. Kilimani Heights Apartments"
-                    className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                    className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                    <label htmlFor="onb-prop-location" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                       Street / Road Location *
                     </label>
                     <input
+                      id="onb-prop-location"
                       type="text"
                       value={propertyLocation}
                       onChange={(e) => setPropertyLocation(e.target.value)}
                       placeholder="e.g. Lenana Road, Kilimani"
-                      className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                      className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                    <label htmlFor="onb-prop-city" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                       City / County
                     </label>
                     <select
+                      id="onb-prop-city"
                       value={propertyCity}
                       onChange={(e) => setPropertyCity(e.target.value)}
-                      className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                      className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                     >
                       <option value="Nairobi">Nairobi</option>
                       <option value="Mombasa">Mombasa</option>
@@ -520,13 +558,14 @@ export const OnboardingWizard: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                    <label htmlFor="onb-prop-type" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                       Property Category
                     </label>
                     <select
+                      id="onb-prop-type"
                       value={propertyType}
                       onChange={(e) => setPropertyType(e.target.value as any)}
-                      className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                      className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                     >
                       <option value="APARTMENT">Apartment Complex</option>
                       <option value="MAISONETTE">Maisonette / Townhouse</option>
@@ -536,22 +575,23 @@ export const OnboardingWizard: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                    <label htmlFor="onb-unit-count" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                       Registered Unit Count
                     </label>
                     <input
+                      id="onb-unit-count"
                       type="number"
                       min={1}
                       max={200}
                       value={totalUnitsCount}
                       onChange={(e) => setTotalUnitsCount(Number(e.target.value))}
-                      className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                      className="w-full min-h-[40px] px-3 py-2 text-sm tabular-nums bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                     />
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 text-xs text-gray-500 dark:text-gray-400">
+              <div className="p-4 rounded-xl bg-[#F6F8F6] dark:bg-[#24332D]/50 text-xs text-[#64736C] dark:text-[#9EB2A9]">
                 You can proceed with an empty portfolio now and create properties later directly from the Properties view.
               </div>
             )}
@@ -560,40 +600,44 @@ export const OnboardingWizard: React.FC = () => {
 
         {/* STEP 3: Units & Occupancy */}
         {step === 3 && (
-          <div className="space-y-5 animate-in fade-in duration-200">
+          <div className="space-y-5">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                <Layers className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                3. Configure First Unit & Rental Pricing
+              <h2 className="text-lg font-bold text-[#24312D] dark:text-[#EDF5F1] flex items-center gap-2 text-balance">
+                <Layers className="w-5 h-5 text-[#2F8A68] dark:text-[#79C8A4] shrink-0" aria-hidden="true" />
+                <span>3. Configure First Unit &amp; Rental Pricing</span>
               </h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-xs text-[#64736C] dark:text-[#9EB2A9] mt-1">
                 Configure door numbering and monthly pricing for your first managed unit.
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="onb-unit-num" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                   Unit Door Number / ID *
                 </label>
                 <input
+                  id="onb-unit-num"
                   type="text"
                   value={unitNumber}
                   onChange={(e) => setUnitNumber(e.target.value)}
                   placeholder="e.g. A1, Unit 12, Penthouse"
-                  className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                  className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 />
-                <span className="text-[10px] text-gray-400">Used by tenants as their M-Pesa BillRef</span>
+                <span className="text-[11px] text-[#64736C] dark:text-[#9EB2A9] mt-1 block">
+                  Used by tenants as their M-Pesa BillRef
+                </span>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="onb-unit-layout" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                   Unit Layout
                 </label>
                 <select
+                  id="onb-unit-layout"
                   value={unitType}
                   onChange={(e) => setUnitType(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                  className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 >
                   <option value="Bedsitter / Studio">Bedsitter / Studio</option>
                   <option value="1 Bedroom">1 Bedroom</option>
@@ -605,63 +649,66 @@ export const OnboardingWizard: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="onb-monthly-rent" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                   Monthly Base Rent (KES) *
                 </label>
                 <input
+                  id="onb-monthly-rent"
                   type="number"
                   min={1000}
                   step={500}
                   value={monthlyRent}
                   onChange={(e) => setMonthlyRent(Number(e.target.value))}
-                  className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                  className="w-full min-h-[40px] px-3 py-2 text-sm tabular-nums bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="onb-service-charge" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                   Monthly Service Charge (KES)
                 </label>
                 <input
+                  id="onb-service-charge"
                   type="number"
                   min={0}
                   step={100}
                   value={serviceCharge}
                   onChange={(e) => setServiceCharge(Number(e.target.value))}
-                  className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                  className="w-full min-h-[40px] px-3 py-2 text-sm tabular-nums bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 />
               </div>
             </div>
 
-            <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl text-xs text-emerald-800 dark:text-emerald-300 flex items-center justify-between border border-emerald-500/20">
+            <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl text-xs text-emerald-900 dark:text-emerald-200 flex flex-wrap items-center justify-between gap-2 border border-emerald-500/20">
               <span className="font-medium">Total Monthly Expected Rent (Base + SC):</span>
-              <strong className="text-sm font-extrabold">KES {(monthlyRent + serviceCharge).toLocaleString()}</strong>
+              <strong className="text-sm font-extrabold tabular-nums">KES {(monthlyRent + serviceCharge).toLocaleString()}</strong>
             </div>
           </div>
         )}
 
         {/* STEP 4: Rent Rules & Recurring Charges */}
         {step === 4 && (
-          <div className="space-y-5 animate-in fade-in duration-200">
+          <div className="space-y-5">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                4. Billing Cycle, Grace Periods & Recurring Fees
+              <h2 className="text-lg font-bold text-[#24312D] dark:text-[#EDF5F1] flex items-center gap-2 text-balance">
+                <Clock className="w-5 h-5 text-[#2F8A68] dark:text-[#79C8A4] shrink-0" aria-hidden="true" />
+                <span>4. Billing Cycle, Grace Periods &amp; Recurring Fees</span>
               </h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-xs text-[#64736C] dark:text-[#9EB2A9] mt-1">
                 Configure rent due dates and automatic arrears follow-up schedules.
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="onb-due-day" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                   Due Day of Month
                 </label>
                 <select
+                  id="onb-due-day"
                   value={rentDueDay}
                   onChange={(e) => setRentDueDay(Number(e.target.value))}
-                  className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                  className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 >
                   <option value={1}>1st of month</option>
                   <option value={5}>5th of month (Standard Kenya)</option>
@@ -670,13 +717,14 @@ export const OnboardingWizard: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="onb-grace-days" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                   Grace Period (Days)
                 </label>
                 <select
+                  id="onb-grace-days"
                   value={gracePeriodDays}
                   onChange={(e) => setGracePeriodDays(Number(e.target.value))}
-                  className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                  className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 >
                   <option value={0}>0 days (Strict)</option>
                   <option value={5}>5 days (Standard)</option>
@@ -685,13 +733,14 @@ export const OnboardingWizard: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="onb-late-fee" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                   Late Fee Surcharge
                 </label>
                 <select
+                  id="onb-late-fee"
                   value={lateFeePercentage}
                   onChange={(e) => setLateFeePercentage(Number(e.target.value))}
-                  className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                  className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 >
                   <option value={0}>No penalty fee</option>
                   <option value={5}>5% of base rent</option>
@@ -702,13 +751,14 @@ export const OnboardingWizard: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div>
-                <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="onb-deposit-months" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                   Security Deposit Requirement
                 </label>
                 <select
+                  id="onb-deposit-months"
                   value={securityDepositMonths}
                   onChange={(e) => setSecurityDepositMonths(Number(e.target.value))}
-                  className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                  className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 >
                   <option value={1}>1 Month Base Rent</option>
                   <option value={2}>2 Months Base Rent</option>
@@ -717,39 +767,40 @@ export const OnboardingWizard: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="onb-garbage-charge" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                   Garbage Collection (KES / Month)
                 </label>
                 <input
+                  id="onb-garbage-charge"
                   type="number"
                   value={garbageCharge}
                   onChange={(e) => setGarbageCharge(Number(e.target.value))}
-                  className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                  className="w-full min-h-[40px] px-3 py-2 text-sm tabular-nums bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 />
               </div>
             </div>
 
-            <div className="p-3 bg-gray-50 dark:bg-gray-800/60 rounded-xl text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-              Rent due on the <strong>{rentDueDay}th</strong>. The Kejahub AI Agent will monitor incoming M-Pesa receipts, and trigger follow-up reminders once the {gracePeriodDays}-day grace period expires on the <strong>{rentDueDay + gracePeriodDays}th</strong>.
+            <div className="p-3 bg-[#F6F8F6] dark:bg-[#24332D]/60 rounded-xl text-xs text-[#64736C] dark:text-[#9EB2A9] leading-relaxed">
+              Rent due on the <strong className="text-[#24312D] dark:text-[#EDF5F1] tabular-nums">{rentDueDay}th</strong>. The Kejahub AI Agent will monitor incoming M-Pesa receipts, and trigger follow-up reminders once the {gracePeriodDays}-day grace period expires on the <strong className="text-[#24312D] dark:text-[#EDF5F1] tabular-nums">{rentDueDay + gracePeriodDays}th</strong>.
             </div>
           </div>
         )}
 
         {/* STEP 5: Tenants & Leases */}
         {step === 5 && (
-          <div className="space-y-5 animate-in fade-in duration-200">
+          <div className="space-y-5">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                <Users className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                5. Tenant & Tenancy Record (Optional)
+              <h2 className="text-lg font-bold text-[#24312D] dark:text-[#EDF5F1] flex items-center gap-2 text-balance">
+                <Users className="w-5 h-5 text-[#2F8A68] dark:text-[#79C8A4] shrink-0" aria-hidden="true" />
+                <span>5. Tenant &amp; Tenancy Record (Optional)</span>
               </h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-xs text-[#64736C] dark:text-[#9EB2A9] mt-1">
                 Assign your first tenant now to evaluate M-Pesa reconciliation and WhatsApp messaging.
               </p>
             </div>
 
-            <div className="p-3 bg-gray-50 dark:bg-gray-800/60 rounded-xl flex items-center justify-between">
-              <label htmlFor="addTenantToggle" className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+            <div className="p-3 bg-[#F6F8F6] dark:bg-[#24332D]/60 rounded-xl flex items-center justify-between gap-3">
+              <label htmlFor="addTenantToggle" className="text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] cursor-pointer">
                 Register an active tenant for Unit {unitNumber}
               </label>
               <input
@@ -757,85 +808,91 @@ export const OnboardingWizard: React.FC = () => {
                 type="checkbox"
                 checked={addTenantNow}
                 onChange={(e) => setAddTenantNow(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 text-[#2F8A68] focus:ring-[#2F8A68]"
+                className="h-4 w-4 rounded border-[#E2E8E5] text-[#2F8A68] focus:ring-[#2F8A68]"
               />
             </div>
 
             {addTenantNow && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="onb-tenant-name" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                     Tenant Full Name *
                   </label>
                   <input
+                    id="onb-tenant-name"
                     type="text"
                     value={tenantName}
                     onChange={(e) => setTenantName(e.target.value)}
                     placeholder="e.g. Wanjiku Kamau"
-                    className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                    className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="onb-tenant-phone" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                     WhatsApp / M-Pesa Phone Number
                   </label>
                   <input
-                    type="text"
+                    id="onb-tenant-phone"
+                    type="tel"
                     value={tenantPhone}
                     onChange={(e) => setTenantPhone(e.target.value)}
                     placeholder="+254 712 345 678"
-                    className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                    className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="onb-tenant-email" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                     Email Address
                   </label>
                   <input
+                    id="onb-tenant-email"
                     type="email"
                     value={tenantEmail}
                     onChange={(e) => setTenantEmail(e.target.value)}
                     placeholder="wanjiku.kamau@gmail.com"
-                    className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                    className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="onb-tenant-id" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                     National ID / Passport Number
                   </label>
                   <input
+                    id="onb-tenant-id"
                     type="text"
                     value={tenantNationalId}
                     onChange={(e) => setTenantNationalId(e.target.value)}
                     placeholder="e.g. 32145678"
-                    className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                    className="w-full min-h-[40px] px-3 py-2 text-sm tabular-nums bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="onb-lease-start" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                     Lease Start Date
                   </label>
                   <input
+                    id="onb-lease-start"
                     type="date"
                     value={leaseStart}
                     onChange={(e) => setLeaseStart(e.target.value)}
-                    className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                    className="w-full min-h-[40px] px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="onb-deposit-held" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                     Security Deposit Held (KES)
                   </label>
                   <input
+                    id="onb-deposit-held"
                     type="number"
                     value={depositAmount}
                     onChange={(e) => setDepositAmount(Number(e.target.value))}
-                    className="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+                    className="w-full min-h-[40px] px-3 py-2 text-sm tabular-nums bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
               </div>
@@ -845,27 +902,30 @@ export const OnboardingWizard: React.FC = () => {
 
         {/* STEP 6: Payments & Communications */}
         {step === 6 && (
-          <div className="space-y-5 animate-in fade-in duration-200">
+          <div className="space-y-5">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                <CreditCard className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                6. Payments & Communications Channels
+              <h2 className="text-lg font-bold text-[#24312D] dark:text-[#EDF5F1] flex items-center gap-2 text-balance">
+                <CreditCard className="w-5 h-5 text-[#2F8A68] dark:text-[#79C8A4] shrink-0" aria-hidden="true" />
+                <span>6. Payments &amp; Communications Channels</span>
               </h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-xs text-[#64736C] dark:text-[#9EB2A9] mt-1">
                 Configure M-Pesa reconciliation parameters and automated WhatsApp communication rules.
               </p>
             </div>
 
             <div className="space-y-4">
-              <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/40">
-                <div className="flex items-start justify-between">
-                  <div className="flex gap-3">
-                    <CreditCard className="w-5 h-5 text-emerald-600 mt-0.5" />
-                    <div>
-                      <div className="text-xs sm:text-sm font-bold text-gray-900 dark:text-gray-100">
+              <div className="p-4 rounded-xl border border-[#E2E8E5] dark:border-[#2D4039] bg-[#F6F8F6]/60 dark:bg-[#24332D]/40">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex gap-3 min-w-0">
+                    <CreditCard className="w-5 h-5 text-[#2F8A68] dark:text-[#79C8A4] mt-0.5 shrink-0" aria-hidden="true" />
+                    <div className="min-w-0">
+                      <label
+                        htmlFor="onb-enable-mpesa"
+                        className="text-xs sm:text-sm font-bold text-[#24312D] dark:text-[#EDF5F1] cursor-pointer block"
+                      >
                         M-Pesa Paybill / Till Reconciliation
-                      </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                      </label>
+                      <p className="text-xs text-[#64736C] dark:text-[#9EB2A9] mt-0.5">
                         Matches incoming C2B M-Pesa receipts against unit account numbers.
                       </p>
                       <span className="inline-block mt-1 text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded">
@@ -874,51 +934,57 @@ export const OnboardingWizard: React.FC = () => {
                     </div>
                   </div>
                   <input
+                    id="onb-enable-mpesa"
                     type="checkbox"
                     checked={enableMpesa}
                     onChange={(e) => setEnableMpesa(e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-[#2F8A68] focus:ring-[#2F8A68]"
+                    className="h-4 w-4 rounded border-[#E2E8E5] text-[#2F8A68] focus:ring-[#2F8A68] shrink-0 mt-0.5"
                   />
                 </div>
 
                 {enableMpesa && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 pt-3 border-t border-[#E2E8E5] dark:border-[#2D4039]">
                     <div>
-                      <label className="block text-[11px] font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                      <label htmlFor="onb-paybill" className="block text-[11px] font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                         Business Paybill / Till Number
                       </label>
                       <input
+                        id="onb-paybill"
                         type="text"
                         value={mpesaPaybillNumber}
                         onChange={(e) => setMpesaPaybillNumber(e.target.value)}
                         placeholder="e.g. 522522"
-                        className="w-full px-3 py-1.5 text-xs bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100"
+                        className="w-full min-h-[38px] px-3 py-1.5 text-xs tabular-nums bg-white dark:bg-[#1B2622] border border-[#E2E8E5] dark:border-[#2D4039] rounded-lg text-[#24312D] dark:text-[#EDF5F1]"
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                      <label htmlFor="onb-ref-format" className="block text-[11px] font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                         Account Reference Matching
                       </label>
                       <input
+                        id="onb-ref-format"
                         type="text"
                         value={mpesaRefFormat}
                         disabled
-                        className="w-full px-3 py-1.5 text-xs bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-gray-500"
+                        className="w-full min-h-[38px] px-3 py-1.5 text-xs bg-[#F0F4F2] dark:bg-[#111A17] border border-[#E2E8E5] dark:border-[#2D4039] rounded-lg text-[#64736C] dark:text-[#9EB2A9] cursor-not-allowed"
                       />
                     </div>
                   </div>
                 )}
               </div>
 
-              <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/40">
-                <div className="flex items-start justify-between">
-                  <div className="flex gap-3">
-                    <MessageSquare className="w-5 h-5 text-emerald-600 mt-0.5" />
-                    <div>
-                      <div className="text-xs sm:text-sm font-bold text-gray-900 dark:text-gray-100">
+              <div className="p-4 rounded-xl border border-[#E2E8E5] dark:border-[#2D4039] bg-[#F6F8F6]/60 dark:bg-[#24332D]/40">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex gap-3 min-w-0">
+                    <MessageSquare className="w-5 h-5 text-[#2F8A68] dark:text-[#79C8A4] mt-0.5 shrink-0" aria-hidden="true" />
+                    <div className="min-w-0">
+                      <label
+                        htmlFor="onb-enable-wa"
+                        className="text-xs sm:text-sm font-bold text-[#24312D] dark:text-[#EDF5F1] cursor-pointer block"
+                      >
                         WhatsApp Tenant Communications
-                      </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                      </label>
+                      <p className="text-xs text-[#64736C] dark:text-[#9EB2A9] mt-0.5">
                         Automated payment receipts, maintenance updates, and reminder drafts.
                       </p>
                       <span className="inline-block mt-1 text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded">
@@ -927,34 +993,37 @@ export const OnboardingWizard: React.FC = () => {
                     </div>
                   </div>
                   <input
+                    id="onb-enable-wa"
                     type="checkbox"
                     checked={enableWhatsApp}
                     onChange={(e) => setEnableWhatsApp(e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-[#2F8A68] focus:ring-[#2F8A68]"
+                    className="h-4 w-4 rounded border-[#E2E8E5] text-[#2F8A68] focus:ring-[#2F8A68] shrink-0 mt-0.5"
                   />
                 </div>
 
                 {enableWhatsApp && (
-                  <div className="space-y-2 mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 text-xs">
-                    <label className="flex items-center gap-2">
+                  <div className="space-y-2 mt-3 pt-3 border-t border-[#E2E8E5] dark:border-[#2D4039] text-xs">
+                    <label htmlFor="onb-wa-receipt" className="flex items-center gap-2 cursor-pointer">
                       <input
+                        id="onb-wa-receipt"
                         type="checkbox"
                         checked={whatsappAutoReceipt}
                         onChange={(e) => setWhatsappAutoReceipt(e.target.checked)}
                         className="h-3.5 w-3.5 rounded text-[#2F8A68]"
                       />
-                      <span className="text-gray-700 dark:text-gray-300">
+                      <span className="text-[#24312D] dark:text-[#EDF5F1]">
                         Auto-dispatch WhatsApp receipt immediately upon payment reconciliation
                       </span>
                     </label>
-                    <label className="flex items-center gap-2">
+                    <label htmlFor="onb-wa-reminders" className="flex items-center gap-2 cursor-pointer">
                       <input
+                        id="onb-wa-reminders"
                         type="checkbox"
                         checked={whatsappAutoReminders}
                         onChange={(e) => setWhatsappAutoReminders(e.target.checked)}
                         className="h-3.5 w-3.5 rounded text-[#2F8A68]"
                       />
-                      <span className="text-gray-700 dark:text-gray-300">
+                      <span className="text-[#24312D] dark:text-[#EDF5F1]">
                         Draft polite rent reminder batches for landlord sign-off when grace period expires
                       </span>
                     </label>
@@ -967,109 +1036,109 @@ export const OnboardingWizard: React.FC = () => {
 
         {/* STEP 7: Review & Finish */}
         {step === 7 && (
-          <div className="space-y-5 animate-in fade-in duration-200">
+          <div className="space-y-5">
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                7. Review Workspace & Launch
+              <h2 className="text-lg font-bold text-[#24312D] dark:text-[#EDF5F1] flex items-center gap-2 text-balance">
+                <FileText className="w-5 h-5 text-[#2F8A68] dark:text-[#79C8A4] shrink-0" aria-hidden="true" />
+                <span>7. Review Workspace &amp; Launch</span>
               </h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-xs text-[#64736C] dark:text-[#9EB2A9] mt-1">
                 Review all details before finalizing. All settings can be adjusted anytime from Settings.
               </p>
             </div>
 
-            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 divide-y divide-gray-200 dark:divide-gray-700 text-xs">
-              <div className="py-2.5 flex items-center justify-between">
-                <div>
-                  <span className="text-gray-500 dark:text-gray-400 block text-[11px]">Workspace & Landlord:</span>
-                  <span className="font-semibold text-gray-900 dark:text-gray-100">{workspaceName}</span>
+            <div className="bg-[#F6F8F6] dark:bg-[#24332D]/50 rounded-xl p-4 divide-y divide-[#E2E8E5] dark:divide-[#2D4039] text-xs">
+              <div className="py-2.5 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <span className="text-[#64736C] dark:text-[#9EB2A9] block text-[11px]">Workspace &amp; Landlord:</span>
+                  <span className="font-semibold text-[#24312D] dark:text-[#EDF5F1] wrap-anywhere">{workspaceName}</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="text-[11px] font-semibold text-[#2F8A68] hover:underline"
+                  className="text-xs font-semibold text-[#267256] dark:text-[#79C8A4] hover:underline shrink-0 cursor-pointer px-2 py-1 rounded"
                 >
                   Edit
                 </button>
               </div>
 
-              <div className="py-2.5 flex items-center justify-between">
-                <div>
-                  <span className="text-gray-500 dark:text-gray-400 block text-[11px]">Primary Property:</span>
-                  <span className="font-semibold text-gray-900 dark:text-gray-100">
+              <div className="py-2.5 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <span className="text-[#64736C] dark:text-[#9EB2A9] block text-[11px]">Primary Property:</span>
+                  <span className="font-semibold text-[#24312D] dark:text-[#EDF5F1] wrap-anywhere">
                     {propertyName} ({propertyLocation}, {propertyCity})
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  className="text-[11px] font-semibold text-[#2F8A68] hover:underline"
+                  className="text-xs font-semibold text-[#267256] dark:text-[#79C8A4] hover:underline shrink-0 cursor-pointer px-2 py-1 rounded"
                 >
                   Edit
                 </button>
               </div>
 
-              <div className="py-2.5 flex items-center justify-between">
-                <div>
-                  <span className="text-gray-500 dark:text-gray-400 block text-[11px]">First Unit Setup:</span>
-                  <span className="font-semibold text-gray-900 dark:text-gray-100">
+              <div className="py-2.5 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <span className="text-[#64736C] dark:text-[#9EB2A9] block text-[11px]">First Unit Setup:</span>
+                  <span className="font-semibold text-[#24312D] dark:text-[#EDF5F1] tabular-nums">
                     Unit {unitNumber} ({unitType}) • KES {monthlyRent.toLocaleString()} + KES {serviceCharge.toLocaleString()} Service Charge
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setStep(3)}
-                  className="text-[11px] font-semibold text-[#2F8A68] hover:underline"
+                  className="text-xs font-semibold text-[#267256] dark:text-[#79C8A4] hover:underline shrink-0 cursor-pointer px-2 py-1 rounded"
                 >
                   Edit
                 </button>
               </div>
 
-              <div className="py-2.5 flex items-center justify-between">
-                <div>
-                  <span className="text-gray-500 dark:text-gray-400 block text-[11px]">Billing Rules:</span>
-                  <span className="font-semibold text-gray-900 dark:text-gray-100">
+              <div className="py-2.5 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <span className="text-[#64736C] dark:text-[#9EB2A9] block text-[11px]">Billing Rules:</span>
+                  <span className="font-semibold text-[#24312D] dark:text-[#EDF5F1] tabular-nums">
                     Due Day {rentDueDay} • {gracePeriodDays} Days Grace Period • {lateFeePercentage}% Late Fee
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setStep(4)}
-                  className="text-[11px] font-semibold text-[#2F8A68] hover:underline"
+                  className="text-xs font-semibold text-[#267256] dark:text-[#79C8A4] hover:underline shrink-0 cursor-pointer px-2 py-1 rounded"
                 >
                   Edit
                 </button>
               </div>
 
               {addTenantNow && (
-                <div className="py-2.5 flex items-center justify-between">
-                  <div>
-                    <span className="text-gray-500 dark:text-gray-400 block text-[11px]">Initial Tenant:</span>
-                    <span className="font-semibold text-gray-900 dark:text-gray-100">
+                <div className="py-2.5 flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <span className="text-[#64736C] dark:text-[#9EB2A9] block text-[11px]">Initial Tenant:</span>
+                    <span className="font-semibold text-[#24312D] dark:text-[#EDF5F1] wrap-anywhere">
                       {tenantName} ({tenantPhone}) &bull; Assigned to Unit {unitNumber}
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => setStep(5)}
-                    className="text-[11px] font-semibold text-[#2F8A68] hover:underline"
+                    className="text-xs font-semibold text-[#267256] dark:text-[#79C8A4] hover:underline shrink-0 cursor-pointer px-2 py-1 rounded"
                   >
                     Edit
                   </button>
                 </div>
               )}
 
-              <div className="py-2.5 flex items-center justify-between">
-                <div>
-                  <span className="text-gray-500 dark:text-gray-400 block text-[11px]">Automations & Guardrails:</span>
-                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+              <div className="py-2.5 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <span className="text-[#64736C] dark:text-[#9EB2A9] block text-[11px]">Automations &amp; Guardrails:</span>
+                  <span className="font-semibold text-[#267256] dark:text-[#79C8A4]">
                     Human-in-the-Loop Safe Mode (Approval required for bulk messaging and expenditures &gt; KES 10,000)
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setStep(6)}
-                  className="text-[11px] font-semibold text-[#2F8A68] hover:underline"
+                  className="text-xs font-semibold text-[#267256] dark:text-[#79C8A4] hover:underline shrink-0 cursor-pointer px-2 py-1 rounded"
                 >
                   Edit
                 </button>
@@ -1079,23 +1148,23 @@ export const OnboardingWizard: React.FC = () => {
         )}
 
         {/* Footer Navigation Buttons */}
-        <div className="mt-8 pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
+        <div className="mt-8 pt-4 border-t border-[#E2E8E5] dark:border-[#2D4039] flex flex-wrap items-center justify-between gap-3">
           <button
             type="button"
             onClick={handlePrev}
             disabled={step === 1}
-            className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 transition-colors"
+            className="min-h-[42px] flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-xl text-[#64736C] dark:text-[#9EB2A9] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] disabled:opacity-40 transition-colors cursor-pointer disabled:cursor-not-allowed"
           >
-            <ChevronLeft className="w-4 h-4" /> Back
+            <ChevronLeft className="w-4 h-4" aria-hidden="true" /> Back
           </button>
 
           <button
             type="button"
             onClick={handleNext}
-            className="flex items-center gap-1.5 px-5 py-2.5 text-xs sm:text-sm font-semibold rounded-xl text-white bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] dark:text-[#111A17] transition-all shadow-sm cursor-pointer"
+            className="min-h-[42px] flex items-center gap-1.5 px-5 py-2.5 text-xs sm:text-sm font-semibold rounded-xl text-white bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] dark:text-[#111A17] transition-all shadow-sm cursor-pointer"
           >
             <span>{step === 7 ? 'Complete Setup & Launch Workspace' : 'Continue'}</span>
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </div>

@@ -47,9 +47,14 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-md border ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+      title={label}
+      className={`inline-flex items-center gap-1.5 rounded-md border max-w-full shrink-0 whitespace-nowrap ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
     >
-      {icon && <span className="shrink-0">{icon}</span>}
+      {icon && (
+        <span className="shrink-0" aria-hidden="true">
+          {icon}
+        </span>
+      )}
       <span className="truncate">{label}</span>
     </span>
   );

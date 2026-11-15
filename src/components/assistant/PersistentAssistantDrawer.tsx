@@ -32,8 +32,22 @@ export const PersistentAssistantDrawer: React.FC = () => {
   const drawerRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
-  // Keyboard accessibility: ESC closes drawer
+  // Keyboard accessibility: ESC closes drawer & focus restoration
+  useEffect(() => {
+    if (isAssistantOpen) {
+      previousFocusRef.current = document.activeElement as HTMLElement | null;
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+    } else if (previousFocusRef.current) {
+      previousFocusRef.current.focus();
+      previousFocusRef.current = null;
+    }
+  }, [isAssistantOpen]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isAssistantOpen) {
@@ -73,7 +87,10 @@ export const PersistentAssistantDrawer: React.FC = () => {
   // Auto-scroll to bottom of messages
   useEffect(() => {
     if (isAssistantOpen) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      messagesEndRef.current?.scrollIntoView({
+        behavior: prefersReducedMotion ? 'auto' : 'smooth',
+      });
     }
   }, [assistantMessages, isAssistantOpen]);
 
@@ -147,7 +164,7 @@ export const PersistentAssistantDrawer: React.FC = () => {
       <div
         ref={backdropRef}
         onClick={closeWithAnimation}
-        className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-black/45 backdrop-blur-xs transition-opacity"
         aria-hidden="true"
       />
 
@@ -156,40 +173,44 @@ export const PersistentAssistantDrawer: React.FC = () => {
         ref={drawerRef}
         className="relative w-full sm:w-[420px] md:w-[460px] bg-white dark:bg-[#1B2622] border-l border-[#E2E8E5] dark:border-[#2D4039] shadow-2xl flex flex-col h-full z-10"
         role="dialog"
-        aria-label="Kejahub AI Property Agent Assistant"
+        aria-modal="true"
+        aria-labelledby="assistant-drawer-title"
       >
         {/* Header */}
         <div className="p-4 bg-[#173C32] text-white flex items-center justify-between shadow-md">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#2F8A68] flex items-center justify-center text-white shadow-inner">
-              <Sparkles className="w-5 h-5 text-emerald-300" />
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-[#2F8A68] flex items-center justify-center text-white shadow-inner shrink-0">
+              <Sparkles className="w-5 h-5 text-emerald-200" aria-hidden="true" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-bold text-sm tracking-tight text-white">Kejahub Agent</h3>
-                <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-500/30 text-emerald-200 px-2 py-0.5 rounded">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 id="assistant-drawer-title" className="font-bold text-sm tracking-tight text-white">
+                  Kejahub Agent
+                </h2>
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-500/30 text-emerald-100 px-2 py-0.5 rounded whitespace-nowrap">
                   Autonomous + Gated
                 </span>
               </div>
-              <p className="text-[11px] text-emerald-200/70">
+              <p className="text-[11px] text-emerald-100/80 truncate">
                 Active Context: <span className="capitalize font-semibold text-white">{currentScreen}</span> view
               </p>
             </div>
           </div>
 
           <button
+            type="button"
             onClick={closeWithAnimation}
-            className="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-[#245245] transition-colors"
+            className="p-2 rounded-xl text-emerald-100 hover:text-white hover:bg-[#245245] transition-colors cursor-pointer shrink-0"
             aria-label="Close Assistant (Esc)"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
         {/* Safety Policy Reminder Bar */}
-        <div className="px-4 py-2.5 bg-emerald-50 dark:bg-[#202D28] border-b border-emerald-100 dark:border-[#2D4039] flex items-center justify-between text-xs text-emerald-900 dark:text-emerald-300">
+        <div className="px-4 py-2.5 bg-emerald-50 dark:bg-[#202D28] border-b border-emerald-100 dark:border-[#2D4039] flex items-center justify-between text-xs text-emerald-900 dark:text-emerald-200">
           <span className="flex items-center gap-1.5 font-medium">
-            <Lock className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <Lock className="w-3.5 h-3.5 text-[#267256] dark:text-[#79C8A4] shrink-0" aria-hidden="true" />
             Policy: Landlord Authorization required for disbursements & waivers
           </span>
         </div>
@@ -204,13 +225,13 @@ export const PersistentAssistantDrawer: React.FC = () => {
                 className={`flex gap-3 ${isAgent ? 'justify-start' : 'justify-end'}`}
               >
                 {isAgent && (
-                  <div className="w-7 h-7 rounded-lg bg-[#173C32] dark:bg-[#2F8A68] text-white flex items-center justify-center shrink-0 mt-0.5">
-                    <Bot className="w-4 h-4" />
+                  <div className="w-7 h-7 rounded-lg bg-[#173C32] dark:bg-[#2F8A68] text-white flex items-center justify-center shrink-0 mt-0.5" aria-hidden="true">
+                    <Bot className="w-4 h-4" aria-hidden="true" />
                   </div>
                 )}
 
                 <div
-                  className={`max-w-[85%] rounded-2xl p-3.5 text-xs sm:text-sm leading-relaxed shadow-xs ${
+                  className={`max-w-[85%] rounded-2xl p-3.5 text-xs sm:text-sm leading-relaxed shadow-xs wrap-anywhere ${
                     isAgent
                       ? 'bg-[#F6F8F6] dark:bg-[#24332D] text-[#24312D] dark:text-[#EDF5F1] border border-[#E2E8E5] dark:border-[#2D4039]'
                       : 'bg-[#173C32] dark:bg-[#79C8A4] text-white dark:text-[#111A17] font-medium'
@@ -221,14 +242,15 @@ export const PersistentAssistantDrawer: React.FC = () => {
                   {/* Suggested Action Button inside chat */}
                   {msg.suggestedAction && (
                     <button
+                      type="button"
                       onClick={() => {
                         setCurrentScreen(msg.suggestedAction!.screen);
                         setIsAssistantOpen(false);
                       }}
-                      className="mt-3 flex items-center gap-1.5 text-xs font-bold text-[#2F8A68] dark:text-[#79C8A4] bg-white dark:bg-[#1B2622] px-3 py-1.5 rounded-lg border border-[#E2E8E5] dark:border-[#2D4039] hover:bg-gray-50 dark:hover:bg-[#202D28] transition-colors"
+                      className="mt-3 flex items-center gap-1.5 text-xs font-bold text-[#267256] dark:text-[#79C8A4] bg-white dark:bg-[#1B2622] px-3 py-1.5 rounded-lg border border-[#E2E8E5] dark:border-[#2D4039] hover:bg-gray-50 dark:hover:bg-[#202D28] transition-colors cursor-pointer"
                     >
                       <span>{msg.suggestedAction.label}</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                     </button>
                   )}
                 </div>
@@ -246,9 +268,10 @@ export const PersistentAssistantDrawer: React.FC = () => {
           <div className="flex flex-wrap gap-1.5">
             {activePrompts.map((prompt) => (
               <button
+                type="button"
                 key={prompt}
                 onClick={() => handleSend(prompt)}
-                className="text-[11px] font-medium bg-white dark:bg-[#1B2622] hover:bg-emerald-50 dark:hover:bg-[#273B33] text-[#24312D] dark:text-[#EDF5F1] border border-[#E2E8E5] dark:border-[#2D4039] hover:border-[#2F8A68] px-2.5 py-1 rounded-lg text-left transition-colors"
+                className="text-[11px] font-medium bg-white dark:bg-[#1B2622] hover:bg-emerald-50 dark:hover:bg-[#273B33] text-[#24312D] dark:text-[#EDF5F1] border border-[#E2E8E5] dark:border-[#2D4039] hover:border-[#2F8A68] px-2.5 py-1.5 rounded-lg text-left transition-colors cursor-pointer"
               >
                 {prompt}
               </button>
@@ -260,24 +283,27 @@ export const PersistentAssistantDrawer: React.FC = () => {
         <div className="p-4 bg-white dark:bg-[#1B2622] border-t border-[#E2E8E5] dark:border-[#2D4039]">
           <div className="flex items-center gap-2">
             <input
+              ref={inputRef}
               type="text"
               value={inputVal}
               onChange={(e) => setInputVal(e.target.value)}
               onKeyDown={handleKeyPress}
+              aria-label="Message Kejahub AI Agent"
               placeholder="Ask anything about rent, tenants, or M-Pesa..."
-              className="flex-1 px-3.5 py-2.5 text-xs sm:text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+              className="flex-1 px-3.5 py-2.5 min-h-[42px] text-xs sm:text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] placeholder-[#64736C] dark:placeholder-[#9EB2A9]"
             />
             <button
+              type="button"
               onClick={() => handleSend(inputVal)}
               disabled={!inputVal.trim()}
-              className="p-2.5 bg-[#173C32] dark:bg-[#79C8A4] hover:bg-[#245245] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+              className="p-2.5 min-h-[42px] min-w-[42px] flex items-center justify-center bg-[#173C32] dark:bg-[#79C8A4] hover:bg-[#245245] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0 cursor-pointer"
               aria-label="Send Message"
             >
-              <Send className="w-4 h-4" />
+              <Send className="w-4 h-4" aria-hidden="true" />
             </button>
           </div>
-          <p className="text-[10px] text-[#64736C] dark:text-[#9EB2A9] mt-2 text-center">
-            Agent operates under human supervisory guardrails. Press <kbd className="font-mono bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded">Esc</kbd> to dismiss.
+          <p className="text-[11px] text-[#64736C] dark:text-[#9EB2A9] mt-2 text-center">
+            Agent operates under human supervisory guardrails. Press <kbd className="font-mono bg-gray-100 dark:bg-[#24332D] px-1.5 py-0.5 rounded">Esc</kbd> to dismiss.
           </p>
         </div>
       </div>

@@ -137,15 +137,20 @@ export const OverviewView: React.FC = () => {
     <GSAPEntrance className="space-y-6">
       {/* 1. Header & Quick Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-extrabold text-[#24312D] dark:text-[#EDF5F1] tracking-tight">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-extrabold text-[#24312D] dark:text-[#EDF5F1] tracking-tight text-balance">
               Habari, {currentUser.name ? currentUser.name.split(' ')[0] : 'Landlord'}
             </h1>
             <StatusBadge
               label="Live Sync"
               variant="evergreen"
-              icon={<span className="w-1.5 h-1.5 rounded-full bg-[#2F8A68] dark:bg-[#79C8A4] animate-pulse" />}
+              icon={
+                <span
+                  aria-hidden="true"
+                  className="w-1.5 h-1.5 rounded-full bg-[#2F8A68] dark:bg-[#79C8A4] animate-pulse"
+                />
+              }
             />
           </div>
           <p className="text-xs sm:text-sm text-[#64736C] dark:text-[#9EB2A9] mt-0.5">
@@ -153,20 +158,22 @@ export const OverviewView: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
           <button
+            type="button"
             onClick={() => setCurrentScreen('reports')}
-            className="flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-[#1B2622] hover:bg-gray-50 dark:hover:bg-[#202D28] text-[#24312D] dark:text-[#EDF5F1] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-xs"
+            className="flex items-center gap-1.5 px-3 py-2 bg-white dark:bg-[#1B2622] hover:bg-[#F0F4F2] dark:hover:bg-[#202D28] text-[#24312D] dark:text-[#EDF5F1] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-xs cursor-pointer"
           >
-            <BarChart3 className="w-4 h-4 text-[#2F8A68] dark:text-[#79C8A4]" />
+            <BarChart3 className="w-4 h-4 text-[#2F8A68] dark:text-[#79C8A4]" aria-hidden="true" />
             <span>Reports</span>
           </button>
 
           <button
+            type="button"
             onClick={() => setIsAssistantOpen(true)}
-            className="flex items-center gap-2 px-3.5 py-2 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-sm active:scale-95"
+            className="flex items-center gap-2 px-3.5 py-2 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-sm active:scale-95 cursor-pointer"
           >
-            <Sparkles className="w-4 h-4 text-emerald-300 dark:text-[#111A17]" />
+            <Sparkles className="w-4 h-4 text-emerald-300 dark:text-[#111A17]" aria-hidden="true" />
             <span>Ask AI Agent</span>
           </button>
         </div>
@@ -181,12 +188,12 @@ export const OverviewView: React.FC = () => {
           title="Expected Rent"
           subtitle={`Across ${portfolioMetrics.totalUnits} registered units`}
           badge={
-            <span className="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
-              <Calendar className="w-4 h-4" />
+            <span className="p-2 rounded-xl bg-[#F0F4F2] dark:bg-[#24332D] text-[#24312D] dark:text-[#EDF5F1]">
+              <Calendar className="w-4 h-4" aria-hidden="true" />
             </span>
           }
         >
-          <div className="text-xl sm:text-2xl font-extrabold text-[#24312D] dark:text-[#EDF5F1] mt-1">
+          <div className="text-xl sm:text-2xl font-extrabold text-[#24312D] dark:text-[#EDF5F1] mt-1 tabular-nums">
             {formatKES(portfolioMetrics.expectedRent)}
           </div>
           <div className="text-[11px] text-[#64736C] dark:text-[#9EB2A9] mt-2 flex items-center gap-1 font-medium">
@@ -202,14 +209,14 @@ export const OverviewView: React.FC = () => {
           subtitle={`${collectionPct}% of target received`}
           badge={
             <span className="p-2 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400">
-              <TrendingUp className="w-4 h-4" />
+              <TrendingUp className="w-4 h-4" aria-hidden="true" />
             </span>
           }
         >
-          <div className="text-xl sm:text-2xl font-extrabold text-[#2F8A68] dark:text-[#79C8A4] mt-1">
+          <div className="text-xl sm:text-2xl font-extrabold text-[#267256] dark:text-[#79C8A4] mt-1 tabular-nums">
             {formatKES(portfolioMetrics.collectedRent)}
           </div>
-          <div className="w-full bg-gray-100 dark:bg-gray-800 h-2 rounded-full overflow-hidden mt-2.5">
+          <div className="w-full bg-[#F0F4F2] dark:bg-[#24332D] h-2 rounded-full overflow-hidden mt-2.5">
             <div
               className="bg-[#2F8A68] dark:bg-[#79C8A4] h-full rounded-full transition-all duration-500"
               style={{ width: `${collectionPct}%` }}
@@ -225,16 +232,16 @@ export const OverviewView: React.FC = () => {
           subtitle={`${overdueTenants.length} tenants with balances`}
           badge={
             <span className="p-2 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400">
-              <AlertTriangle className="w-4 h-4" />
+              <AlertTriangle className="w-4 h-4" aria-hidden="true" />
             </span>
           }
         >
-          <div className="text-xl sm:text-2xl font-extrabold text-amber-600 dark:text-amber-400 mt-1">
+          <div className="text-xl sm:text-2xl font-extrabold text-amber-700 dark:text-amber-400 mt-1 tabular-nums">
             {formatKES(portfolioMetrics.outstandingRent)}
           </div>
-          <div className="text-[11px] text-amber-700 dark:text-amber-400 mt-2 font-medium flex items-center justify-between">
+          <div className="text-[11px] text-amber-700 dark:text-amber-400 mt-2 font-medium flex flex-wrap items-center justify-between gap-1">
             <span>Grace ended Oct 10</span>
-            <span className="underline cursor-pointer">View tenants →</span>
+            <span className="underline">View tenants &rarr;</span>
           </div>
         </BentoCard>
 
@@ -246,11 +253,11 @@ export const OverviewView: React.FC = () => {
           subtitle={`${portfolioMetrics.occupiedUnits} occupied • ${portfolioMetrics.vacantUnits} vacant`}
           badge={
             <span className="p-2 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400">
-              <Building className="w-4 h-4" />
+              <Building className="w-4 h-4" aria-hidden="true" />
             </span>
           }
         >
-          <div className="text-xl sm:text-2xl font-extrabold text-[#24312D] dark:text-[#EDF5F1] mt-1">
+          <div className="text-xl sm:text-2xl font-extrabold text-[#24312D] dark:text-[#EDF5F1] mt-1 tabular-nums">
             {portfolioMetrics.occupancyRate}%
           </div>
           <div className="text-[11px] text-[#64736C] dark:text-[#9EB2A9] mt-2 font-medium">
@@ -344,8 +351,8 @@ export const OverviewView: React.FC = () => {
 
       {/* 4. Actionable Attention Queue (Critical Operational Gate) */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm sm:text-base font-bold text-[#24312D] dark:text-[#EDF5F1] flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-sm sm:text-base font-bold text-[#24312D] dark:text-[#EDF5F1] flex flex-wrap items-center gap-2">
             <span>Actionable Operational Queue</span>
             <StatusBadge
               label={`${unallocatedTxs.length + pendingApprovals.length + overdueTenants.length} Pending Actions`}
@@ -361,11 +368,11 @@ export const OverviewView: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Item 1: Unallocated Payments */}
           {unallocatedTxs.length > 0 && (
-            <div className="bento-card bg-white dark:bg-[#1B2622] p-5 rounded-2xl border-l-4 border-l-amber-500 border border-[#E2E8E5] dark:border-[#2D4039] shadow-xs flex flex-col justify-between">
+            <div className="bento-card bg-white dark:bg-[#1B2622] p-5 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] shadow-xs flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
-                    <Receipt className="w-3.5 h-3.5" /> M-Pesa Unallocated
+                    <Receipt className="w-3.5 h-3.5" aria-hidden="true" /> M-Pesa Unallocated
                   </span>
                   <StatusBadge
                     label={`${unallocatedTxs.length} Unmatched`}
@@ -373,7 +380,7 @@ export const OverviewView: React.FC = () => {
                     size="sm"
                   />
                 </div>
-                <h3 className="font-bold text-sm text-[#24312D] dark:text-[#EDF5F1]">
+                <h3 className="font-bold text-sm text-[#24312D] dark:text-[#EDF5F1] tabular-nums">
                   {formatKES(portfolioMetrics.unallocatedAmount)} in Unmatched Paybill Deposits
                 </h3>
                 <p className="text-xs text-[#64736C] dark:text-[#9EB2A9] mt-1.5 leading-relaxed">
@@ -383,11 +390,12 @@ export const OverviewView: React.FC = () => {
 
               <div className="mt-4 pt-3 border-t border-[#E2E8E5] dark:border-[#2D4039] flex items-center justify-between">
                 <button
+                  type="button"
                   onClick={() => setCurrentScreen('payments')}
-                  className="text-xs font-semibold text-[#2F8A68] dark:text-[#79C8A4] hover:underline flex items-center gap-1"
+                  className="text-xs font-semibold text-[#267256] dark:text-[#79C8A4] hover:underline flex items-center gap-1 cursor-pointer"
                 >
                   <span>Reconcile Transactions</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                 </button>
               </div>
             </div>
@@ -397,12 +405,12 @@ export const OverviewView: React.FC = () => {
           {pendingApprovals.map((m) => (
             <div
               key={m.id}
-              className="bento-card bg-white dark:bg-[#1B2622] p-5 rounded-2xl border-l-4 border-l-red-500 border border-[#E2E8E5] dark:border-[#2D4039] shadow-xs flex flex-col justify-between"
+              className="bento-card bg-white dark:bg-[#1B2622] p-5 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] shadow-xs flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-red-700 dark:text-red-400 flex items-center gap-1.5">
-                    <Wrench className="w-3.5 h-3.5" /> High-Cost Repair Signoff
+                    <Wrench className="w-3.5 h-3.5" aria-hidden="true" /> High-Cost Repair Signoff
                   </span>
                   <StatusBadge
                     label={formatKES(m.estimatedCost)}
@@ -418,16 +426,18 @@ export const OverviewView: React.FC = () => {
                 </p>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-[#E2E8E5] dark:border-[#2D4039] flex items-center justify-between">
+              <div className="mt-4 pt-3 border-t border-[#E2E8E5] dark:border-[#2D4039] flex items-center justify-between gap-2">
                 <button
+                  type="button"
                   onClick={() => approveMaintenanceTicket(m.id)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#173C32] hover:bg-[#245245] text-white dark:bg-[#79C8A4] dark:text-[#111A17] transition-colors"
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#173C32] hover:bg-[#245245] text-white dark:bg-[#79C8A4] dark:text-[#111A17] transition-colors cursor-pointer"
                 >
                   Authorize Work Order
                 </button>
                 <button
+                  type="button"
                   onClick={() => setCurrentScreen('maintenance')}
-                  className="text-xs font-medium text-[#64736C] dark:text-[#9EB2A9] hover:text-[#24312D] dark:hover:text-white"
+                  className="text-xs font-medium text-[#64736C] dark:text-[#9EB2A9] hover:text-[#24312D] dark:hover:text-white cursor-pointer"
                 >
                   Details
                 </button>
@@ -437,11 +447,11 @@ export const OverviewView: React.FC = () => {
 
           {/* Item 3: Rent Arrears Past Grace Period */}
           {overdueTenants.length > 0 && (
-            <div className="bento-card bg-white dark:bg-[#1B2622] p-5 rounded-2xl border-l-4 border-l-[#2F8A68] border border-[#E2E8E5] dark:border-[#2D4039] shadow-xs flex flex-col justify-between">
+            <div className="bento-card bg-white dark:bg-[#1B2622] p-5 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] shadow-xs flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-[#173C32] dark:text-[#79C8A4] flex items-center gap-1.5">
-                    <MessageSquare className="w-3.5 h-3.5" /> Rent Arrears Notice Batch
+                    <MessageSquare className="w-3.5 h-3.5" aria-hidden="true" /> Rent Arrears Notice Batch
                   </span>
                   <StatusBadge
                     label={`${overdueTenants.length} Tenants`}
@@ -459,11 +469,12 @@ export const OverviewView: React.FC = () => {
 
               <div className="mt-4 pt-3 border-t border-[#E2E8E5] dark:border-[#2D4039] flex items-center justify-between">
                 <button
+                  type="button"
                   onClick={() => setCurrentScreen('agent')}
-                  className="text-xs font-semibold text-[#2F8A68] dark:text-[#79C8A4] hover:underline flex items-center gap-1"
+                  className="text-xs font-semibold text-[#267256] dark:text-[#79C8A4] hover:underline flex items-center gap-1 cursor-pointer"
                 >
-                  <span>Review & Approve Batch</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <span>Review &amp; Approve Batch</span>
+                  <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                 </button>
               </div>
             </div>
@@ -473,9 +484,9 @@ export const OverviewView: React.FC = () => {
           {expiringTenants.length > 0 && (
             <div className="bento-card bg-white dark:bg-[#1B2622] p-5 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] shadow-xs flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-purple-700 dark:text-purple-400 flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5" /> Lease Expirations (Q4)
+                    <Calendar className="w-3.5 h-3.5" aria-hidden="true" /> Lease Expirations (Q4)
                   </span>
                   <StatusBadge
                     label={`${expiringTenants.length} Leases`}
@@ -493,11 +504,12 @@ export const OverviewView: React.FC = () => {
 
               <div className="mt-4 pt-3 border-t border-[#E2E8E5] dark:border-[#2D4039] flex items-center justify-between">
                 <button
+                  type="button"
                   onClick={() => setCurrentScreen('tenants')}
-                  className="text-xs font-semibold text-[#2F8A68] dark:text-[#79C8A4] hover:underline flex items-center gap-1"
+                  className="text-xs font-semibold text-[#267256] dark:text-[#79C8A4] hover:underline flex items-center gap-1 cursor-pointer"
                 >
                   <span>Prepare Renewal Notices</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                 </button>
               </div>
             </div>
@@ -514,11 +526,12 @@ export const OverviewView: React.FC = () => {
           subtitle="Latest confirmed M-Pesa Paybill & bank deposits matched to tenant accounts"
           action={
             <button
+              type="button"
               onClick={() => setCurrentScreen('payments')}
-              className="text-xs font-semibold text-[#2F8A68] dark:text-[#79C8A4] hover:underline flex items-center gap-1"
+              className="text-xs font-semibold text-[#267256] dark:text-[#79C8A4] hover:underline flex items-center gap-1 cursor-pointer"
             >
               <span>View All Payments</span>
-              <ChevronRight className="w-3.5 h-3.5" />
+              <ChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
             </button>
           }
         >
@@ -526,11 +539,12 @@ export const OverviewView: React.FC = () => {
             {transactions.slice(0, 5).map((tx) => (
               <div
                 key={tx.id}
-                className="py-3 flex items-center justify-between text-xs hover:bg-gray-50/50 dark:hover:bg-[#202D28]/40 px-2 rounded-lg transition-colors"
+                className="py-3 flex items-center justify-between gap-3 text-xs hover:bg-[#F6F8F6] dark:hover:bg-[#202D28]/40 px-2 rounded-lg transition-colors"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 min-w-0">
                   <div
-                    className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-[11px] ${
+                    aria-hidden="true"
+                    className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-[11px] shrink-0 ${
                       tx.status === 'CONFIRMED' || tx.status === 'RECONCILED'
                         ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300'
                         : 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300'
@@ -538,13 +552,13 @@ export const OverviewView: React.FC = () => {
                   >
                     {tx.channel === 'M-PESA' ? 'M' : 'B'}
                   </div>
-                  <div>
-                    <div className="font-semibold text-[#24312D] dark:text-[#EDF5F1]">
+                  <div className="min-w-0">
+                    <div className="font-semibold text-[#24312D] dark:text-[#EDF5F1] truncate">
                       {tx.senderName || 'Anonymous Deposit'}
                     </div>
-                    <div className="text-[11px] text-[#64736C] dark:text-[#9EB2A9]">
+                    <div className="text-[11px] text-[#64736C] dark:text-[#9EB2A9] tabular-nums">
                       Ref:{' '}
-                      <span className="font-mono text-[#24312D] dark:text-gray-300 font-semibold">
+                      <span className="font-mono text-[#24312D] dark:text-[#EDF5F1] font-semibold">
                         {tx.referenceNumber}
                       </span>{' '}
                       • {new Date(tx.date).toLocaleDateString()}
@@ -552,8 +566,8 @@ export const OverviewView: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="text-right">
-                  <div className="font-bold text-[#24312D] dark:text-[#EDF5F1]">
+                <div className="text-right shrink-0">
+                  <div className="font-bold text-[#24312D] dark:text-[#EDF5F1] tabular-nums">
                     {formatKES(tx.amount)}
                   </div>
                   <span
@@ -584,13 +598,14 @@ export const OverviewView: React.FC = () => {
             />
           }
           footer={
-            <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center justify-between gap-2 text-xs">
               <span className="text-[#64736C] dark:text-[#9EB2A9]">AI Sentinel v2.4</span>
               <button
+                type="button"
                 onClick={() => setCurrentScreen('agent')}
-                className="font-bold text-[#173C32] dark:text-[#79C8A4] hover:underline flex items-center gap-1"
+                className="font-bold text-[#173C32] dark:text-[#79C8A4] hover:underline flex items-center gap-1 cursor-pointer"
               >
-                Open Agent Hub <ArrowRight className="w-3.5 h-3.5" />
+                Open Agent Hub <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
               </button>
             </div>
           }
@@ -598,23 +613,24 @@ export const OverviewView: React.FC = () => {
           <div className="space-y-3">
             <div className="bg-[#F6F8F6] dark:bg-[#24332D] p-3 rounded-xl border border-[#E2E8E5] dark:border-[#2D4039] text-xs">
               <div className="font-bold text-[#24312D] dark:text-[#EDF5F1] mb-1 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-[#2F8A68] dark:text-[#79C8A4]" />
+                <Sparkles className="w-3.5 h-3.5 text-[#2F8A68] dark:text-[#79C8A4]" aria-hidden="true" />
                 <span>M-Pesa Match Ready</span>
               </div>
               <p className="text-[11px] text-[#64736C] dark:text-[#9EB2A9] leading-relaxed">
                 2 unallocated transactions have 85%+ correlation with active leases. Reconciling will clear KES 83,000 in arrears.
               </p>
               <button
+                type="button"
                 onClick={() => approveAgentTask('task-1')}
-                className="mt-2 text-xs font-bold text-[#2F8A68] dark:text-[#79C8A4] hover:underline"
+                className="mt-2 text-xs font-bold text-[#267256] dark:text-[#79C8A4] hover:underline cursor-pointer"
               >
-                Approve Reconciliation Task →
+                Approve Reconciliation Task &rarr;
               </button>
             </div>
 
             <div className="bg-[#F6F8F6] dark:bg-[#24332D] p-3 rounded-xl border border-[#E2E8E5] dark:border-[#2D4039] text-xs">
               <div className="font-bold text-[#24312D] dark:text-[#EDF5F1] mb-1 flex items-center gap-1.5">
-                <Wrench className="w-3.5 h-3.5 text-blue-500" />
+                <Wrench className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
                 <span>Water Sub-Meter Spike</span>
               </div>
               <p className="text-[11px] text-[#64736C] dark:text-[#9EB2A9] leading-relaxed">
