@@ -14,8 +14,8 @@ interface GSAPEntranceProps {
 export const GSAPEntrance: React.FC<GSAPEntranceProps> = ({
   children,
   selector = '.bento-card',
-  stagger = 0.05,
-  delay = 0.05,
+  stagger = 0.025,
+  delay = 0,
   className = '',
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -34,16 +34,16 @@ export const GSAPEntrance: React.FC<GSAPEntranceProps> = ({
           elements,
           {
             opacity: 0,
-            y: 18,
+            y: 8,
           },
           {
             opacity: 1,
             y: 0,
-            duration: 0.55,
+            duration: 0.24,
             stagger,
             delay,
-            ease: 'power3.out',
-            clearProps: 'transform',
+            ease: 'power2.out',
+            clearProps: 'opacity,transform',
           }
         );
       }

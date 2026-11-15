@@ -124,7 +124,7 @@ export const SignUpView: React.FC = () => {
           <h1 className="text-xl font-medium tracking-tight text-[#F5F2E9]">
             Kejahub
           </h1>
-          <p className="text-[11px] uppercase tracking-widest text-white/70 mt-0.5">
+          <p className="text-[11px] uppercase tracking-widest text-white/75 mt-0.5">
             Property AI Operations
           </p>
         </div>
@@ -425,7 +425,7 @@ export const SignUpView: React.FC = () => {
           </button>
         </div>
 
-        <div className="mt-4 text-center text-xs text-white/70">
+        <div className="mt-4 text-center text-xs text-white/75">
           Already registered?{' '}
           <Link
             href="/login"
@@ -437,7 +437,7 @@ export const SignUpView: React.FC = () => {
       </AuthGlassCard>
 
       {/* Subtle Bottom Attribution */}
-      <p className="mt-5 text-center text-xs text-white/70 tracking-wide">
+      <p className="mt-5 text-center text-xs text-white/75 tracking-wide">
         &copy; {new Date().getFullYear()} Kejahub • Kenya Property Operations
       </p>
     </div>

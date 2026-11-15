@@ -17,7 +17,6 @@ export const DemoRoleSwitcher: React.FC = () => {
   return (
     <div className="bg-[#173C32]/10 dark:bg-[#79C8A4]/10 border-b border-[#173C32]/20 dark:border-[#79C8A4]/20 px-4 py-2 text-xs flex flex-col xl:flex-row xl:items-center justify-between gap-2">
       <div className="flex flex-wrap items-center gap-2 min-w-0">
-        <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" aria-hidden="true" />
         <span className="font-semibold text-[#173C32] dark:text-[#79C8A4] flex items-center gap-1.5 whitespace-nowrap">
           <ShieldCheck className="w-3.5 h-3.5 shrink-0" aria-hidden="true" /> Demo RBAC Simulator:
         </span>

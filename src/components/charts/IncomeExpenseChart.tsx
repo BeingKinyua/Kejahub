@@ -32,12 +32,20 @@ const defaultData = [
 export const IncomeExpenseChart: React.FC<IncomeExpenseChartProps> = ({
   data = defaultData,
 }) => {
+  if (!data || data.length === 0) {
+    return (
+      <div className="w-full h-56 flex items-center justify-center text-xs text-[#64736C] dark:text-[#9EB2A9]">
+        No income or expense history recorded yet.
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-56">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}
-          margin={{ top: 10, right: 10, left: -15, bottom: 0 }}
+          margin={{ top: 10, right: 12, left: -10, bottom: 0 }}
         >
           <CartesianGrid
             strokeDasharray="3 3"
@@ -54,7 +62,7 @@ export const IncomeExpenseChart: React.FC<IncomeExpenseChartProps> = ({
           />
           <YAxis
             stroke="currentColor"
-            className="text-xs text-[#64736C] dark:text-[#9EB2A9]"
+            className="text-xs text-[#64736C] dark:text-[#9EB2A9] tabular-nums"
             tickLine={false}
             axisLine={false}
             tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
@@ -66,6 +74,7 @@ export const IncomeExpenseChart: React.FC<IncomeExpenseChartProps> = ({
               borderRadius: '0.75rem',
               color: 'var(--text-primary)',
               fontSize: '12px',
+              fontVariantNumeric: 'tabular-nums',
             }}
             formatter={(value: any) => [
               `KES ${Number(value).toLocaleString()}`,
@@ -81,7 +90,7 @@ export const IncomeExpenseChart: React.FC<IncomeExpenseChartProps> = ({
           <Bar
             name="Collected Income"
             dataKey="income"
-            fill="#2F8A68"
+            fill="var(--accent-green)"
             radius={[4, 4, 0, 0]}
             maxBarSize={22}
           />

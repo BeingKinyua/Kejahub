@@ -7,19 +7,12 @@ import {
   ShieldCheck,
   CheckCircle2,
   Clock,
-  AlertTriangle,
-  Play,
-  X,
   ListTodo,
-  Settings2,
   History,
   Check,
-  ArrowRight,
   ShieldAlert,
   Sliders,
-  ChevronRight,
 } from 'lucide-react';
-import { formatKES } from '../../utils/propertyMath';
 
 import { GSAPEntrance } from '../animation/GSAPEntrance';
 import { StatusBadge } from '../ui/StatusBadge';
@@ -29,15 +22,9 @@ export const AgentWorkspaceView: React.FC = () => {
     agentTasks,
     automationRules,
     auditLogs,
-    tenants,
-    properties,
-    units,
-    transactions,
     approveAgentTask,
     rejectAgentTask,
     toggleAutomationRule,
-    currentUser,
-    addToast,
     setIsAssistantOpen,
   } = useProperty();
 
@@ -81,9 +68,7 @@ export const AgentWorkspaceView: React.FC = () => {
               <h1 className="text-xl sm:text-2xl font-extrabold text-[#24312D] dark:text-[#EDF5F1] tracking-tight text-balance">
                 AI Agent Hub & Sentinel
               </h1>
-              <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded-full whitespace-nowrap shrink-0">
-                Active Guardian
-              </span>
+              <StatusBadge label="Active Guardian" variant="evergreen" size="sm" />
             </div>
             <p className="text-xs sm:text-sm text-[#64736C] dark:text-[#9EB2A9]">
               Autonomous task orchestration, plan verification, and human authorization control
@@ -94,7 +79,7 @@ export const AgentWorkspaceView: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsAssistantOpen(true)}
-          className="flex items-center gap-1.5 px-4 py-2 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-sm shrink-0 self-start sm:self-auto min-h-[38px]"
+          className="flex items-center gap-1.5 px-4 py-2 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-sm shrink-0 self-start sm:self-auto min-h-[38px] cursor-pointer"
         >
           <Bot className="w-4 h-4" aria-hidden="true" />
           <span>Launch Chat Session</span>
@@ -124,7 +109,7 @@ export const AgentWorkspaceView: React.FC = () => {
               aria-selected={isActive}
               aria-controls={`agent-panel-${tab.id}`}
               onClick={() => setActiveTab(tab.id as 'TASKS' | 'APPROVALS' | 'AUTOMATIONS' | 'AUDIT')}
-              className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap shrink-0 ${
+              className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F8A68] ${
                 isActive
                   ? 'bg-[#173C32] text-white dark:bg-[#79C8A4] dark:text-[#111A17] shadow-xs'
                   : 'text-[#64736C] dark:text-[#9EB2A9] hover:text-[#24312D] dark:hover:text-[#EDF5F1] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D]'
@@ -134,7 +119,7 @@ export const AgentWorkspaceView: React.FC = () => {
               <span>{tab.label}</span>
               {tab.badge !== undefined && (
                 <span
-                  className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold tabular-nums ${
+                  className={`text-[10px] px-1.5 py-0.5 rounded-md font-bold tabular-nums ${
                     isActive
                       ? 'bg-white/20 text-white dark:bg-black/20 dark:text-[#111A17]'
                       : 'bg-[#E2E8E5] dark:bg-[#2D4039] text-[#24312D] dark:text-[#EDF5F1]'
@@ -180,9 +165,12 @@ export const AgentWorkspaceView: React.FC = () => {
                 >
                   <div>
                     <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                      <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 px-2 py-0.5 rounded-full flex items-center gap-1 whitespace-nowrap">
-                        <Clock className="w-3 h-3" aria-hidden="true" /> Awaiting Landlord Signoff
-                      </span>
+                      <StatusBadge
+                        label="Awaiting Landlord Signoff"
+                        variant="warning"
+                        size="sm"
+                        icon={<Clock className="w-3 h-3" />}
+                      />
                       <span className="text-xs font-mono text-[#64736C] dark:text-[#9EB2A9] tabular-nums">#{task.id}</span>
                     </div>
 
@@ -196,8 +184,8 @@ export const AgentWorkspaceView: React.FC = () => {
                     {/* Proposed changes summary */}
                     {task.proposedChangesSummary && (
                       <div className="mt-3 p-3 bg-[#F6F8F6] dark:bg-[#202D28] rounded-xl text-xs border border-[#E2E8E5] dark:border-[#2D4039]">
-                        <span className="text-[10px] font-bold uppercase text-[#64736C] dark:text-[#9EB2A9] block mb-1">
-                          Impact & Side Effects:
+                        <span className="text-[11px] font-semibold text-[#64736C] dark:text-[#9EB2A9] block mb-1">
+                          Impact & Side Effects
                         </span>
                         <p className="text-[#24312D] dark:text-[#EDF5F1]">{task.proposedChangesSummary}</p>
                       </div>
@@ -205,8 +193,8 @@ export const AgentWorkspaceView: React.FC = () => {
 
                     {/* Plan Steps preview */}
                     <div className="mt-4 space-y-1.5">
-                      <span className="text-[10px] font-bold uppercase text-[#64736C] dark:text-[#9EB2A9] block">
-                        Execution Plan:
+                      <span className="text-[11px] font-semibold text-[#64736C] dark:text-[#9EB2A9] block">
+                        Execution Plan
                       </span>
                       {task.planSteps.map((step, idx) => (
                         <div key={idx} className="flex items-center gap-2 text-xs">
@@ -237,14 +225,14 @@ export const AgentWorkspaceView: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleReject(task)}
-                      className="px-3.5 py-2 text-xs font-semibold text-[#64736C] dark:text-[#9EB2A9] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] rounded-xl transition-colors"
+                      className="px-3.5 py-2 text-xs font-semibold text-[#64736C] dark:text-[#9EB2A9] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] rounded-xl transition-colors cursor-pointer"
                     >
                       Reject / Dismiss
                     </button>
                     <button
                       type="button"
                       onClick={() => handleApprove(task)}
-                      className="px-4 py-2 text-xs font-semibold text-white bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] dark:text-[#111A17] rounded-xl shadow-xs flex items-center gap-1.5 transition-all"
+                      className="px-4 py-2 text-xs font-semibold text-white bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] dark:text-[#111A17] rounded-xl shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
                     >
                       <Check className="w-3.5 h-3.5" aria-hidden="true" />
                       <span>Approve & Execute Task</span>
@@ -270,7 +258,7 @@ export const AgentWorkspaceView: React.FC = () => {
                 aria-label="Filter agent tasks by status"
                 value={taskFilter}
                 onChange={(e) => setTaskFilter(e.target.value as 'ALL' | AgentTaskStatus)}
-                className="text-xs bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-lg px-2 py-1 text-[#24312D] dark:text-[#EDF5F1]"
+                className="text-xs bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-lg px-2 py-1 text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68] cursor-pointer"
               >
                 <option value="ALL">All Statuses</option>
                 <option value="AWAITING_APPROVAL">Awaiting Approval</option>
@@ -287,7 +275,7 @@ export const AgentWorkspaceView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setTaskFilter('ALL')}
-                    className="mt-3 px-3 py-1.5 rounded-lg bg-[#F0F4F2] hover:bg-[#E2E8E5] dark:bg-[#24332D] dark:hover:bg-[#2D4039] text-[#24312D] dark:text-[#EDF5F1] font-semibold"
+                    className="mt-3 px-3 py-1.5 rounded-lg bg-[#F0F4F2] hover:bg-[#E2E8E5] dark:bg-[#24332D] dark:hover:bg-[#2D4039] text-[#24312D] dark:text-[#EDF5F1] font-semibold cursor-pointer"
                   >
                     Show all tasks
                   </button>
@@ -303,7 +291,7 @@ export const AgentWorkspaceView: React.FC = () => {
                     key={t.id}
                     aria-current={isSelected ? 'true' : undefined}
                     onClick={() => setSelectedTask(t)}
-                    className={`w-full text-left p-3 rounded-xl border transition-all text-xs ${
+                    className={`w-full text-left p-3 rounded-xl border transition-all text-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F8A68] ${
                       isSelected
                         ? 'border-[#2F8A68] bg-[#173C32]/5 dark:bg-[#79C8A4]/10 shadow-xs'
                         : 'border-[#E2E8E5] dark:border-[#2D4039] hover:border-[#2F8A68]/60'
@@ -311,17 +299,17 @@ export const AgentWorkspaceView: React.FC = () => {
                   >
                     <div className="flex items-center justify-between gap-2 mb-1">
                       <span className="text-[10px] font-mono text-[#64736C] dark:text-[#9EB2A9] tabular-nums">#{t.id}</span>
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap ${
+                      <StatusBadge
+                        label={t.status.replace(/_/g, ' ')}
+                        variant={
                           t.status === 'COMPLETED'
-                            ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                            ? 'success'
                             : t.status === 'AWAITING_APPROVAL'
-                            ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
-                            : 'bg-[#F0F4F2] text-[#64736C] dark:bg-[#24332D] dark:text-[#9EB2A9]'
-                        }`}
-                      >
-                        {t.status.replace(/_/g, ' ')}
-                      </span>
+                            ? 'warning'
+                            : 'neutral'
+                        }
+                        size="sm"
+                      />
                     </div>
                     <div className="font-bold text-[#24312D] dark:text-[#EDF5F1] line-clamp-1">{t.title}</div>
                     <p className="text-[11px] text-[#64736C] dark:text-[#9EB2A9] line-clamp-2 mt-0.5">
@@ -340,7 +328,7 @@ export const AgentWorkspaceView: React.FC = () => {
               <div className="space-y-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#267256] dark:text-[#79C8A4]">
+                    <span className="text-[11px] font-semibold text-[#267256] dark:text-[#79C8A4]">
                       {selectedTask.category.replace(/_/g, ' ')} • {selectedTask.safetyLevel}
                     </span>
                     <h2 className="text-lg font-extrabold text-[#24312D] dark:text-[#EDF5F1] mt-0.5 wrap-anywhere">
@@ -351,23 +339,23 @@ export const AgentWorkspaceView: React.FC = () => {
                     </p>
                   </div>
 
-                  <span
-                    className={`text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap shrink-0 ${
+                  <StatusBadge
+                    label={selectedTask.status.replace(/_/g, ' ')}
+                    variant={
                       selectedTask.status === 'COMPLETED'
-                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                        ? 'success'
                         : selectedTask.status === 'AWAITING_APPROVAL'
-                        ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
-                        : 'bg-[#F0F4F2] text-[#24312D] dark:bg-[#24332D] dark:text-[#EDF5F1]'
-                    }`}
-                  >
-                    {selectedTask.status.replace(/_/g, ' ')}
-                  </span>
+                        ? 'warning'
+                        : 'neutral'
+                    }
+                    size="md"
+                  />
                 </div>
 
                 {/* Requested Outcome */}
                 <div className="p-3.5 bg-[#F6F8F6] dark:bg-[#202D28] rounded-xl text-xs space-y-1">
-                  <span className="font-bold text-[#64736C] dark:text-[#9EB2A9] uppercase text-[10px] block">
-                    Requested Goal:
+                  <span className="font-semibold text-[#64736C] dark:text-[#9EB2A9] text-[11px] block">
+                    Requested Goal
                   </span>
                   <p className="text-[#24312D] dark:text-[#EDF5F1] leading-relaxed font-medium">
                     {selectedTask.requestedOutcome}
@@ -376,7 +364,7 @@ export const AgentWorkspaceView: React.FC = () => {
 
                 {/* Execution Plan Checklist */}
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#64736C] dark:text-[#9EB2A9] mb-2.5">
+                  <h4 className="text-xs font-semibold text-[#64736C] dark:text-[#9EB2A9] mb-2.5">
                     Plan Execution Steps
                   </h4>
                   <div className="space-y-2">
@@ -414,7 +402,7 @@ export const AgentWorkspaceView: React.FC = () => {
                 {/* Result Summary */}
                 {selectedTask.resultSummary && (
                   <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-500/20 text-xs text-emerald-800 dark:text-emerald-300">
-                    <span className="font-bold block text-[10px] uppercase">Execution Result:</span>
+                    <span className="font-semibold block text-[11px]">Execution Result</span>
                     <p className="mt-0.5">{selectedTask.resultSummary}</p>
                   </div>
                 )}
@@ -425,14 +413,14 @@ export const AgentWorkspaceView: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleReject(selectedTask)}
-                      className="px-4 py-2 text-xs font-semibold text-[#64736C] dark:text-[#9EB2A9] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] rounded-xl"
+                      className="px-4 py-2 text-xs font-semibold text-[#64736C] dark:text-[#9EB2A9] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] rounded-xl cursor-pointer"
                     >
                       Reject Task
                     </button>
                     <button
                       type="button"
                       onClick={() => handleApprove(selectedTask)}
-                      className="px-5 py-2 text-xs font-semibold text-white bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] dark:text-[#111A17] rounded-xl flex items-center gap-1.5 shadow-xs"
+                      className="px-5 py-2 text-xs font-semibold text-white bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] dark:text-[#111A17] rounded-xl flex items-center gap-1.5 shadow-xs cursor-pointer"
                     >
                       <Check className="w-3.5 h-3.5" aria-hidden="true" />
                       <span>Authorize Execution</span>
@@ -470,9 +458,7 @@ export const AgentWorkspaceView: React.FC = () => {
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="font-bold text-[#24312D] dark:text-[#EDF5F1] text-sm">{rule.name}</span>
                       {rule.requiresLandlordApproval && (
-                        <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-100 dark:bg-amber-950 px-2 py-0.5 rounded-full whitespace-nowrap">
-                          Approval Required
-                        </span>
+                        <StatusBadge label="Approval Required" variant="warning" size="sm" />
                       )}
                     </div>
                     <p className="text-[#64736C] dark:text-[#9EB2A9] leading-relaxed">{rule.description}</p>
@@ -486,7 +472,7 @@ export const AgentWorkspaceView: React.FC = () => {
                     aria-pressed={rule.enabled}
                     aria-label={`${rule.enabled ? 'Disable' : 'Enable'} automation rule ${rule.name}`}
                     onClick={() => toggleAutomationRule(rule.id)}
-                    className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all shrink-0 self-start ${
+                    className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all shrink-0 self-start cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F8A68] ${
                       rule.enabled
                         ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-200 dark:hover:bg-emerald-900'
                         : 'bg-[#E2E8E5] dark:bg-[#2D4039] text-[#64736C] dark:text-[#9EB2A9] hover:text-[#24312D] dark:hover:text-[#EDF5F1]'

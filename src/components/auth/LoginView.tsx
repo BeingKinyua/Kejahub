@@ -18,6 +18,7 @@ import {
   Building2,
   ChevronDown,
   Sparkles,
+  Users,
 } from 'lucide-react';
 
 export const LoginView: React.FC = () => {
@@ -131,7 +132,7 @@ export const LoginView: React.FC = () => {
           <h1 className="text-xl font-medium tracking-tight text-[#F5F2E9]">
             Kejahub
           </h1>
-          <p className="text-[11px] uppercase tracking-widest text-white/70 mt-0.5">
+          <p className="text-[11px] uppercase tracking-widest text-white/75 mt-0.5">
             Property AI Operations
           </p>
         </div>
@@ -345,7 +346,7 @@ export const LoginView: React.FC = () => {
                   </div>
                   <ArrowRight className="w-3 h-3 text-white/60 group-hover:text-white group-hover:translate-x-0.5 transition-all shrink-0" aria-hidden="true" />
                 </div>
-                <p className="text-[11px] text-white/70 pl-5.5 mt-0.5">
+                <p className="text-[11px] text-white/75 pl-5.5 mt-0.5">
                   Mwangi Holdings • 3 properties • Ready data
                 </p>
               </button>
@@ -363,19 +364,14 @@ export const LoginView: React.FC = () => {
               >
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 min-w-0">
-                    <span
-                      aria-hidden="true"
-                      className="w-3.5 h-3.5 rounded-full bg-white/20 flex items-center justify-center text-[9px] text-white shrink-0"
-                    >
-                      P
-                    </span>
+                    <Users className="w-3.5 h-3.5 text-[#EAE7DD] shrink-0" aria-hidden="true" />
                     <span className="text-xs font-medium text-[#F5F2E9] truncate">
                       Sarah Omondi (Manager)
                     </span>
                   </div>
                   <ArrowRight className="w-3 h-3 text-white/60 group-hover:text-white group-hover:translate-x-0.5 transition-all shrink-0" aria-hidden="true" />
                 </div>
-                <p className="text-[11px] text-white/70 pl-5.5 mt-0.5">
+                <p className="text-[11px] text-white/75 pl-5.5 mt-0.5">
                   Operations, maintenance triage &amp; payments
                 </p>
               </button>
@@ -385,7 +381,7 @@ export const LoginView: React.FC = () => {
       </AuthGlassCard>
 
       {/* Subtle Bottom Attribution */}
-      <p className="mt-5 text-center text-xs text-white/70 tracking-wide">
+      <p className="mt-5 text-center text-xs text-white/75 tracking-wide">
         &copy; {new Date().getFullYear()} Kejahub • Kenya Property Operations
       </p>
     </div>

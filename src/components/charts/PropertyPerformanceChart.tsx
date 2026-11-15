@@ -29,13 +29,21 @@ const defaultData = [
 export const PropertyPerformanceChart: React.FC<PropertyPerformanceChartProps> = ({
   data = defaultData,
 }) => {
+  if (!data || data.length === 0) {
+    return (
+      <div className="w-full h-56 flex items-center justify-center text-xs text-[#64736C] dark:text-[#9EB2A9]">
+        Add properties to compare collection and occupancy velocity.
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-56">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}
           layout="vertical"
-          margin={{ top: 10, right: 20, left: 20, bottom: 0 }}
+          margin={{ top: 10, right: 16, left: 4, bottom: 0 }}
         >
           <CartesianGrid
             strokeDasharray="3 3"
@@ -48,13 +56,14 @@ export const PropertyPerformanceChart: React.FC<PropertyPerformanceChartProps> =
             domain={[0, 100]}
             unit="%"
             stroke="currentColor"
-            className="text-xs text-[#64736C] dark:text-[#9EB2A9]"
+            className="text-xs text-[#64736C] dark:text-[#9EB2A9] tabular-nums"
             tickLine={false}
             axisLine={false}
           />
           <YAxis
             type="category"
             dataKey="name"
+            width={92}
             stroke="currentColor"
             className="text-xs text-[#24312D] dark:text-[#EDF5F1] font-medium"
             tickLine={false}
@@ -67,6 +76,7 @@ export const PropertyPerformanceChart: React.FC<PropertyPerformanceChartProps> =
               borderRadius: '0.75rem',
               color: 'var(--text-primary)',
               fontSize: '12px',
+              fontVariantNumeric: 'tabular-nums',
             }}
             formatter={(value: any) => [`${value}%`, '']}
           />
@@ -79,14 +89,14 @@ export const PropertyPerformanceChart: React.FC<PropertyPerformanceChartProps> =
           <Bar
             name="Collection Rate"
             dataKey="collectionRate"
-            fill="#2F8A68"
+            fill="var(--accent-green)"
             radius={[0, 4, 4, 0]}
             maxBarSize={14}
           />
           <Bar
             name="Occupancy"
             dataKey="occupancyRate"
-            fill="#173C32"
+            fill="var(--chart-5)"
             radius={[0, 4, 4, 0]}
             maxBarSize={14}
           />

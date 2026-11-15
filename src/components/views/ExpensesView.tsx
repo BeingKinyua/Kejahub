@@ -1,22 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useProperty } from '../../context/PropertyContext';
-import { Expense, ExpenseCategory } from '../../types';
+import { ExpenseCategory } from '../../types';
 import {
   CreditCard,
   Plus,
   Search,
-  Filter,
-  DollarSign,
-  Building,
-  CheckCircle2,
-  Calendar,
-  Sparkles,
   Paperclip,
-  Tag,
   X,
 } from 'lucide-react';
 import { formatKES } from '../../utils/propertyMath';
 import { GSAPEntrance } from '../animation/GSAPEntrance';
+import { StatusBadge } from '../ui/StatusBadge';
 
 export const ExpensesView: React.FC = () => {
   const { expenses, properties, addExpense, currentUser, addToast } = useProperty();
@@ -111,7 +105,7 @@ export const ExpensesView: React.FC = () => {
             <button
               type="button"
               onClick={() => setModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-sm min-h-[38px]"
+              className="flex items-center gap-1.5 px-3.5 py-2 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-sm min-h-[38px] cursor-pointer"
             >
               <Plus className="w-4 h-4" aria-hidden="true" />
               <span>Record Expense</span>
@@ -152,7 +146,7 @@ export const ExpensesView: React.FC = () => {
               id="expense-category-filter"
               value={selectedCat}
               onChange={(e) => setSelectedCat(e.target.value as 'ALL' | ExpenseCategory)}
-              className="px-3 py-2 bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+              className="px-3 py-2 bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68] cursor-pointer"
             >
               <option value="ALL">All Categories</option>
               <option value="SECURITY_CARETAKER">Security / Caretaker</option>
@@ -182,7 +176,7 @@ export const ExpensesView: React.FC = () => {
                   setSearchTerm('');
                   setSelectedCat('ALL');
                 }}
-                className="mt-4 px-4 py-2 text-xs font-semibold rounded-xl bg-[#F0F4F2] hover:bg-[#E2E8E5] dark:bg-[#24332D] dark:hover:bg-[#2D4039] text-[#24312D] dark:text-[#EDF5F1] transition-colors"
+                className="mt-4 px-4 py-2 text-xs font-semibold rounded-xl bg-[#F0F4F2] hover:bg-[#E2E8E5] dark:bg-[#24332D] dark:hover:bg-[#2D4039] text-[#24312D] dark:text-[#EDF5F1] transition-colors cursor-pointer"
               >
                 Reset filters
               </button>
@@ -191,7 +185,7 @@ export const ExpensesView: React.FC = () => {
         ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-[#24312D] dark:text-[#EDF5F1]">
-            <thead className="bg-[#F6F8F6] dark:bg-[#24332D] uppercase text-[11px] font-bold text-[#64736C] dark:text-[#9EB2A9] border-b border-[#E2E8E5] dark:border-[#2D4039]">
+            <thead className="bg-[#F6F8F6] dark:bg-[#24332D] text-[11px] font-semibold tracking-wide text-[#64736C] dark:text-[#9EB2A9] border-b border-[#E2E8E5] dark:border-[#2D4039]">
               <tr>
                 <th className="px-4 py-3">Date</th>
                 <th className="px-4 py-3">Expense Description</th>
@@ -216,9 +210,11 @@ export const ExpensesView: React.FC = () => {
                     </td>
 
                     <td className="px-4 py-3.5">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#F0F4F2] dark:bg-[#24332D] text-[#24312D] dark:text-[#EDF5F1] whitespace-nowrap">
-                        {exp.category.replace(/_/g, ' ')}
-                      </span>
+                      <StatusBadge
+                        label={exp.category.replace(/_/g, ' ')}
+                        variant="neutral"
+                        size="sm"
+                      />
                     </td>
 
                     <td className="px-4 py-3.5 font-medium text-[#24312D] dark:text-[#EDF5F1]">
@@ -268,7 +264,7 @@ export const ExpensesView: React.FC = () => {
                 type="button"
                 aria-label="Close record expense modal"
                 onClick={() => setModalOpen(false)}
-                className="p-1.5 rounded-lg text-[#64736C] dark:text-[#9EB2A9] hover:text-[#24312D] dark:hover:text-[#EDF5F1]"
+                className="p-1.5 rounded-lg text-[#64736C] dark:text-[#9EB2A9] hover:text-[#24312D] dark:hover:text-[#EDF5F1] cursor-pointer"
               >
                 <X className="w-4 h-4" aria-hidden="true" />
               </button>
@@ -289,11 +285,11 @@ export const ExpensesView: React.FC = () => {
                   value={description}
                   onChange={(e) => handleDescriptionChange(e.target.value)}
                   placeholder="e.g. Kenya Power Common Area Tokens"
-                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label htmlFor="expense-category" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                     Category (AI Classified)
@@ -302,7 +298,7 @@ export const ExpensesView: React.FC = () => {
                     id="expense-category"
                     value={category}
                     onChange={(e) => setCategory(e.target.value as ExpenseCategory)}
-                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68] cursor-pointer"
                   >
                     <option value="SECURITY_CARETAKER">Security / Wages</option>
                     <option value="KPLC_ELECTRICITY">KPLC Electricity</option>
@@ -323,12 +319,12 @@ export const ExpensesView: React.FC = () => {
                     required
                     value={amount}
                     onChange={(e) => setAmount(Number(e.target.value))}
-                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] tabular-nums"
+                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label htmlFor="expense-property" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                     Property
@@ -337,7 +333,7 @@ export const ExpensesView: React.FC = () => {
                     id="expense-property"
                     value={propertyId}
                     onChange={(e) => setPropertyId(e.target.value)}
-                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68] cursor-pointer"
                   >
                     {properties.map((p) => (
                       <option key={p.id} value={p.id}>
@@ -358,7 +354,7 @@ export const ExpensesView: React.FC = () => {
                     value={vendor}
                     onChange={(e) => setVendor(e.target.value)}
                     placeholder="e.g. Kenya Power Ltd"
-                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
               </div>
@@ -372,7 +368,7 @@ export const ExpensesView: React.FC = () => {
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] tabular-nums"
+                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 />
               </div>
 
@@ -380,13 +376,13 @@ export const ExpensesView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 text-xs font-semibold text-[#64736C] dark:text-[#9EB2A9] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] rounded-xl"
+                  className="px-4 py-2 text-xs font-semibold text-[#64736C] dark:text-[#9EB2A9] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] rounded-xl cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-semibold text-white bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] dark:text-[#111A17] rounded-xl"
+                  className="px-4 py-2 text-xs font-semibold text-white bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] dark:text-[#111A17] rounded-xl cursor-pointer"
                 >
                   Record Expense
                 </button>

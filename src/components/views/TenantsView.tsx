@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { formatKES } from '../../utils/propertyMath';
 import { GSAPEntrance } from '../animation/GSAPEntrance';
+import { StatusBadge } from '../ui/StatusBadge';
 
 export const TenantsView: React.FC = () => {
   const {
@@ -224,7 +225,7 @@ export const TenantsView: React.FC = () => {
         <div className="bg-white dark:bg-[#1B2622] rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-[#24312D] dark:text-[#EDF5F1]">
-              <thead className="bg-[#F6F8F6] dark:bg-[#24332D] uppercase text-[10px] font-bold text-[#64736C] dark:text-[#9EB2A9] border-b border-[#E2E8E5] dark:border-[#2D4039]">
+              <thead className="bg-[#F6F8F6] dark:bg-[#24332D] uppercase text-[11px] font-semibold tracking-wide text-[#64736C] dark:text-[#9EB2A9] border-b border-[#E2E8E5] dark:border-[#2D4039]">
                 <tr>
                   <th className="px-4 py-3">Tenant Details</th>
                   <th className="px-4 py-3">Assigned Unit</th>
@@ -311,17 +312,17 @@ export const TenantsView: React.FC = () => {
                       </td>
 
                       <td className="px-4 py-3.5">
-                        <span
-                          className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${
+                        <StatusBadge
+                          label={balanceInfo.status}
+                          variant={
                             balanceInfo.status === 'PAID'
-                              ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
+                              ? 'success'
                               : balanceInfo.status === 'CREDIT'
-                              ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300'
-                              : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300'
-                          }`}
-                        >
-                          {balanceInfo.status}
-                        </span>
+                              ? 'info'
+                              : 'warning'
+                          }
+                          size="sm"
+                        />
                       </td>
 
                       <td className="px-4 py-3.5 text-right">
@@ -415,9 +416,18 @@ export const TenantsView: React.FC = () => {
                       >
                         {formatKES(balanceInfo.balance)}
                       </span>
-                      <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-white dark:bg-[#1B2622] inline-block mt-0.5">
-                        {balanceInfo.status}
-                      </span>
+                      <StatusBadge
+                        label={balanceInfo.status}
+                        variant={
+                          balanceInfo.status === 'PAID'
+                            ? 'success'
+                            : balanceInfo.status === 'CREDIT'
+                            ? 'info'
+                            : 'warning'
+                        }
+                        size="sm"
+                        className="mt-1"
+                      />
                     </div>
                   </div>
                 );
@@ -426,13 +436,11 @@ export const TenantsView: React.FC = () => {
               {/* WhatsApp Communication Timeline */}
               <div className="mt-6">
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#64736C] dark:text-[#9EB2A9] flex items-center gap-1.5">
+                  <h3 className="text-xs font-bold text-[#64736C] dark:text-[#9EB2A9] flex items-center gap-1.5">
                     <MessageSquare className="w-4 h-4 text-[#267256] dark:text-[#79C8A4]" aria-hidden="true" />
                     <span>WhatsApp Thread (Simulated)</span>
                   </h3>
-                  <span className="text-[10px] font-medium bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded-full">
-                    Tenant WhatsApp Link
-                  </span>
+                  <StatusBadge label="WhatsApp Link" variant="evergreen" size="sm" />
                 </div>
 
                 <div className="bg-[#EFEAE2]/30 dark:bg-[#111A17]/50 p-3.5 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] space-y-3 max-h-56 overflow-y-auto">
@@ -511,7 +519,7 @@ export const TenantsView: React.FC = () => {
 
               {/* Maintenance History */}
               <div className="mt-6">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#64736C] dark:text-[#9EB2A9] mb-2">
+                <h3 className="text-xs font-bold text-[#64736C] dark:text-[#9EB2A9] mb-2">
                   Maintenance Reported
                 </h3>
                 <div className="space-y-2">
@@ -526,9 +534,17 @@ export const TenantsView: React.FC = () => {
                           <div className="font-semibold text-[#24312D] dark:text-[#EDF5F1] truncate">{m.title}</div>
                           <span className="text-[11px] text-[#64736C] dark:text-[#9EB2A9] tabular-nums">Est: {formatKES(m.estimatedCost)}</span>
                         </div>
-                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 shrink-0 whitespace-nowrap">
-                          {m.status}
-                        </span>
+                        <StatusBadge
+                          label={m.status.replace(/_/g, ' ')}
+                          variant={
+                            m.status === 'RESOLVED'
+                              ? 'success'
+                              : m.status === 'AWAITING_APPROVAL'
+                              ? 'error'
+                              : 'neutral'
+                          }
+                          size="sm"
+                        />
                       </div>
                     ))}
                   {maintenanceTickets.filter((m) => m.tenantId === selectedTenant.id).length === 0 && (
@@ -605,7 +621,7 @@ export const TenantsView: React.FC = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Victor Mutiso"
-                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 />
               </div>
 
@@ -621,7 +637,7 @@ export const TenantsView: React.FC = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+254 7..."
-                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
 
@@ -635,7 +651,7 @@ export const TenantsView: React.FC = () => {
                     value={nationalId}
                     onChange={(e) => setNationalId(e.target.value)}
                     placeholder="e.g. 31892019"
-                    className="w-full px-3 py-2 text-sm tabular-nums bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm tabular-nums bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
               </div>
@@ -652,7 +668,7 @@ export const TenantsView: React.FC = () => {
                       setPropertyId(e.target.value);
                       setUnitId('');
                     }}
-                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   >
                     {properties.map((p) => (
                       <option key={p.id} value={p.id}>
@@ -671,7 +687,7 @@ export const TenantsView: React.FC = () => {
                     required
                     value={unitId}
                     onChange={(e) => setUnitId(e.target.value)}
-                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   >
                     <option value="">Select vacant unit</option>
                     {units
@@ -695,7 +711,7 @@ export const TenantsView: React.FC = () => {
                     type="date"
                     value={leaseStart}
                     onChange={(e) => setLeaseStart(e.target.value)}
-                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
 
@@ -708,7 +724,7 @@ export const TenantsView: React.FC = () => {
                     type="date"
                     value={leaseEnd}
                     onChange={(e) => setLeaseEnd(e.target.value)}
-                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
               </div>

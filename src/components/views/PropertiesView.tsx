@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { formatKES } from '../../utils/propertyMath';
 import { GSAPEntrance } from '../animation/GSAPEntrance';
+import { StatusBadge } from '../ui/StatusBadge';
 
 export const PropertiesView: React.FC = () => {
   const {
@@ -233,8 +234,8 @@ export const PropertiesView: React.FC = () => {
                 <div className="w-full">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#267256] dark:text-[#79C8A4]">
-                        {prop.type}
+                      <span className="text-[11px] font-semibold capitalize text-[#267256] dark:text-[#79C8A4]">
+                        {prop.type.replace(/_/g, ' ').toLowerCase()}
                       </span>
                       <h3 className="text-base font-bold text-[#24312D] dark:text-[#EDF5F1] group-hover:text-[#267256] dark:group-hover:text-[#79C8A4] transition-colors">
                         {prop.name}
@@ -246,9 +247,12 @@ export const PropertiesView: React.FC = () => {
                     </div>
 
                     <div className="text-right shrink-0">
-                      <span className="inline-block text-xs font-bold tabular-nums bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded-full whitespace-nowrap">
-                        {occRate}% Occupied
-                      </span>
+                      <StatusBadge
+                        label={`${occRate}% Occupied`}
+                        variant={occRate >= 80 ? 'success' : 'warning'}
+                        size="sm"
+                        className="tabular-nums"
+                      />
                     </div>
                   </div>
 
@@ -294,7 +298,7 @@ export const PropertiesView: React.FC = () => {
         <div className="bg-white dark:bg-[#1B2622] rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-[#24312D] dark:text-[#EDF5F1]">
-              <thead className="bg-[#F6F8F6] dark:bg-[#24332D] uppercase text-[10px] font-bold text-[#64736C] dark:text-[#9EB2A9] border-b border-[#E2E8E5] dark:border-[#2D4039]">
+              <thead className="bg-[#F6F8F6] dark:bg-[#24332D] uppercase text-[11px] font-semibold tracking-wide text-[#64736C] dark:text-[#9EB2A9] border-b border-[#E2E8E5] dark:border-[#2D4039]">
                 <tr>
                   <th className="px-4 py-3">Property Name</th>
                   <th className="px-4 py-3">Location</th>
@@ -367,8 +371,8 @@ export const PropertiesView: React.FC = () => {
               {/* Drawer Header */}
               <div className="flex items-start justify-between gap-3 pb-4 border-b border-[#E2E8E5] dark:border-[#2D4039]">
                 <div className="min-w-0">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#267256] dark:text-[#79C8A4]">
-                    {selectedProperty.type}
+                  <span className="text-[11px] font-semibold capitalize text-[#267256] dark:text-[#79C8A4]">
+                    {selectedProperty.type.replace(/_/g, ' ').toLowerCase()}
                   </span>
                   <h2 id="property-drawer-title" className="text-xl font-extrabold text-[#24312D] dark:text-[#EDF5F1]">
                     {selectedProperty.name}
@@ -458,21 +462,21 @@ export const PropertiesView: React.FC = () => {
                             </div>
                           </div>
 
-                          <div className="text-right shrink-0">
+                          <div className="text-right shrink-0 flex flex-col items-end gap-1">
                             <div className="font-bold tabular-nums text-[#24312D] dark:text-[#EDF5F1]">
                               {formatKES(unit.monthlyRent + unit.serviceCharge)}
                             </div>
-                            <span
-                              className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${
+                            <StatusBadge
+                              label={unit.status}
+                              variant={
                                 unit.status === 'OCCUPIED'
-                                  ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
+                                  ? 'success'
                                   : unit.status === 'VACANT'
-                                  ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300'
-                                  : 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300'
-                              }`}
-                            >
-                              {unit.status}
-                            </span>
+                                  ? 'warning'
+                                  : 'info'
+                              }
+                              size="sm"
+                            />
                           </div>
                         </button>
                       );
@@ -549,7 +553,7 @@ export const PropertiesView: React.FC = () => {
                   value={newPropName}
                   onChange={(e) => setNewPropName(e.target.value)}
                   placeholder="e.g. Parklands Executive Suites"
-                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 />
               </div>
 
@@ -565,7 +569,7 @@ export const PropertiesView: React.FC = () => {
                     value={newPropLocation}
                     onChange={(e) => setNewPropLocation(e.target.value)}
                     placeholder="e.g. 3rd Parklands Ave"
-                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
 
@@ -578,7 +582,7 @@ export const PropertiesView: React.FC = () => {
                     type="text"
                     value={newPropCity}
                     onChange={(e) => setNewPropCity(e.target.value)}
-                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
               </div>
@@ -594,7 +598,7 @@ export const PropertiesView: React.FC = () => {
                     value={newPropCaretakerName}
                     onChange={(e) => setNewPropCaretakerName(e.target.value)}
                     placeholder="e.g. Samuel Mutua"
-                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
 
@@ -608,7 +612,7 @@ export const PropertiesView: React.FC = () => {
                     value={newPropCaretakerPhone}
                     onChange={(e) => setNewPropCaretakerPhone(e.target.value)}
                     placeholder="+254 7..."
-                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
               </div>
@@ -672,7 +676,7 @@ export const PropertiesView: React.FC = () => {
                   value={newUnitNumber}
                   onChange={(e) => setNewUnitNumber(e.target.value)}
                   placeholder="e.g. C3, Villa 4, Flat 10"
-                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 />
               </div>
 
@@ -686,11 +690,11 @@ export const PropertiesView: React.FC = () => {
                   value={newUnitType}
                   onChange={(e) => setNewUnitType(e.target.value)}
                   placeholder="e.g. 2BR Master Ensuite"
-                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label htmlFor="unit-rent" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                     Monthly Rent (KES)
@@ -700,7 +704,7 @@ export const PropertiesView: React.FC = () => {
                     type="number"
                     value={newUnitRent}
                     onChange={(e) => setNewUnitRent(Number(e.target.value))}
-                    className="w-full px-3 py-2 text-sm tabular-nums bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm tabular-nums bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
 
@@ -713,7 +717,7 @@ export const PropertiesView: React.FC = () => {
                     type="number"
                     value={newUnitServiceCharge}
                     onChange={(e) => setNewUnitServiceCharge(Number(e.target.value))}
-                    className="w-full px-3 py-2 text-sm tabular-nums bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm tabular-nums bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
               </div>

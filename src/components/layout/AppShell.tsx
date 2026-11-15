@@ -94,11 +94,12 @@ export const AppShell: React.FC = () => {
       {/* Floating Action Button for Assistant (when drawer is closed) */}
       {!isAssistantOpen && (
         <button
+          type="button"
           onClick={() => setIsAssistantOpen(true)}
-          className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-3 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-full shadow-xl hover:shadow-2xl transition-all duration-200 active:scale-95 group font-semibold text-xs sm:text-sm border-2 border-emerald-400/30"
+          className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-3 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-full shadow-xl hover:shadow-2xl transition-all duration-200 active:scale-95 group font-semibold text-xs sm:text-sm border-2 border-emerald-400/30 cursor-pointer"
           aria-label="Open AI Property Agent Assistant"
         >
-          <Sparkles className="w-4 h-4 text-emerald-300 dark:text-[#111A17] animate-pulse" />
+          <Sparkles className="w-4 h-4 text-emerald-300 dark:text-[#111A17]" aria-hidden="true" />
           <span>Ask Agent</span>
         </button>
       )}

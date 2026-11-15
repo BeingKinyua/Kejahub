@@ -6,29 +6,21 @@ import { useProperty } from '../../context/PropertyContext';
 import { OnboardingData } from '../../types';
 import {
   Building2,
-  CheckCircle2,
   ChevronRight,
   ChevronLeft,
   Sparkles,
-  ArrowRight,
-  ShieldCheck,
-  CreditCard,
-  MessageSquare,
   Users,
-  Calendar,
   Layers,
   Check,
-  Plus,
-  Trash2,
   AlertCircle,
   Clock,
-  DollarSign,
-  Phone,
-  Mail,
+  CreditCard,
+  MessageSquare,
   MapPin,
   FileText,
 } from 'lucide-react';
 import { BuildingBlocksLoader } from '../ui/BuildingBlocksLoader';
+import { StatusBadge } from '../ui/StatusBadge';
 
 export const OnboardingWizard: React.FC = () => {
   const router = useRouter();
@@ -305,7 +297,7 @@ export const OnboardingWizard: React.FC = () => {
       {/* Header Banner */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-8 pb-4 border-b border-[#E2E8E5] dark:border-[#2D4039]">
         <div className="min-w-0">
-          <span className="text-xs uppercase font-extrabold text-[#267256] dark:text-[#79C8A4] tracking-wider flex items-center gap-1.5">
+          <span className="text-xs font-semibold text-[#267256] dark:text-[#79C8A4] flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
             Landlord Onboarding Workflow
           </span>
@@ -928,9 +920,7 @@ export const OnboardingWizard: React.FC = () => {
                       <p className="text-xs text-[#64736C] dark:text-[#9EB2A9] mt-0.5">
                         Matches incoming C2B M-Pesa receipts against unit account numbers.
                       </p>
-                      <span className="inline-block mt-1 text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded">
-                        Simulated Sandbox Configured
-                      </span>
+                      <StatusBadge label="Simulated Sandbox Configured" variant="evergreen" size="sm" className="mt-1.5" />
                     </div>
                   </div>
                   <input
@@ -987,9 +977,7 @@ export const OnboardingWizard: React.FC = () => {
                       <p className="text-xs text-[#64736C] dark:text-[#9EB2A9] mt-0.5">
                         Automated payment receipts, maintenance updates, and reminder drafts.
                       </p>
-                      <span className="inline-block mt-1 text-[10px] font-semibold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded">
-                        Interactive Logs Ready
-                      </span>
+                      <StatusBadge label="Interactive Logs Ready" variant="evergreen" size="sm" className="mt-1.5" />
                     </div>
                   </div>
                   <input

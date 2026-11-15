@@ -5,20 +5,13 @@ import {
   Wrench,
   Search,
   Plus,
-  AlertTriangle,
-  Clock,
-  CheckCircle2,
-  Phone,
   MessageSquare,
   Sparkles,
   X,
-  User,
-  ShieldCheck,
-  Building,
-  Image,
 } from 'lucide-react';
 import { formatKES } from '../../utils/propertyMath';
 import { GSAPEntrance } from '../animation/GSAPEntrance';
+import { StatusBadge } from '../ui/StatusBadge';
 
 export const MaintenanceView: React.FC = () => {
   const {
@@ -144,7 +137,7 @@ export const MaintenanceView: React.FC = () => {
           <button
             type="button"
             onClick={() => setSimModalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-2 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-950 text-emerald-800 dark:text-emerald-300 rounded-xl text-xs font-semibold border border-emerald-500/20 transition-all shadow-xs min-h-[38px]"
+            className="flex items-center gap-1.5 px-3 py-2 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-950 text-emerald-800 dark:text-emerald-300 rounded-xl text-xs font-semibold border border-emerald-500/20 transition-all shadow-xs min-h-[38px] cursor-pointer"
           >
             <MessageSquare className="w-4 h-4 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
             <span>Simulate WhatsApp Ingest</span>
@@ -154,7 +147,7 @@ export const MaintenanceView: React.FC = () => {
             <button
               type="button"
               onClick={() => setNewModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-sm min-h-[38px]"
+              className="flex items-center gap-1.5 px-3.5 py-2 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-sm min-h-[38px] cursor-pointer"
             >
               <Plus className="w-4 h-4" aria-hidden="true" />
               <span>New Ticket</span>
@@ -182,7 +175,7 @@ export const MaintenanceView: React.FC = () => {
             aria-label="Filter tickets by priority"
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value as 'ALL' | TicketPriority)}
-            className="px-3 py-2 bg-white dark:bg-[#1B2622] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+            className="px-3 py-2 bg-white dark:bg-[#1B2622] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68] cursor-pointer"
           >
             <option value="ALL">All Priorities</option>
             <option value="EMERGENCY">Emergency</option>
@@ -195,7 +188,7 @@ export const MaintenanceView: React.FC = () => {
             aria-label="Filter tickets by status"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as 'ALL' | TicketStatus)}
-            className="px-3 py-2 bg-white dark:bg-[#1B2622] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
+            className="px-3 py-2 bg-white dark:bg-[#1B2622] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68] cursor-pointer"
           >
             <option value="ALL">All Statuses</option>
             <option value="NEW">New</option>
@@ -216,17 +209,17 @@ export const MaintenanceView: React.FC = () => {
             Try clearing your search query or adjusting the priority and status filters.
           </p>
           {(searchTerm || priorityFilter !== 'ALL' || statusFilter !== 'ALL') && (
-            <button
-              type="button"
-              onClick={() => {
-                setSearchTerm('');
-                setPriorityFilter('ALL');
-                setStatusFilter('ALL');
-              }}
-              className="mt-4 px-4 py-2 text-xs font-semibold rounded-xl bg-[#F0F4F2] hover:bg-[#E2E8E5] dark:bg-[#24332D] dark:hover:bg-[#2D4039] text-[#24312D] dark:text-[#EDF5F1] transition-colors"
-            >
-              Reset filters
-            </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchTerm('');
+                  setPriorityFilter('ALL');
+                  setStatusFilter('ALL');
+                }}
+                className="mt-4 px-4 py-2 text-xs font-semibold rounded-xl bg-[#F0F4F2] hover:bg-[#E2E8E5] dark:bg-[#24332D] dark:hover:bg-[#2D4039] text-[#24312D] dark:text-[#EDF5F1] transition-colors cursor-pointer"
+              >
+                Reset filters
+              </button>
           )}
         </div>
       ) : (
@@ -253,31 +246,31 @@ export const MaintenanceView: React.FC = () => {
               <div>
                 <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
                   <div className="flex items-center gap-2 min-w-0">
-                    <span
-                      className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full whitespace-nowrap shrink-0 ${
+                    <StatusBadge
+                      label={ticket.priority}
+                      variant={
                         ticket.priority === 'EMERGENCY'
-                          ? 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300'
+                          ? 'error'
                           : ticket.priority === 'HIGH'
-                          ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
-                          : 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
-                      }`}
-                    >
-                      {ticket.priority}
-                    </span>
+                          ? 'warning'
+                          : 'info'
+                      }
+                      size="sm"
+                    />
                     <span className="text-xs text-[#64736C] dark:text-[#9EB2A9] font-mono tabular-nums truncate">#{ticket.id}</span>
                   </div>
 
-                  <span
-                    className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap shrink-0 ${
+                  <StatusBadge
+                    label={ticket.status.replace(/_/g, ' ')}
+                    variant={
                       ticket.status === 'RESOLVED'
-                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                        ? 'success'
                         : ticket.status === 'AWAITING_APPROVAL'
-                        ? 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300 font-bold'
-                        : 'bg-[#F0F4F2] text-[#24312D] dark:bg-[#24332D] dark:text-[#EDF5F1]'
-                    }`}
-                  >
-                    {ticket.status.replace(/_/g, ' ')}
-                  </span>
+                        ? 'error'
+                        : 'neutral'
+                    }
+                    size="sm"
+                  />
                 </div>
 
                 <h3 className="font-bold text-sm text-[#24312D] dark:text-[#EDF5F1] leading-snug wrap-anywhere">
@@ -312,7 +305,7 @@ export const MaintenanceView: React.FC = () => {
                       e.stopPropagation();
                       approveMaintenanceTicket(ticket.id);
                     }}
-                    className="px-3 py-1.5 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] text-xs font-semibold rounded-lg shadow-xs shrink-0"
+                    className="px-3 py-1.5 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] text-xs font-semibold rounded-lg shadow-xs shrink-0 cursor-pointer"
                   >
                     Authorize Quote
                   </button>
@@ -355,7 +348,7 @@ export const MaintenanceView: React.FC = () => {
                   type="button"
                   aria-label="Close ticket details"
                   onClick={() => setSelectedTicket(null)}
-                  className="p-2 rounded-lg text-[#64736C] dark:text-[#9EB2A9] hover:text-[#24312D] dark:hover:text-[#EDF5F1] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] shrink-0"
+                  className="p-2 rounded-lg text-[#64736C] dark:text-[#9EB2A9] hover:text-[#24312D] dark:hover:text-[#EDF5F1] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] shrink-0 cursor-pointer"
                 >
                   <X className="w-5 h-5" aria-hidden="true" />
                 </button>
@@ -364,10 +357,18 @@ export const MaintenanceView: React.FC = () => {
               {/* Status and Action banner */}
               <div className="my-4 p-3.5 bg-[#F6F8F6] dark:bg-[#24332D] rounded-xl flex items-center justify-between gap-3 text-xs">
                 <div>
-                  <span className="text-[#64736C] dark:text-[#9EB2A9] block text-[11px]">Current Status</span>
-                  <span className="font-bold text-[#24312D] dark:text-[#EDF5F1]">
-                    {selectedTicket.status.replace(/_/g, ' ')}
-                  </span>
+                  <span className="text-[#64736C] dark:text-[#9EB2A9] block text-[11px] mb-1">Current Status</span>
+                  <StatusBadge
+                    label={selectedTicket.status.replace(/_/g, ' ')}
+                    variant={
+                      selectedTicket.status === 'RESOLVED'
+                        ? 'success'
+                        : selectedTicket.status === 'AWAITING_APPROVAL'
+                        ? 'error'
+                        : 'neutral'
+                    }
+                    size="sm"
+                  />
                 </div>
                 <div className="text-right">
                   <span className="text-[#64736C] dark:text-[#9EB2A9] block text-[11px]">Estimated Quote</span>
@@ -435,7 +436,7 @@ export const MaintenanceView: React.FC = () => {
                           updateMaintenanceStatus(selectedTicket.id, st);
                           setSelectedTicket({ ...selectedTicket, status: st });
                         }}
-                        className={`py-2 px-2 rounded-lg text-[11px] font-semibold border transition-all ${
+                        className={`py-2 px-2 rounded-lg text-[11px] font-semibold border transition-all cursor-pointer ${
                           selectedTicket.status === st
                             ? 'bg-[#173C32] text-white dark:bg-[#79C8A4] dark:text-[#111A17] border-transparent'
                             : 'bg-white dark:bg-[#202D28] text-[#24312D] dark:text-[#EDF5F1] border-[#E2E8E5] dark:border-[#2D4039] hover:border-[#2F8A68]'
@@ -457,7 +458,7 @@ export const MaintenanceView: React.FC = () => {
                     approveMaintenanceTicket(selectedTicket.id);
                     setSelectedTicket(null);
                   }}
-                  className="px-4 py-2 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] text-xs font-semibold rounded-xl"
+                  className="px-4 py-2 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] text-xs font-semibold rounded-xl cursor-pointer"
                 >
                   Authorize Work Order Quote
                 </button>
@@ -465,7 +466,7 @@ export const MaintenanceView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setSelectedTicket(null)}
-                className="ml-auto px-4 py-2 text-xs font-semibold bg-[#F0F4F2] hover:bg-[#E2E8E5] dark:bg-[#24332D] dark:hover:bg-[#2D4039] text-[#24312D] dark:text-[#EDF5F1] rounded-xl"
+                className="ml-auto px-4 py-2 text-xs font-semibold bg-[#F0F4F2] hover:bg-[#E2E8E5] dark:bg-[#24332D] dark:hover:bg-[#2D4039] text-[#24312D] dark:text-[#EDF5F1] rounded-xl cursor-pointer"
               >
                 Close
               </button>
@@ -498,7 +499,7 @@ export const MaintenanceView: React.FC = () => {
                 type="button"
                 aria-label="Close WhatsApp simulator modal"
                 onClick={() => setSimModalOpen(false)}
-                className="p-1.5 rounded-lg text-[#64736C] dark:text-[#9EB2A9] hover:text-[#24312D] dark:hover:text-[#EDF5F1]"
+                className="p-1.5 rounded-lg text-[#64736C] dark:text-[#9EB2A9] hover:text-[#24312D] dark:hover:text-[#EDF5F1] cursor-pointer"
               >
                 <X className="w-4 h-4" aria-hidden="true" />
               </button>
@@ -522,14 +523,14 @@ export const MaintenanceView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setSimModalOpen(false)}
-                className="px-4 py-2 text-xs font-semibold text-[#64736C] dark:text-[#9EB2A9] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] rounded-xl"
+                className="px-4 py-2 text-xs font-semibold text-[#64736C] dark:text-[#9EB2A9] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] rounded-xl cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleSimulateWhatsAppReport}
-                className="px-4 py-2 text-xs font-semibold text-white bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] dark:text-[#111A17] rounded-xl flex items-center gap-1.5"
+                className="px-4 py-2 text-xs font-semibold text-white bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] dark:text-[#111A17] rounded-xl flex items-center gap-1.5 cursor-pointer"
               >
                 <Sparkles className="w-3.5 h-3.5" aria-hidden="true" /> Ingest & Triage Ticket
               </button>
@@ -559,7 +560,7 @@ export const MaintenanceView: React.FC = () => {
                 type="button"
                 aria-label="Close new ticket modal"
                 onClick={() => setNewModalOpen(false)}
-                className="p-1.5 rounded-lg text-[#64736C] dark:text-[#9EB2A9] hover:text-[#24312D] dark:hover:text-[#EDF5F1]"
+                className="p-1.5 rounded-lg text-[#64736C] dark:text-[#9EB2A9] hover:text-[#24312D] dark:hover:text-[#EDF5F1] cursor-pointer"
               >
                 <X className="w-4 h-4" aria-hidden="true" />
               </button>
@@ -580,7 +581,7 @@ export const MaintenanceView: React.FC = () => {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Borehole pressure sensor fault"
-                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 />
               </div>
 
@@ -595,11 +596,11 @@ export const MaintenanceView: React.FC = () => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Describe root cause and required materials..."
-                  className="w-full px-3 py-2 text-xs bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                  className="w-full px-3 py-2 text-xs bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label htmlFor="ticket-property" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                     Property
@@ -608,7 +609,7 @@ export const MaintenanceView: React.FC = () => {
                     id="ticket-property"
                     value={propertyId}
                     onChange={(e) => setPropertyId(e.target.value)}
-                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68] cursor-pointer"
                   >
                     {properties.map((p) => (
                       <option key={p.id} value={p.id}>
@@ -626,7 +627,7 @@ export const MaintenanceView: React.FC = () => {
                     id="ticket-priority"
                     value={priority}
                     onChange={(e) => setPriority(e.target.value as TicketPriority)}
-                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68] cursor-pointer"
                   >
                     <option value="LOW">Low</option>
                     <option value="MEDIUM">Medium</option>
@@ -636,7 +637,7 @@ export const MaintenanceView: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label htmlFor="ticket-cost" className="block text-xs font-semibold text-[#24312D] dark:text-[#EDF5F1] mb-1">
                     Estimated Cost (KES)
@@ -646,7 +647,7 @@ export const MaintenanceView: React.FC = () => {
                     type="number"
                     value={estimatedCost}
                     onChange={(e) => setEstimatedCost(Number(e.target.value))}
-                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] tabular-nums"
+                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                   {estimatedCost > workspaceConfig.maintenanceApprovalThreshold && (
                     <span className="text-[11px] text-amber-700 dark:text-amber-400 block mt-0.5 tabular-nums">
@@ -665,7 +666,7 @@ export const MaintenanceView: React.FC = () => {
                     value={assigneeName}
                     onChange={(e) => setAssigneeName(e.target.value)}
                     placeholder="Fundi Joseph"
-                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
               </div>
@@ -674,13 +675,13 @@ export const MaintenanceView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setNewModalOpen(false)}
-                  className="px-4 py-2 text-xs font-semibold text-[#64736C] dark:text-[#9EB2A9] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] rounded-xl"
+                  className="px-4 py-2 text-xs font-semibold text-[#64736C] dark:text-[#9EB2A9] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] rounded-xl cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-semibold text-white bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] dark:text-[#111A17] rounded-xl"
+                  className="px-4 py-2 text-xs font-semibold text-white bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] dark:text-[#111A17] rounded-xl cursor-pointer"
                 >
                   Create Work Order
                 </button>

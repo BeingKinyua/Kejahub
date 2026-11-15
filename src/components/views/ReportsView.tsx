@@ -1,19 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useProperty } from '../../context/PropertyContext';
 import {
-  BarChart3,
-  Download,
-  Calendar,
-  Building,
   TrendingUp,
   AlertTriangle,
   FileSpreadsheet,
-  CheckCircle2,
   Calculator,
-  ShieldCheck,
-  Percent,
 } from 'lucide-react';
 import { formatKES } from '../../utils/propertyMath';
 import { BentoCard } from '../ui/BentoCard';
@@ -129,7 +122,7 @@ export const ReportsView: React.FC = () => {
         <button
           type="button"
           onClick={handleExportCSV}
-          className="flex items-center gap-2 px-3.5 py-2 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-sm self-start sm:self-auto shrink-0 min-h-[38px]"
+          className="flex items-center gap-2 px-3.5 py-2 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-sm self-start sm:self-auto shrink-0 min-h-[38px] cursor-pointer"
         >
           <FileSpreadsheet className="w-4 h-4" aria-hidden="true" />
           <span>Export Rent Roll (CSV)</span>
@@ -246,9 +239,14 @@ export const ReportsView: React.FC = () => {
           />
         }
       >
+        {tenants.length === 0 ? (
+          <div className="py-10 text-center text-xs text-[#64736C] dark:text-[#9EB2A9]">
+            No active tenant leases recorded for this reporting cycle.
+          </div>
+        ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-xs text-left">
-            <thead className="bg-[#F6F8F6] dark:bg-[#202D28] text-[#64736C] dark:text-[#9EB2A9] uppercase font-semibold border-b border-[#E2E8E5] dark:border-[#2D4039]">
+            <thead className="bg-[#F6F8F6] dark:bg-[#202D28] text-[11px] text-[#64736C] dark:text-[#9EB2A9] font-semibold tracking-wide border-b border-[#E2E8E5] dark:border-[#2D4039]">
               <tr>
                 <th className="py-2.5 px-3">Property</th>
                 <th className="py-2.5 px-3">Unit</th>
@@ -312,6 +310,7 @@ export const ReportsView: React.FC = () => {
             </tbody>
           </table>
         </div>
+        )}
       </BentoCard>
     </GSAPEntrance>
   );

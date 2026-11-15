@@ -1,25 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useProperty } from '../../context/PropertyContext';
 import {
-  Settings,
-  User,
-  Building,
   CreditCard,
   MessageSquare,
-  ShieldAlert,
   Sun,
   Moon,
   Laptop,
   RotateCcw,
   CheckCircle2,
   AlertTriangle,
-  Send,
-  Lock,
   Eye,
-  Sparkles,
   X,
 } from 'lucide-react';
 import { BuildingBlocksLoader } from '../ui/BuildingBlocksLoader';
+import { StatusBadge } from '../ui/StatusBadge';
 
 export const SettingsView: React.FC = () => {
   const {
@@ -28,8 +22,6 @@ export const SettingsView: React.FC = () => {
     theme,
     setTheme,
     resetDemoData,
-    currentUser,
-    signOut,
     addToast,
   } = useProperty();
 
@@ -62,6 +54,12 @@ export const SettingsView: React.FC = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [loaderFullscreenPreview, resetConfirmOpen]);
+
+  useEffect(() => {
+    if (!loaderFullscreenPreview) return;
+    const timer = window.setTimeout(() => setLoaderFullscreenPreview(false), 3500);
+    return () => window.clearTimeout(timer);
+  }, [loaderFullscreenPreview]);
 
   const handleSaveDefaults = (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,7 +125,7 @@ export const SettingsView: React.FC = () => {
                 type="button"
                 aria-pressed={isSelected}
                 onClick={() => setTheme(th.id as 'light' | 'dark' | 'system')}
-                className={`p-3 rounded-xl border flex flex-col items-center gap-2 transition-all min-h-[72px] ${
+                className={`p-3 rounded-xl border flex flex-col items-center gap-2 transition-all min-h-[72px] cursor-pointer ${
                   isSelected
                     ? 'border-[#2F8A68] bg-[#173C32]/5 dark:bg-[#79C8A4]/10 ring-2 ring-[#2F8A68]'
                     : 'border-[#E2E8E5] dark:border-[#2D4039] hover:bg-[#F6F8F6] dark:hover:bg-[#202D28]'
@@ -152,9 +150,7 @@ export const SettingsView: React.FC = () => {
               <h3 className="text-sm font-bold text-[#24312D] dark:text-[#EDF5F1]">
                 KejaHub Building Blocks Loader
               </h3>
-              <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded-full whitespace-nowrap">
-                Motion System
-              </span>
+              <StatusBadge label="Motion System" variant="evergreen" size="sm" />
             </div>
             <p className="text-xs text-[#64736C] dark:text-[#9EB2A9] mt-0.5">
               Architectural 9-block modular construction sequence: Foundation → Structure → Upper Floor → Details → Completion Shimmer
@@ -163,11 +159,8 @@ export const SettingsView: React.FC = () => {
 
           <button
             type="button"
-            onClick={() => {
-              setLoaderFullscreenPreview(true);
-              setTimeout(() => setLoaderFullscreenPreview(false), 3500);
-            }}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-xl text-xs font-semibold transition-all shadow-xs shrink-0 self-start sm:self-auto"
+            onClick={() => setLoaderFullscreenPreview(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-xl text-xs font-semibold transition-all shadow-xs shrink-0 self-start sm:self-auto cursor-pointer"
           >
             <Eye className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Preview Fullscreen (3s)</span>
@@ -184,8 +177,8 @@ export const SettingsView: React.FC = () => {
             completionMessage="Your workspace is ready"
           />
 
-          <div className="absolute top-2.5 right-2.5 text-[10px] font-mono text-[#64736C] dark:text-[#9EB2A9] tabular-nums">
-            {loaderTestCompletion ? 'STATE: COMPLETED ARCHITECTURE' : 'STATE: 3.6S LOOP CYCLE'}
+          <div className="absolute top-2.5 right-2.5 text-[11px] font-medium text-[#64736C] dark:text-[#9EB2A9] tabular-nums">
+            {loaderTestCompletion ? 'Completed state' : '3.6s loop'}
           </div>
         </div>
 
@@ -203,7 +196,7 @@ export const SettingsView: React.FC = () => {
                   type="button"
                   aria-pressed={loaderTestSize === s}
                   onClick={() => setLoaderTestSize(s)}
-                  className={`flex-1 py-1 rounded text-xs font-semibold uppercase transition-all ${
+                  className={`flex-1 py-1 rounded text-xs font-semibold uppercase transition-all cursor-pointer ${
                     loaderTestSize === s
                       ? 'bg-white dark:bg-[#1B2622] text-[#173C32] dark:text-[#79C8A4] shadow-xs'
                       : 'text-[#64736C] dark:text-[#9EB2A9] hover:text-[#24312D] dark:hover:text-[#EDF5F1]'
@@ -225,7 +218,7 @@ export const SettingsView: React.FC = () => {
                 type="button"
                 aria-pressed={!loaderTestCompletion}
                 onClick={() => setLoaderTestCompletion(false)}
-                className={`flex-1 py-1 rounded text-xs font-semibold transition-all ${
+                className={`flex-1 py-1 rounded text-xs font-semibold transition-all cursor-pointer ${
                   !loaderTestCompletion
                     ? 'bg-white dark:bg-[#1B2622] text-[#173C32] dark:text-[#79C8A4] shadow-xs'
                     : 'text-[#64736C] dark:text-[#9EB2A9] hover:text-[#24312D] dark:hover:text-[#EDF5F1]'
@@ -237,7 +230,7 @@ export const SettingsView: React.FC = () => {
                 type="button"
                 aria-pressed={loaderTestCompletion}
                 onClick={() => setLoaderTestCompletion(true)}
-                className={`flex-1 py-1 rounded text-xs font-semibold transition-all ${
+                className={`flex-1 py-1 rounded text-xs font-semibold transition-all cursor-pointer ${
                   loaderTestCompletion
                     ? 'bg-white dark:bg-[#1B2622] text-[#173C32] dark:text-[#79C8A4] shadow-xs'
                     : 'text-[#64736C] dark:text-[#9EB2A9] hover:text-[#24312D] dark:hover:text-[#EDF5F1]'
@@ -258,7 +251,7 @@ export const SettingsView: React.FC = () => {
               type="text"
               value={loaderCustomLabel}
               onChange={(e) => setLoaderCustomLabel(e.target.value)}
-              className="w-full px-2.5 py-1.5 text-xs bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-lg text-[#24312D] dark:text-[#EDF5F1]"
+              className="w-full px-2.5 py-1.5 text-xs bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-lg text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
             />
           </div>
         </div>
@@ -275,7 +268,7 @@ export const SettingsView: React.FC = () => {
             <button
               type="button"
               onClick={() => setLoaderFullscreenPreview(false)}
-              className="fixed top-5 right-5 z-[60] px-3 py-1.5 bg-black/75 hover:bg-black text-white rounded-lg text-xs font-semibold backdrop-blur-md"
+              className="fixed top-5 right-5 z-[60] px-3 py-1.5 bg-black/75 hover:bg-black text-white rounded-lg text-xs font-semibold backdrop-blur-md cursor-pointer"
             >
               Exit Preview (Esc)
             </button>
@@ -303,7 +296,7 @@ export const SettingsView: React.FC = () => {
                 type="text"
                 value={workspaceName}
                 onChange={(e) => setWorkspaceName(e.target.value)}
-                className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
               />
             </div>
 
@@ -316,7 +309,7 @@ export const SettingsView: React.FC = () => {
                 type="text"
                 value={landlordName}
                 onChange={(e) => setLandlordName(e.target.value)}
-                className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
               />
             </div>
 
@@ -331,7 +324,7 @@ export const SettingsView: React.FC = () => {
                 max={28}
                 value={rentDueDay}
                 onChange={(e) => setRentDueDay(Number(e.target.value))}
-                className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] tabular-nums"
+                className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
               />
             </div>
 
@@ -346,7 +339,7 @@ export const SettingsView: React.FC = () => {
                 max={15}
                 value={gracePeriodDays}
                 onChange={(e) => setGracePeriodDays(Number(e.target.value))}
-                className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] tabular-nums"
+                className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
               />
             </div>
 
@@ -360,7 +353,7 @@ export const SettingsView: React.FC = () => {
                 step={1000}
                 value={maintThreshold}
                 onChange={(e) => setMaintThreshold(Number(e.target.value))}
-                className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] tabular-nums"
+                className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
               />
               <span className="text-[11px] text-[#64736C] dark:text-[#9EB2A9] block mt-1">
                 Quotes above this amount require Landlord signoff.
@@ -377,7 +370,7 @@ export const SettingsView: React.FC = () => {
                 value={paybill}
                 onChange={(e) => setPaybill(e.target.value)}
                 placeholder="522522"
-                className="w-full px-3 py-2 text-sm font-mono bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] tabular-nums"
+                className="w-full px-3 py-2 text-sm font-mono bg-[#F6F8F6] dark:bg-[#202D28] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
               />
             </div>
           </div>
@@ -385,7 +378,7 @@ export const SettingsView: React.FC = () => {
           <div className="pt-2 flex justify-end">
             <button
               type="submit"
-              className="px-4 py-2 text-xs font-semibold text-white bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] dark:text-[#111A17] rounded-xl shadow-xs min-h-[38px]"
+              className="px-4 py-2 text-xs font-semibold text-white bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] dark:text-[#111A17] rounded-xl shadow-xs min-h-[38px] cursor-pointer"
             >
               Save Configuration
             </button>
@@ -412,9 +405,7 @@ export const SettingsView: React.FC = () => {
                   <span className="font-bold text-sm text-[#24312D] dark:text-[#EDF5F1]">
                     Safaricom M-Pesa Daraja C2B / B2C
                   </span>
-                  <span className="text-[10px] font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 px-2 py-0.5 rounded-full whitespace-nowrap">
-                    Demo Sandbox Connected
-                  </span>
+                  <StatusBadge label="Demo Sandbox Connected" variant="success" size="sm" />
                 </div>
                 <p className="text-xs text-[#64736C] dark:text-[#9EB2A9] mt-0.5 tabular-nums">
                   Simulated Paybill {paybill}. Automated validation and confirmation URL handlers active.
@@ -430,7 +421,7 @@ export const SettingsView: React.FC = () => {
             <button
               type="button"
               onClick={handleTestMpesaPing}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-[#1B2622] border border-[#E2E8E5] dark:border-[#2D4039] text-[#24312D] dark:text-[#EDF5F1] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] shrink-0"
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-[#1B2622] border border-[#E2E8E5] dark:border-[#2D4039] text-[#24312D] dark:text-[#EDF5F1] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] shrink-0 cursor-pointer"
             >
               Test Daraja Ping
             </button>
@@ -445,9 +436,7 @@ export const SettingsView: React.FC = () => {
                   <span className="font-bold text-sm text-[#24312D] dark:text-[#EDF5F1]">
                     WhatsApp Business Cloud API
                   </span>
-                  <span className="text-[10px] font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 px-2 py-0.5 rounded-full whitespace-nowrap">
-                    Demo Webhook Active
-                  </span>
+                  <StatusBadge label="Demo Webhook Active" variant="success" size="sm" />
                 </div>
                 <p className="text-xs text-[#64736C] dark:text-[#9EB2A9] mt-0.5">
                   Tenant WhatsApp message intake and automated receipt dispatch simulated.
@@ -463,7 +452,7 @@ export const SettingsView: React.FC = () => {
             <button
               type="button"
               onClick={handleTestWhatsAppPing}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-[#1B2622] border border-[#E2E8E5] dark:border-[#2D4039] text-[#24312D] dark:text-[#EDF5F1] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] shrink-0"
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-[#1B2622] border border-[#E2E8E5] dark:border-[#2D4039] text-[#24312D] dark:text-[#EDF5F1] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] shrink-0 cursor-pointer"
             >
               Test WhatsApp Ping
             </button>
@@ -483,7 +472,7 @@ export const SettingsView: React.FC = () => {
         <button
           type="button"
           onClick={() => setResetConfirmOpen(true)}
-          className="px-4 py-2 text-xs font-semibold bg-red-50 hover:bg-red-100 dark:bg-red-950/30 dark:hover:bg-red-950/60 text-red-700 dark:text-red-300 rounded-xl border border-red-200 dark:border-red-800 flex items-center gap-1.5"
+          className="px-4 py-2 text-xs font-semibold bg-red-50 hover:bg-red-100 dark:bg-red-950/30 dark:hover:bg-red-950/60 text-red-700 dark:text-red-300 rounded-xl border border-red-200 dark:border-red-800 flex items-center gap-1.5 cursor-pointer"
         >
           <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
           <span>Reset Demo Data to Initial Seed</span>
@@ -511,7 +500,7 @@ export const SettingsView: React.FC = () => {
                 type="button"
                 aria-label="Close reset confirmation dialog"
                 onClick={() => setResetConfirmOpen(false)}
-                className="p-1 rounded-lg text-[#64736C] dark:text-[#9EB2A9] hover:text-[#24312D] dark:hover:text-[#EDF5F1]"
+                className="p-1 rounded-lg text-[#64736C] dark:text-[#9EB2A9] hover:text-[#24312D] dark:hover:text-[#EDF5F1] cursor-pointer"
               >
                 <X className="w-4 h-4" aria-hidden="true" />
               </button>
@@ -524,7 +513,7 @@ export const SettingsView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setResetConfirmOpen(false)}
-                className="px-3.5 py-1.5 text-xs font-semibold text-[#64736C] dark:text-[#9EB2A9] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] rounded-xl"
+                className="px-3.5 py-1.5 text-xs font-semibold text-[#64736C] dark:text-[#9EB2A9] hover:bg-[#F0F4F2] dark:hover:bg-[#24332D] rounded-xl cursor-pointer"
               >
                 Cancel
               </button>
@@ -534,7 +523,7 @@ export const SettingsView: React.FC = () => {
                   resetDemoData();
                   setResetConfirmOpen(false);
                 }}
-                className="px-4 py-1.5 text-xs font-semibold bg-red-600 hover:bg-red-700 text-white rounded-xl shadow-xs"
+                className="px-4 py-1.5 text-xs font-semibold bg-red-600 hover:bg-red-700 text-white rounded-xl shadow-xs cursor-pointer"
               >
                 Reset Now
               </button>

@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { formatKES } from '../../utils/propertyMath';
 import { GSAPEntrance } from '../animation/GSAPEntrance';
+import { StatusBadge } from '../ui/StatusBadge';
 
 export const PaymentsView: React.FC = () => {
   const {
@@ -162,7 +163,7 @@ export const PaymentsView: React.FC = () => {
       </div>
 
       {/* KPI Highlights Bar */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white dark:bg-[#1B2622] p-4 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] shadow-xs">
           <span className="text-[11px] font-semibold text-[#64736C] dark:text-[#9EB2A9] block">Total Expected</span>
           <div className="text-lg font-bold tabular-nums text-[#24312D] dark:text-[#EDF5F1] mt-1">
@@ -187,7 +188,7 @@ export const PaymentsView: React.FC = () => {
         <div className="bg-white dark:bg-[#1B2622] p-4 rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] shadow-xs">
           <span className="text-[11px] font-semibold text-[#64736C] dark:text-[#9EB2A9] block">Unallocated M-Pesa</span>
           <div className="text-lg font-bold tabular-nums text-amber-700 dark:text-amber-400 mt-1">
-            {portfolioMetrics.unallocatedCount} tx ({formatKES(portfolioMetrics.unallocatedAmount)})
+            {portfolioMetrics.unallocatedCount} pending ({formatKES(portfolioMetrics.unallocatedAmount)})
           </div>
         </div>
       </div>
@@ -242,7 +243,7 @@ export const PaymentsView: React.FC = () => {
             aria-label="Filter payments by channel"
             value={channelFilter}
             onChange={(e) => setChannelFilter(e.target.value as any)}
-            className="px-3 py-2 bg-white dark:bg-[#1B2622] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] cursor-pointer"
+            className="px-3 py-2 bg-white dark:bg-[#1B2622] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
           >
             <option value="ALL">All Channels</option>
             <option value="M-PESA">M-Pesa</option>
@@ -254,7 +255,7 @@ export const PaymentsView: React.FC = () => {
             aria-label="Filter payments by status"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as any)}
-            className="px-3 py-2 bg-white dark:bg-[#1B2622] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] cursor-pointer"
+            className="px-3 py-2 bg-white dark:bg-[#1B2622] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
           >
             <option value="ALL">All Statuses</option>
             <option value="CONFIRMED">Confirmed</option>
@@ -292,7 +293,7 @@ export const PaymentsView: React.FC = () => {
         <div className="bg-white dark:bg-[#1B2622] rounded-2xl border border-[#E2E8E5] dark:border-[#2D4039] overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-[#24312D] dark:text-[#EDF5F1]">
-              <thead className="bg-[#F6F8F6] dark:bg-[#24332D] uppercase text-[10px] font-bold text-[#64736C] dark:text-[#9EB2A9] border-b border-[#E2E8E5] dark:border-[#2D4039]">
+              <thead className="bg-[#F6F8F6] dark:bg-[#24332D] uppercase text-[11px] font-semibold tracking-wide text-[#64736C] dark:text-[#9EB2A9] border-b border-[#E2E8E5] dark:border-[#2D4039]">
                 <tr>
                   <th className="px-4 py-3">Date &amp; Time</th>
                   <th className="px-4 py-3">Channel &amp; Ref</th>
@@ -357,17 +358,17 @@ export const PaymentsView: React.FC = () => {
                       </td>
 
                       <td className="px-4 py-3.5">
-                        <span
-                          className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${
+                        <StatusBadge
+                          label={tx.status}
+                          variant={
                             tx.status === 'CONFIRMED'
-                              ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300'
+                              ? 'success'
                               : tx.status === 'RECONCILED'
-                              ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
-                              : 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300'
-                          }`}
-                        >
-                          {tx.status}
-                        </span>
+                              ? 'info'
+                              : 'warning'
+                          }
+                          size="sm"
+                        />
                       </td>
 
                       <td className="px-4 py-3.5 text-right space-x-2">
@@ -469,7 +470,7 @@ export const PaymentsView: React.FC = () => {
                     const t = tenants.find((item) => item.id === e.target.value);
                     if (t) setReconUnitId(t.assignedUnitId);
                   }}
-                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 >
                   {tenants.map((t) => (
                     <option key={t.id} value={t.id}>
@@ -487,7 +488,7 @@ export const PaymentsView: React.FC = () => {
                   id="recon-unit"
                   value={reconUnitId}
                   onChange={(e) => setReconUnitId(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 >
                   {units.map((u) => (
                     <option key={u.id} value={u.id}>
@@ -533,7 +534,7 @@ export const PaymentsView: React.FC = () => {
           >
             <div className="flex justify-between items-start gap-2 border-b border-[#E2E8E5] dark:border-[#2D4039] pb-3">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#267256] dark:text-[#79C8A4]">
+                <span className="text-xs font-semibold text-[#267256] dark:text-[#79C8A4]">
                   Official Rent Receipt (Simulated)
                 </span>
                 <h3 id="receipt-modal-title" className="text-base font-extrabold tabular-nums text-[#24312D] dark:text-[#EDF5F1]">
@@ -653,7 +654,7 @@ export const PaymentsView: React.FC = () => {
                   required
                   value={selectedTenantId}
                   onChange={(e) => setSelectedTenantId(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 >
                   <option value="">Select Tenant</option>
                   {tenants.map((t) => (
@@ -675,7 +676,7 @@ export const PaymentsView: React.FC = () => {
                     required
                     value={amount}
                     onChange={(e) => setAmount(Number(e.target.value))}
-                    className="w-full px-3 py-2 text-sm tabular-nums bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm tabular-nums bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   />
                 </div>
 
@@ -687,7 +688,7 @@ export const PaymentsView: React.FC = () => {
                     id="manual-channel"
                     value={channel}
                     onChange={(e) => setChannel(e.target.value as any)}
-                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                    className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                   >
                     <option value="M-PESA">M-Pesa</option>
                     <option value="BANK_TRANSFER">Bank Transfer</option>
@@ -706,7 +707,7 @@ export const PaymentsView: React.FC = () => {
                   required
                   value={refNumber}
                   onChange={(e) => setRefNumber(e.target.value)}
-                  className="w-full px-3 py-2 text-sm font-mono tabular-nums bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                  className="w-full px-3 py-2 text-sm font-mono tabular-nums bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 />
               </div>
 
@@ -720,7 +721,7 @@ export const PaymentsView: React.FC = () => {
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="e.g. Cleared via NCBA App"
-                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1]"
+                  className="w-full px-3 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
                 />
               </div>
 

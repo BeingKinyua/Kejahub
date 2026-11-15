@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
+  ShieldCheck,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -176,7 +177,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-200">
                   <Sparkles className="w-3.5 h-3.5 text-emerald-300" aria-hidden="true" /> Agent Sentinel
                 </span>
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-300/90" aria-hidden="true" />
               </div>
               <p className="text-[11px] text-emerald-100/80 leading-relaxed tabular-nums">
                 {pendingTasksCount > 0

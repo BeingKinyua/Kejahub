@@ -71,13 +71,13 @@ export const PersistentAssistantDrawer: React.FC = () => {
         gsap.fromTo(
           drawerRef.current,
           { x: '100%' },
-          { x: '0%', duration: 0.4, ease: 'power3.out' }
+          { x: '0%', duration: 0.26, ease: 'power2.out' }
         );
         if (backdropRef.current) {
           gsap.fromTo(
             backdropRef.current,
             { opacity: 0 },
-            { opacity: 1, duration: 0.3, ease: 'power2.out' }
+            { opacity: 1, duration: 0.2, ease: 'power2.out' }
           );
         }
       }
@@ -147,14 +147,14 @@ export const PersistentAssistantDrawer: React.FC = () => {
 
     gsap.to(drawerRef.current, {
       x: '100%',
-      duration: 0.3,
-      ease: 'power3.in',
+      duration: 0.2,
+      ease: 'power2.in',
       onComplete: () => {
         setIsAssistantOpen(false);
       },
     });
     if (backdropRef.current) {
-      gsap.to(backdropRef.current, { opacity: 0, duration: 0.25 });
+      gsap.to(backdropRef.current, { opacity: 0, duration: 0.18 });
     }
   };
 
@@ -187,8 +187,8 @@ export const PersistentAssistantDrawer: React.FC = () => {
                 <h2 id="assistant-drawer-title" className="font-bold text-sm tracking-tight text-white">
                   Kejahub Agent
                 </h2>
-                <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-500/30 text-emerald-100 px-2 py-0.5 rounded whitespace-nowrap">
-                  Autonomous + Gated
+                <span className="text-[11px] font-medium bg-emerald-500/25 text-emerald-100 px-2 py-0.5 rounded-md whitespace-nowrap">
+                  Human-gated
                 </span>
               </div>
               <p className="text-[11px] text-emerald-100/80 truncate">
@@ -262,8 +262,8 @@ export const PersistentAssistantDrawer: React.FC = () => {
 
         {/* Contextual Quick Suggestions */}
         <div className="p-3 bg-[#F6F8F6] dark:bg-[#202D28] border-t border-[#E2E8E5] dark:border-[#2D4039]">
-          <span className="text-[11px] font-bold text-[#64736C] dark:text-[#9EB2A9] uppercase tracking-wider block mb-2">
-            Suggested Prompts ({currentScreen})
+          <span className="text-xs font-semibold text-[#64736C] dark:text-[#9EB2A9] block mb-2">
+            Suggested prompts (<span className="capitalize">{currentScreen}</span>)
           </span>
           <div className="flex flex-wrap gap-1.5">
             {activePrompts.map((prompt) => (
@@ -290,7 +290,7 @@ export const PersistentAssistantDrawer: React.FC = () => {
               onKeyDown={handleKeyPress}
               aria-label="Message Kejahub AI Agent"
               placeholder="Ask anything about rent, tenants, or M-Pesa..."
-              className="flex-1 px-3.5 py-2.5 min-h-[42px] text-xs sm:text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] placeholder-[#64736C] dark:placeholder-[#9EB2A9]"
+              className="flex-1 px-3.5 py-2.5 min-h-[42px] text-xs sm:text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] placeholder-[#64736C] dark:placeholder-[#9EB2A9] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
             />
             <button
               type="button"

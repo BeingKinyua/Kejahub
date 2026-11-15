@@ -162,7 +162,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobileMenu }) => {
               value={selectedPropertyId || ''}
               onChange={(e) => setSelectedPropertyId(e.target.value || null)}
               aria-label="Filter by property"
-              className="text-xs sm:text-sm font-medium bg-[#F6F8F6] dark:bg-[#24332D] text-[#24312D] dark:text-[#EDF5F1] border border-[#E2E8E5] dark:border-[#2D4039] rounded-lg px-2.5 py-1.5 max-w-[155px] sm:max-w-xs truncate cursor-pointer"
+              className="text-xs sm:text-sm font-medium bg-[#F6F8F6] dark:bg-[#24332D] text-[#24312D] dark:text-[#EDF5F1] border border-[#E2E8E5] dark:border-[#2D4039] rounded-lg px-2.5 py-1.5 max-w-[132px] sm:max-w-xs truncate cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
             >
               <option value="">All Properties ({properties.length})</option>
               {properties.map((p) => (
@@ -188,7 +188,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobileMenu }) => {
               }}
               aria-label="Global portfolio search"
               placeholder="Search units, tenants (e.g. Wanjiku), M-Pesa refs..."
-              className="w-full pl-9 pr-8 py-1.5 text-xs sm:text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-lg text-[#24312D] dark:text-[#EDF5F1] placeholder-[#64736C] dark:placeholder-[#9EB2A9] transition-all"
+              className="w-full pl-9 pr-8 py-1.5 text-xs sm:text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-lg text-[#24312D] dark:text-[#EDF5F1] placeholder-[#64736C] dark:placeholder-[#9EB2A9] focus:outline-none focus:ring-2 focus:ring-[#2F8A68] transition-all"
             />
             {searchQuery && (
               <button
@@ -258,10 +258,11 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobileMenu }) => {
           <button
             type="button"
             onClick={() => setIsAssistantOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 min-h-[36px] bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-lg text-xs sm:text-sm font-semibold transition-all shadow-sm active:scale-95 cursor-pointer"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 min-h-[36px] bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-lg text-xs sm:text-sm font-semibold transition-all shadow-sm active:scale-95 cursor-pointer"
             aria-label="Ask the AI Property Agent"
           >
-            <Sparkles className="w-4 h-4 text-emerald-300 dark:text-[#111A17]" aria-hidden="true" />
+            <Sparkles className="w-4 h-4 text-emerald-300 dark:text-[#111A17] shrink-0" aria-hidden="true" />
+            <span className="sm:hidden">Ask</span>
             <span className="hidden sm:inline">Ask Agent</span>
           </button>
 
@@ -496,7 +497,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobileMenu }) => {
               aria-label="Global portfolio search"
               placeholder="Search units, tenants, M-Pesa refs..."
               autoFocus
-              className="w-full pl-9 pr-9 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] placeholder-[#64736C] dark:placeholder-[#9EB2A9]"
+              className="w-full pl-9 pr-9 py-2 text-sm bg-[#F6F8F6] dark:bg-[#24332D] border border-[#E2E8E5] dark:border-[#2D4039] rounded-xl text-[#24312D] dark:text-[#EDF5F1] placeholder-[#64736C] dark:placeholder-[#9EB2A9] focus:outline-none focus:ring-2 focus:ring-[#2F8A68]"
             />
             {searchQuery && (
               <button

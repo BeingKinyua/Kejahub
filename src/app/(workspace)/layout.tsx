@@ -12,7 +12,6 @@ import {
   AlertCircle,
   Info,
   X,
-  Sparkles,
 } from 'lucide-react';
 import { BuildingBlocksLoader } from '../../components/ui/BuildingBlocksLoader';
 
@@ -26,11 +25,8 @@ export default function WorkspaceLayout({
   const {
     currentUser,
     isAuthLoaded,
-    workspaceConfig,
     toasts,
     dismissToast,
-    isAssistantOpen,
-    setIsAssistantOpen,
   } = useProperty();
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -91,25 +87,12 @@ export default function WorkspaceLayout({
           <main
             id="main-content"
             tabIndex={-1}
-            className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 pb-24 sm:pb-8 focus:outline-none"
+            className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 focus:outline-none"
           >
             <div className="max-w-7xl mx-auto">{children}</div>
           </main>
         </div>
       </div>
-
-      {/* Floating Action Button for Assistant */}
-      {!isAssistantOpen && (
-        <button
-          type="button"
-          onClick={() => setIsAssistantOpen(true)}
-          className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 flex items-center gap-2 px-4 py-3 min-h-[44px] bg-[#173C32] hover:bg-[#245245] dark:bg-[#79C8A4] dark:hover:bg-[#93D6B7] text-white dark:text-[#111A17] rounded-full shadow-xl hover:shadow-2xl transition-all duration-200 active:scale-95 group font-semibold text-xs sm:text-sm border-2 border-emerald-400/30 cursor-pointer"
-          aria-label="Open AI Property Agent Assistant"
-        >
-          <Sparkles className="w-4 h-4 text-emerald-300 dark:text-[#111A17] shrink-0" aria-hidden="true" />
-          <span>Ask Agent</span>
-        </button>
-      )}
 
       {/* Persistent Sliding Assistant Drawer */}
       <PersistentAssistantDrawer />
